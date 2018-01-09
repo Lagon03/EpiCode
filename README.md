@@ -9,6 +9,6 @@ Generating an EpiCode will be the processing data part. The input data can be a 
 
 ## Schedule for the first defense
 
-- [] Define project boundaries
-- [] Fully fleshed-out website
-- [] Working Cyphering
+- [ ] Define project boundaries
+- [ ] Fully fleshed-out website
+- [ ] Working Cyphering
