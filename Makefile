@@ -1,23 +1,28 @@
-# Makefile
+# Cypher Makefile
 
-CPPFLAGS = -MMD
-CC = gcc
-CFLAGS = -Wall -Wextra -std=c99 -O2
-LDFLAGS =
-LDLIBS =
+CC= gcc -fsanitize=address
 
-SRC = main.c
-OBJ = ${SRC:.c=.o}
-DEP = ${SRC:.c=.d}
+CPPFLAGS= `pkg-config --cflags sdl` -MMD
+CFLAGS= -Wall -Wextra -std=c99 -O2
+LDFLAGS=
+LDLIBS=`pkg-config --libs sdl` -lSDL_image -lm
 
+SRC= main.c
+OBJ=${SRC:.c=.o}
+DEP=${SRC:.c=.d}
 
-main: ${OBJ}
+all : main 
+
+test: ${OBJ}
+	${CC} ${CFLAGS} ${CPPFLAGS} ${OBJ} ${LDLIBS} -o main
+
+.PHONY: clean
+
+clean:
+	${RM} ${OBJ} ${DEP} *~
+	${RM} main
+	${RM} *.d
 
 -include ${DEP}
 
-clean:
-	${RM} ${OBJ}
-	${RM} ${DEP}
-	${RM} main
-
-# END
+# End
