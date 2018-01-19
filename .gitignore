@@ -1,0 +1,8 @@
+# Prerequisites
+    *.d
+
+# Object Files
+    *.o
+
+# Binary files
+    main
