@@ -7,11 +7,11 @@ CFLAGS= -Wall -Wextra -std=c99 -O2
 LDFLAGS=
 LDLIBS=`pkg-config --libs sdl` -lSDL_image -lm
 
-SRC= main.c
+SRC= main.c analysis.c
 OBJ=${SRC:.c=.o}
 DEP=${SRC:.c=.d}
 
-all : main 
+all : test 
 
 test: ${OBJ}
 	${CC} ${CFLAGS} ${CPPFLAGS} ${OBJ} ${LDLIBS} -o main
