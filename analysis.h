@@ -4,8 +4,17 @@
 # include <stdio.h>
 # include <stdlib.h>
 
+enum data
+{
+  Numeric = 0, 
+  Alphanumeric = 1, 
+  Byte = 2,
+  Kanji = 3
+};
+typedef enum data Mode;
+
 size_t getSize(char *input);
 int* selectMode(char *input);
-void checkmod(int *mod);
+Mode checkmod(int *mod);
 
 # endif

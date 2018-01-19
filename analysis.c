@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-enum mode {numeric, alphanumeric, byte, kanji};
+#include "analysis.h"
 
 // $  %  *  +  -  .  /  :
 // 36 37 42 43 45 46 47 58
@@ -21,7 +21,7 @@ int* selectMode(char *input)
   while(*(input + i) != '\0')
   {
     int char_ = ((int)*(input + i));
-    printf("Character value : %i\n", char_);
+    //printf("Ascii value : %i\n", char_);
     if (((char_ > 47 && char_ < 58)))
       mod[0] = 1;
     else if ((((char_ > 64 && char_ < 90)) |
@@ -37,18 +37,18 @@ int* selectMode(char *input)
     }
     ++i;
   }
-
   return mod;
 }
 
-void checkmod(int *mod)
+Mode checkmod(int *mod)
 {
   for(int i = 2; i > -1; i--)
   {
     if(mod[i] == 1)
     {
-      printf("\n--mode : %i\n", i);
-      break;
+      //printf("\n--mode : %i\n", i);
+      return (Mode) i;
     }
   }
+  return (Mode) 0;
 }

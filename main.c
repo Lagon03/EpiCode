@@ -5,24 +5,45 @@
 
 int main (void)
 {
-  char *input;
+  //char *input;
   int n = 1;
 
   printf("Please enter input to detect mode\n");
-  n = scanf("\t%m[0-9-a-z]", &input);
-  //char *input = "45/89*423-2+1\0";
+  //n = scanf("\t%m[0-9-a-z]", &input);
+  char *input = "Bonjour ceci est un input hard coded.";
   if(n == 1)
-    {
-      int* mod;
+  {
+    int* mod;
+    Mode mode;
 
-      mod = selectMode(input);
-      printf("Input: %s\n", input);
-      checkmod(mod);
+    mod = selectMode(input);
+    printf("Input: %s\n", input);
+    mode = checkmod(mod);
+    
+    printf("\n--> ");
+    switch(mode) 
+    {  
+      case Numeric:
+        {
+          printf("Numerical mode\n");  
+          break;
+        }
+      case Alphanumeric:  
+        {
+          printf("Alphanumerical mode\n");  
+          break;
+        }
+      default :  
+        {
+          printf("Byte mode\n");
+          break;
+        }
+    }  
 
-      free(mod);
-    }
+    free(mod);
+  }
   else
     fprintf(stderr, "No matching characters\n Please use characters in [a-z]\n");
-  free(input);
-	return 1;
+  //free(input);
+  return 1;
 }
