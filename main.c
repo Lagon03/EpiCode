@@ -2,6 +2,7 @@
 # include <stdlib.h>
 
 # include "analysis.h"
+# include "encode.h"
 
 int main (void)
 {
@@ -38,12 +39,14 @@ int main (void)
           printf("Byte mode\n");
           break;
         }
-    }  
+    } 
+    getEncodedSize(input);
 
     free(mod);
   }
   else
     fprintf(stderr, "No matching characters\n Please use characters in [a-z]\n");
   //free(input);
+  
   return 1;
 }

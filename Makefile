@@ -1,13 +1,12 @@
 # Cypher Makefile
 
 CC= gcc -fsanitize=address
-
 CPPFLAGS= `pkg-config --cflags sdl` -MMD
 CFLAGS= -Wall -Wextra -std=c99 -O2
 LDFLAGS=
 LDLIBS=`pkg-config --libs sdl` -lSDL_image -lm
 
-SRC= main.c analysis.c
+SRC= main.c analysis.c encode.c
 OBJ=${SRC:.c=.o}
 DEP=${SRC:.c=.d}
 
