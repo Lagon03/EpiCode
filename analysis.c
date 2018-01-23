@@ -25,7 +25,7 @@ int* selectMode(char *input)
     if (((char_ > 47 && char_ < 58)))
       mod[0] = 1;
     else if ((((char_ > 64 && char_ < 90)) |
-          (char_ > 35 && char_ < 59)))
+          (char_ > 35 && char_ < 59)) | (char_ == 32))
       mod[1] = 1;
     else if (char_ != 44 && (((char_ < 38) && (char_ > 35)) | ((char_ < 48) 
             && (char_ > 44)) | (char_ == 58)))
