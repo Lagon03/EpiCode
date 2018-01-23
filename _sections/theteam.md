@@ -1,6 +1,6 @@
 ---
 title: The Team
-icon: fa-check
+icon: fa-user
 order: 3
 ---
 
