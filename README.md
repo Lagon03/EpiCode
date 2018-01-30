@@ -101,3 +101,21 @@ Similarly for numeric encoding we have 23648−4−14 = 23630 bits available. Yo
 Caveat
 
 Whilst the character capacity can be derived using the above procedure in practise QR Code permits encoding the input using multiple modes within a single symbol and a decent QR Code generator will switch between modes as often as necessary to optimise the overall data density. This makes the whole business of considering the capacity limits much less useful for open applications since they only describe the pathological case.
+
+## Module Placement in Matrix
+
+### Overview of Functions Patterns
+
+![alt text](https://github.com/Lagon03/tree/cypher/resources/function-patterns.png "Pattern Overview")
+
+- The finder patterns are the three blocks in the corners of the QR code at the top left, top right, and bottom left.
+
+- The separators are areas of whitespace beside the finder patterns.
+
+- The alignment patterns are similar to finder patterns, but smaller, and are placed throughout the code. They are used in versions 2 and larger, and their positions depend on the QR code version.
+
+- The timing patterns are dotted lines that connect the finder patterns.
+
+- The dark module is a single black module that is always placed beside the bottom left finder pattern.
+
+- The sections below explain in greater detail how to position the function patterns. 
