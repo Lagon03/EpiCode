@@ -106,7 +106,7 @@ Whilst the character capacity can be derived using the above procedure in practi
 
 ### Overview of Functions Patterns
 
-![alt text](https://github.com/Lagon03/EpiCode/tree/cypher/resources/function-patterns.png "Pattern Overview")
+![QrCode Pattern](https://github.com/Lagon03/EpiCode/tree/cypher/resources/function-patterns.png "Pattern Overview")
 
 - The finder patterns are the three blocks in the corners of the QR code at the top left, top right, and bottom left.
 
