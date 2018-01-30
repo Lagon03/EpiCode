@@ -27,7 +27,6 @@ struct EncData
   size_t version;
   struct ErrorCorrection Correction;
 };
-
 // tool functions
 
 size_t sPow(size_t x, int n);
@@ -36,7 +35,7 @@ size_t getLastInf(size_t x);
 // --------------
 
 char* convertToByte(size_t input);
-size_t getEncodedSize(char *input);
+size_t getEncodedSize(struct options *arg);
 struct EncData getVersion(char* input, Mode mode);
 
 

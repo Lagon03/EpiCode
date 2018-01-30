@@ -38,7 +38,7 @@ int* selectMode(char *input)
   return mod;
 }
 
-Mode checkmod(int *mod)
+Mode checkmod(int *mod) // just for debug purpose
 {
   for(int i = 2; i > -1; i--)
   {
