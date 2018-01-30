@@ -24,9 +24,13 @@ struct ErrorCorrection
 
 struct EncData
 {
+  char* mode_ind;
+  char* character_count_ind;
+  char* encoded_data;
   size_t version;
   struct ErrorCorrection Correction;
 };
+
 // tool functions
 
 size_t sPow(size_t x, int n);
