@@ -3,9 +3,7 @@
 
 #include "analysis.h"
 
-// $  %  *  +  -  .  /  :
-// 36 37 42 43 45 46 47 58
-// 36 37 | 42 43 | 45 46 47 | 58
+const char *alpha = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:";
 
 size_t getSize(char *input)
 {

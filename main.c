@@ -11,7 +11,7 @@ int main (void)
 
   printf("Please enter input to detect mode\n");
   //n = scanf("\t%m[0-9-a-z]", &input);
-  char *input = "Bonjour ceci est un input hard coded.";
+  char *input = "HELLO WORLD";
   if(n == 1)
   {
     int* mod;
