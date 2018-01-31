@@ -128,4 +128,12 @@ Whilst the character capacity can be derived using the above procedure in practi
 
 - The dark module is a single black module that is always placed beside the bottom left finder pattern.
 
-- The sections below explain in greater detail how to position the function patterns. 
+- The sections below explain in greater detail how to position the function patterns.
+
+[Check the images in resources for greater introspection](https://github.com/Lagon03/EpiCode/tree/cypher/resources)
+
+## Localization and Segmentation of 2D High Capacity Color Barcodes
+
+[Nice PDF about that! ](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.218.125&rep=rep1&type=pdf "COOL PDF") it is focused on color barcodes.
+
+[Strictly for QRCodes](https://thesai.org/Downloads/Volume8No4/Paper_33-QR_%20Code_Recognition_based_on_Principal_Components.pdf) what we will be using for now
