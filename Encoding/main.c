@@ -60,11 +60,11 @@ int main (int argc, char* argv[])
   Mode mode;
 
   mod = selectMode(arg->message);
-  arg->mode = *mod;
-  printf("Input: %s\n", arg->message);
+  printf("Input         : %s\n", arg->message);
   mode = checkmod(mod);
+  arg->mode = (int)mode;
 
-  printf("\n--> ");
+  printf("Detected mode : ");
   switch(mode) 
   {  
     case Numeric:
@@ -83,8 +83,25 @@ int main (int argc, char* argv[])
         break;
       }
   } 
-  getEncodedSize(arg);
-
+  struct EncData *data = getEncodedSize(arg);
+  if(arg->correction == -1)
+    data->correction_level = 0;
+ 
+  printf("\nEncoded data informations :\n");
+  printf("\tMode indicator             : %s\n", data->mode_ind);
+  printf("\tCharacters count indicator : %s\n", data->character_count_ind);
+  printf("\tEncoded message            : %s\n", data->encoded_data);
+  printf("------ Options  ------\n");
+  printf("\tVersion                    : %li\n", data->version);
+  printf("\tCorrection                 : %i\n", data->correction_level);
+  printf("------ Raw bits ------\n");
+  printf("\tRaw encoded bits           : %s%s%s\n", data->mode_ind,
+  data->character_count_ind, data->encoded_data);
+  // need a custom made free function
+  free(data->character_count_ind);
+  free(data->encoded_data);
+  free(data);
+  // ---
   free(mod);
   free(arg);
 

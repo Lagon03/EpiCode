@@ -3,8 +3,6 @@
 
 #include "analysis.h"
 
-const char *alpha = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:";
-
 size_t getSize(char *input)
 {
   size_t i = 0;

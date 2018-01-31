@@ -28,19 +28,19 @@ struct EncData
   char* character_count_ind;
   char* encoded_data;
   size_t version;
-  struct ErrorCorrection Correction;
+  int correction_level;
 };
 
 // tool functions
 
 size_t sPow(size_t x, int n);
 size_t getLastInf(size_t x);
+char* adjustSize(char* bits, int limit);
 
 // --------------
 
 char* convertToByte(size_t input);
-size_t getEncodedSize(struct options *arg);
-struct EncData getVersion(char* input, Mode mode);
+struct EncData* getEncodedSize(struct options *arg);
 
 
 # endif

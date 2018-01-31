@@ -1,9 +1,27 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <string.h>
 
 # include "encode.h"
+# include "encode_message.h"
 # include "analysis.h"
+
+const size_t TOTAL_DECC[4][41] = {
+  // Version: (note that index 0 is for padding, and is set to an illegal value)
+  {-1, 19, 34, 55, 80, 108, 136, 156, 194, 232, 274, 324, 370, 428, 461, 523, 
+    589, 647, 721, 795, 861, 932, 1006, 1094, 1174, 1276, 1370, 1468, 1531, 1631,
+    1735, 1843, 1955, 2071, 2191, 2306, 2434, 2566, 2702, 2812, 2956},  // Low
+  {-1, 16, 28, 44, 64, 86,  108, 124, 154, 182, 216, 254, 290, 334, 365, 415, 
+    453, 507, 563, 627, 669, 714, 782, 860, 914, 1000, 1062, 1128, 1193, 1267,
+    1373, 1455, 1541, 1631, 1725, 1812, 1914, 1992, 2102, 2216, 2334},  // Medium
+  {-1, 13, 22, 34, 48, 62,  76,   88, 110, 132, 154, 180, 206, 244, 261, 295, 
+    325, 367, 397, 445, 485, 512, 568, 614, 664, 718, 754, 808, 871, 911, 985, 
+    1033, 1115, 1171, 1231, 1286, 1354, 1426, 1502, 1582, 1666},  // Quartile
+  {-1, 9 , 16, 26, 36, 46,  60,   66,  86, 100, 122, 140, 158, 180, 197, 223,
+    253, 283, 313, 341, 385, 406, 442, 464, 514, 538, 596, 628, 661, 701, 745, 
+    793, 845, 901, 961, 986, 1054, 1096, 1142, 1222, 1276}  // High
+};
 
 const int8_t ECC_CODEWORDS_PER_BLOCK[4][41] = {
   // Version: (note that index 0 is for padding, and is set to an illegal value)
@@ -137,7 +155,7 @@ char* convertToByte(size_t input)
   return array;
 }
 
-size_t getSmallestVersion(int mod, size_t count, int correction_level)
+static size_t getSmallestVersion(int mod, size_t count, int correction_level)
 {
   size_t version = 0;
   switch(correction_level)
@@ -182,6 +200,7 @@ size_t getSmallestVersion(int mod, size_t count, int correction_level)
 
 char* adjustSize(char* bits, int limit) {
   // Use to add 0 if the count indicator is not X bits long
+  // the 0 added are added to the left
   size_t cur_count = getSize(bits);
   char *tmp = calloc(limit + 2, sizeof(char));
   tmp[limit + 1] = '\0';
@@ -195,23 +214,118 @@ char* adjustSize(char* bits, int limit) {
   return tmp;
 }
 
-size_t getEncodedSize(struct options *arg)
+char* getModeIndicator(int mode)
+{
+  char* indicator = calloc(5, sizeof(char));
+  switch(mode) {
+    case 0: { // Numeric indicator
+              indicator = "0001\0";
+              break;
+            }
+    case 1: { // Alphanumeric indicator
+              indicator = "0010\0";
+              break;
+            }
+    default: { // Byte indicator
+               indicator = "0100\0";
+               break;
+             }
+  }
+  return indicator;
+}
+
+/*void breakCodeword(struct EncData *data)
+{
+  size_t full_size = TOTAL_DECC[data->correction_level][data->version] * 8;
+  char **spec = malloc(2 * sizeof(char*));
+  *spec[0] = malloc(8 * sizeof(char));
+  *spec[0] = "11101100";
+  *spec[1] = malloc(8 * sizeof(char));
+  *spec[1] = "00010001";
+
+  // First we adjust the size of the string to a multiple of 8
+  size_t cur_size = getSize(data->encoded_data) 
+    + 4 + getSize(data->character_count_ind);
+  size_t repeat = cur_size / full_size;
+  for(int i = 0; i < repeat; ++i)
+    for(int j = 0; j < 2; ++j ++i)
+}*/
+
+struct EncData* getEncodedSize(struct options *arg)
 {  
+  struct EncData *data = malloc(sizeof(struct EncData));
+
   size_t char_count = getSize(arg->message);
   char *count_bits = convertToByte(char_count);
 
-  printf("size_t to bits : %li -> %s\n", char_count, count_bits);
-
-  //size_t num_bits = getSize(count_bits);
-
-  size_t version = getSmallestVersion(1, char_count, arg->correction);
-  printf("Smallest version is : v.%li | Characters counter : %li\n",
-      version, char_count);
- 
+  size_t version = getSmallestVersion(1, char_count, arg->correction); 
   // need to specify the limit in function of the version and of the mode
-  count_bits = adjustSize(count_bits, 9);
-  // ---
-  printf("\nAfter adjustment : %s\n", count_bits);
-  free(count_bits);
-  return 0;
+  if(version <= 9) {
+    if(arg->mode == 0)
+      count_bits = adjustSize(count_bits, 10);
+    else if(arg->mode == 1)
+      count_bits = adjustSize(count_bits, 9);
+    else
+      count_bits = adjustSize(count_bits, 8);
+  }
+  else if(version <= 26) {
+    if(arg->mode == 0)
+      count_bits = adjustSize(count_bits, 12);
+    else if(arg->mode == 1)
+      count_bits = adjustSize(count_bits, 11);
+    else
+      count_bits = adjustSize(count_bits, 16);
+  }
+  else {
+    if(arg->mode == 0)
+      count_bits = adjustSize(count_bits, 14);
+    else if(arg->mode == 1)
+      count_bits = adjustSize(count_bits, 13);
+    else
+      count_bits = adjustSize(count_bits, 16);
+  }
+  // ---  
+
+  data->mode_ind = getModeIndicator(arg->mode);
+  data->character_count_ind = count_bits;
+  data->version = version;
+  data->correction_level = arg->correction;
+
+  if(arg->mode == 0)
+    data->encoded_data = num_encoding(arg->message, char_count);
+  else if(arg->mode == 1)
+    data->encoded_data = alpha_encoding(arg->message, char_count);
+  else
+    data->encoded_data = byte_encoding(arg->message, char_count);
+
+  size_t data_size = getSize(data->encoded_data);
+  size_t enc_size = data_size + 4 + getSize(data->character_count_ind);
+  size_t full_size = TOTAL_DECC[data->correction_level][data->version] * 8;
+
+  printf("Current size : %li | Full size : %li\n", enc_size, full_size);
+
+  if(enc_size < full_size) {
+    int x = 0;
+    if(full_size - enc_size <= 4) {
+      x = full_size - enc_size;
+      data->encoded_data = realloc(data->encoded_data,
+          data_size + (x + 1) * sizeof(char));
+    }
+    else {
+      x = 4;
+      data->encoded_data = realloc(data->encoded_data,
+          data_size + (x + 1) * sizeof(char));
+    }
+    data->encoded_data[data_size + x] = '\0';
+    for(int i = 0; i < x && enc_size + i < full_size ; ++i)
+    {
+      data->encoded_data[data_size + i] = '0';
+    }
+    enc_size += (x + 1);
+  }
+
+  // Now we need to break the whole (mode indicator + characters count +
+  // encoded data) into 8-bits Codewords
+  //breakCodeword(data);
+  return data;
 }

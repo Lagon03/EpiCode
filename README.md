@@ -1,3 +1,13 @@
+# Instruction / How to use
+For debugging purpose of the encoding part follow the next instruction :
+- ./main :
+  - -d : stand for data, put after this option your data beside quote
+  - -c : stand for correction, put the level L(Low)/M(Medium)/Q(Quartile)/H(High)
+Example of command :
+- ./main                    : will test encoding with HELLO WORLD and correction level Low
+- ./main -d "HEllo BananA"  : will test with HEllo Banana and correction Low
+- ./main -d "Hello" -c Q    : will test with Hello and correction Quartile
+
 # Cypher - Encoding / Decoding
 We will use this branch to develop the encoding and decoding process.
 
