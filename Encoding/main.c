@@ -86,7 +86,7 @@ int main (int argc, char* argv[])
   struct EncData *data = getEncodedSize(arg);
   if(arg->correction == -1)
     data->correction_level = 0;
- 
+
   printf("\nEncoded data informations :\n");
   printf("\tMode indicator             : %s\n", data->mode_ind);
   printf("\tCharacters count indicator : %s\n", data->character_count_ind);
@@ -96,7 +96,10 @@ int main (int argc, char* argv[])
   printf("\tCorrection                 : %i\n", data->correction_level);
   printf("------ Raw bits ------\n");
   printf("\tRaw encoded bits           : %s%s%s\n", data->mode_ind,
-  data->character_count_ind, data->encoded_data);
+      data->character_count_ind, data->encoded_data);
+  size_t size = 4 + getSize(data->character_count_ind) 
+    + getSize(data->encoded_data);
+  printf("\tRaw encoded bits length    : %li\n", size);
   // need a custom made free function
   free(data->character_count_ind);
   free(data->encoded_data);
