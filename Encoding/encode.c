@@ -7,6 +7,10 @@
 # include "encode_message.h"
 # include "analysis.h"
 
+//-----------------------------------------------------------------------------
+//                              HARD CODED CONST
+//-----------------------------------------------------------------------------
+
 const size_t TOTAL_DECC[4][41] = {
   // Version: (note that index 0 is for padding, and is set to an illegal value)
   {-1, 19, 34, 55, 80, 108, 136, 156, 194, 232, 274, 324, 370, 428, 461, 523, 
@@ -106,6 +110,21 @@ const size_t Q_LEVEL[3][41] = {
     982, 1030, 1112, 1168, 1228, 1283, 1351, 1423, 1499, 1579, 1663}, 
   // Byte 
 };
+
+// TODO ADD H_LEVEL FOR H CORRECTION
+
+const char SpecAdd[2][8] = { {'1','1','1','0','1', '1', '0', '0'},
+  {'0','0','0','1','0','0','0','1'}};
+
+
+//-----------------------------------------------------------------------------
+//                            END OF HARD CODE
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+//                            Tools functions
+//-----------------------------------------------------------------------------
 
 // Simple pow function
 size_t sPow(size_t x, int n)
@@ -234,21 +253,62 @@ char* getModeIndicator(int mode)
   return indicator;
 }
 
-/*void breakCodeword(struct EncData *data)
+// Function used to add 0 to the left of the input
+void adjustBits(struct EncData *input, size_t length)
 {
+  // Full size of the encoded data
+  size_t size = getSize(input->character_count_ind) + 4 
+    + getSize(input->encoded_data);
+  //size_t strict_l = size - 4 - getSize(input->character_count_ind);
+  // We're looking for the smallest superior mulitple of 8 of size
+  size_t mulE = 8;
+  while(mulE < size)
+    mulE += 8;
+  char* data = input->encoded_data;
+  size_t data_s = getSize(data);
+  data = realloc(data, (data_s + (mulE - size) + 1) * sizeof(char));
+  data[data_s + mulE - size] = '\0';
+  for(; size < mulE; ++data_s, ++size)
+    data[data_s] = '0';
+
+  // Now we can add the specified supplementary 8-bits codewords
+  data = realloc(data, (data_s + (length - size) + 1) * sizeof(char));
+
+  data[data_s + length - size] = '\0';
+  size_t repeat = (length - size) / 8;
+  for(size_t i = 0; i < repeat; ++i) {
+    for(size_t j = 0; j < 8; ++j, ++data_s, ++size) {
+      if(i % 2 == 0)
+        data[data_s] = SpecAdd[0][j];
+      else
+        data[data_s] = SpecAdd[1][j];
+    }
+  }
+
+  // be sure that the pointer is reassigned otherwise we might have 
+  // heap-use-after-free errors
+  input->encoded_data = data;
+}
+
+//#############################################################################
+//                                END OF TOOLS
+//#############################################################################
+
+/*void breakCodeword(struct EncData *data)
+  {
   size_t full_size = TOTAL_DECC[data->correction_level][data->version] * 8;
   char **spec = malloc(2 * sizeof(char*));
-  *spec[0] = malloc(8 * sizeof(char));
-  *spec[0] = "11101100";
-  *spec[1] = malloc(8 * sizeof(char));
-  *spec[1] = "00010001";
+ *spec[0] = malloc(8 * sizeof(char));
+ *spec[0] = "11101100";
+ *spec[1] = malloc(8 * sizeof(char));
+ *spec[1] = "00010001";
 
-  // First we adjust the size of the string to a multiple of 8
-  size_t cur_size = getSize(data->encoded_data) 
-    + 4 + getSize(data->character_count_ind);
-  size_t repeat = cur_size / full_size;
-  for(int i = 0; i < repeat; ++i)
-    for(int j = 0; j < 2; ++j ++i)
+// First we adjust the size of the string to a multiple of 8
+size_t cur_size = getSize(data->encoded_data) 
++ 4 + getSize(data->character_count_ind);
+size_t repeat = cur_size / full_size;
+for(int i = 0; i < repeat; ++i)
+for(int j = 0; j < 2; ++j ++i)
 }*/
 
 struct EncData* getEncodedSize(struct options *arg)
@@ -284,6 +344,7 @@ struct EncData* getEncodedSize(struct options *arg)
     else
       count_bits = adjustSize(count_bits, 16);
   }
+
   // ---  
 
   data->mode_ind = getModeIndicator(arg->mode);
@@ -298,12 +359,14 @@ struct EncData* getEncodedSize(struct options *arg)
   else
     data->encoded_data = byte_encoding(arg->message, char_count);
 
+  // Size of the encoded message
   size_t data_size = getSize(data->encoded_data);
+  // size of the whole encoded data (message + mode ind + char count)
   size_t enc_size = data_size + 4 + getSize(data->character_count_ind);
+  // full size according to the correction level and version * 8 (bits)
   size_t full_size = TOTAL_DECC[data->correction_level][data->version] * 8;
 
-  printf("Current size : %li | Full size : %li\n", enc_size, full_size);
-
+  // We add terminating 0 if neccessary, maximum of 4
   if(enc_size < full_size) {
     int x = 0;
     if(full_size - enc_size <= 4) {
@@ -323,6 +386,9 @@ struct EncData* getEncodedSize(struct options *arg)
     }
     enc_size += (x + 1);
   }
+  adjustBits(data, full_size);
+  // if the size of the whole encoded data is still different from a multiple
+  // of 8, we must add zero to the left of it
 
   // Now we need to break the whole (mode indicator + characters count +
   // encoded data) into 8-bits Codewords
