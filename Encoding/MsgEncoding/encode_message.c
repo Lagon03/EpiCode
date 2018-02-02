@@ -3,8 +3,8 @@
 # include <string.h>
 # include <err.h>
 
-# include "analysis.h"
-# include "encode.h"
+# include "../headers/analysis.h"
+# include "../headers/encode.h"
 
 const char *alpha_ = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:";
 

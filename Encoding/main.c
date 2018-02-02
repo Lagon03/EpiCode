@@ -3,8 +3,8 @@
 # include <err.h>
 # include <string.h>
 
-# include "analysis.h"
-# include "encode.h"
+# include "headers/analysis.h"
+# include "headers/encode.h"
 
 struct options* checkArg(int argc, char* argv[])
 {
