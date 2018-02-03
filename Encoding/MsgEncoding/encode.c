@@ -3,9 +3,9 @@
 # include <unistd.h>
 # include <string.h>
 
-# include "encode.h"
-# include "encode_message.h"
-# include "analysis.h"
+# include "../headers/encode.h"
+# include "../headers/encode_message.h"
+# include "../headers/analysis.h"
 
 //-----------------------------------------------------------------------------
 //                              HARD CODED CONST
@@ -294,22 +294,32 @@ void adjustBits(struct EncData *input, size_t length)
 //                                END OF TOOLS
 //#############################################################################
 
-/*void breakCodeword(struct EncData *data)
-  {
-  size_t full_size = TOTAL_DECC[data->correction_level][data->version] * 8;
-  char **spec = malloc(2 * sizeof(char*));
- *spec[0] = malloc(8 * sizeof(char));
- *spec[0] = "11101100";
- *spec[1] = malloc(8 * sizeof(char));
- *spec[1] = "00010001";
+char** breakCodeword(struct EncData* data)
+{
+  size_t f_size = getSize(data->character_count_ind) 
+    + 4 + getSize(data->encoded_data) + 1;
+  char *full_data = malloc(f_size * sizeof(char));
+  
+  full_data = strcpy(full_data, data->mode_ind);
+  full_data = strcat(full_data, data->character_count_ind);
+  full_data = strcat(full_data, data->encoded_data);
 
-// First we adjust the size of the string to a multiple of 8
-size_t cur_size = getSize(data->encoded_data) 
-+ 4 + getSize(data->character_count_ind);
-size_t repeat = cur_size / full_size;
-for(int i = 0; i < repeat; ++i)
-for(int j = 0; j < 2; ++j ++i)
-}*/
+  // Number of codewords
+  int nb_cw = TOTAL_DECC[data->correction_level][data->version];
+  // Current position in encoded data
+  int cur = 0;
+
+  char **codewords = malloc(nb_cw * sizeof(char*));
+  for(int id = 0; id < nb_cw; ++id) { // we set the codewords
+    codewords[id] = malloc(9 * sizeof(char));
+    codewords[id][8] = '\0';
+    for(int i = 0; i < 8; ++i, ++cur)
+      codewords[id][i] = full_data[cur];
+    printf("\t Codeword n°%3i: %s\n", id, codewords[id]);
+  }
+  free(full_data);
+  return codewords;
+}
 
 struct EncData* getEncodedSize(struct options *arg)
 {  
@@ -387,11 +397,14 @@ struct EncData* getEncodedSize(struct options *arg)
     enc_size += (x + 1);
   }
   adjustBits(data, full_size);
+  char **codewords = breakCodeword(data);
+  for(int i = 0; i < 13; ++i)
+    free(codewords[i]);
+  free(codewords);
   // if the size of the whole encoded data is still different from a multiple
   // of 8, we must add zero to the left of it
 
   // Now we need to break the whole (mode indicator + characters count +
-  // encoded data) into 8-bits Codewords
-  //breakCodeword(data);
+  // encoded data) into 8-bits Codewords to prepare the error correction
   return data;
 }
