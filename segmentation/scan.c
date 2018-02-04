@@ -4,8 +4,6 @@
 **  description : Qr Code Scan Finder Patterns
 */
 
-//  Include descriptor
-
 # include <stdio.h>
 # include "scan.h"
 # include "Dmat.h"
@@ -21,26 +19,44 @@
 # define foreach_state(_state_)     \
     for (int i = 1 ; i <6 ; i++)
         
+# define PRECISION 1
 
 //  Functions
+static inline
+void draw_line(SDL_Surface *img, int x_begin, int y_begin, int x_end, int y_end, char color)
+{   
+    int r = 255;
+    int g = 0;
+    int b = 0;
+    
+    if( color == 'g')
+    {
+        r = 0;
+        g = 255;
+    }
+    
+    if( color == 'b')
+    {
+        r = 0;
+        b = 255;
+    }
 
-void draw_line(SDL_Surface *img, int x_begin, int y_begin, int x_end, int y_end)
-{
     for(int y = y_begin; y <= y_end; y++)
     {
         for(int x = x_begin; x <= x_end; x++)
-            putpixel(img, x, y, SDL_MapRGB(img->format, 255, 0, 0));
+            putpixel(img, x, y, SDL_MapRGB(img->format, r, g, b));
     } 
 }
 
-void print_seg(SDL_Surface *img, struct Dmat *mat)
+void print_seg(SDL_Surface *img, struct Dmat *mat, char color)
 {
     for(size_t i = 0; i < mat->lines; i++)
     {
         if(mat->mat[i][0] == 0 && mat->mat[i][2] == 0)
             return;
         printf("Segment Number %ld :", i + 1);
-        draw_line(img, mat->mat[i][0], mat->mat[i][1], mat->mat[i][2], mat->mat[i][3]);
+        draw_line(img, mat->mat[i][0], mat->mat[i][1], mat->mat[i][2],
+mat->mat[i][3], color);
         for(size_t j = 0; j < mat->cols; j++)
         {
             printf(" %d;", mat->mat[i][j]);
@@ -67,7 +83,7 @@ int check_patternF(int *state)
     
     if((abs(module_size - (state[1])) < max_var) &&
        (abs(module_size - (state[2])) < max_var) &&
-       (abs(module_size * 3 - (state[3])) < max_var) &&
+       (abs(module_size * 3 - (state[3])) < max_var * 3) &&
        (abs(module_size - (state[4])) < max_var) &&
        (abs(module_size - (state[5])) < max_var))
         return 1;
@@ -80,17 +96,16 @@ int check_patternF(int *state)
 struct Dmat *horizontal_scan (SDL_Surface *img)
 {
     struct Dmat *mat = init_Dmat(2 , 4);
-    int precision = 1;
     int *state = calloc(6, sizeof(int));
     int state_count = 0;
     int b_checkpoint = 0;
     int segcoords[4]; // ( x, y , x', y')
     
 
-    for(int y = 0; y < img->h; y += precision)
+    for(int y = 0; y < img->h; y += PRECISION)
     {
         RESET_STATE(state);
-        
+        state_count = 0; 
         for(int x = 0; x < img->w; x++)
         {
             Uint32 pixel = getpixel(img, x, y);
@@ -138,7 +153,7 @@ struct Dmat *horizontal_scan (SDL_Surface *img)
                 }
             }
             else
-            {
+            { 
                 if( check_patternF(state) == 1)
                 {
                       //PRINT_STATE(state);
@@ -158,17 +173,17 @@ struct Dmat *horizontal_scan (SDL_Surface *img)
 struct Dmat *vertical_scan (SDL_Surface *img)
 {
     struct Dmat *mat = init_Dmat(2 , 4);
-    int precision = 1;
     int *state = calloc(6, sizeof(int));
     int state_count = 0;
     int b_checkpoint = 0;
     int segcoords[4]; // ( x, y , x', y')
     
 
-    for(int x = 0; x < img->w; x += precision)
+    for(int x = 0; x < img->w; x += PRECISION)
     {
         RESET_STATE(state);
-        
+        state_count = 0;
+
         for(int y = 0; y < img->h; y++)
         {
             Uint32 pixel = getpixel(img, x, y);
@@ -216,9 +231,12 @@ struct Dmat *vertical_scan (SDL_Surface *img)
                 }
             }
             else
-            {
+            {   
+                //warn("%d, %d  pixel", x, y);
+                //PRINT_STATE(state);
                 if( check_patternF(state) == 1)
-                {
+                {   
+                      //warn("%d row", x);
                       //PRINT_STATE(state);
                       add_Dmat(mat, segcoords);
                 }
@@ -227,6 +245,7 @@ struct Dmat *vertical_scan (SDL_Surface *img)
                 RESET_STATE(state);
                 state_count = 0;
             }
+            //PRINT_STATE(state);
         }
     }
     free(state);

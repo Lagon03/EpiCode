@@ -11,7 +11,7 @@
 # include "Dmat.h"
 # include "../sdl/mysdl.h" // include <err.h>
 
-void print_seg (SDL_Surface *img, struct Dmat *mat);
+void print_seg (SDL_Surface *img, struct Dmat *mat, char color);
 struct Dmat *horizontal_scan (SDL_Surface *img);
 struct Dmat *vertical_scan (SDL_Surface *img);
 
