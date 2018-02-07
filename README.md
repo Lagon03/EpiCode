@@ -1,4 +1,12 @@
-# Instruction / How to use
+# EpiCode by the Team NotABarCode
+
+## Schedule for the first defense
+
+- [ ] Define project boundaries
+- [ ] Fully fleshed-out website
+- [ ] Working Cyphering
+
+## Instruction / How to use
 For debugging purpose of the encoding part follow the next instruction :
 - ./main :
   - -d : stand for data, put after this option your data beside quote
@@ -8,7 +16,7 @@ Example of command :
 - ./main -d "HEllo BananA"  : will test with HEllo Banana and correction Low
 - ./main -d "Hello" -c Q    : will test with Hello and correction Quartile
 
-# Cypher - Encoding / Decoding
+## Cypher - Encoding / Decoding
 We will use this branch to develop the encoding and decoding process.
 
 To create the Qr-Code we do the following :
@@ -20,7 +28,7 @@ To create the Qr-Code we do the following :
 6. Data Masking
 7. Format and Version Information
 
-## Encoding
+### Encoding
 
 In the first part we need to find which mode is the most efficient one.
 Modes which are appropriate for us :
@@ -29,25 +37,25 @@ Modes which are appropriate for us :
 - Byte mode
 - Kanji mode
 
-#### The Numeric mode
+##### The Numeric mode
 Is designed for decimal digits from 0 to 9
 
-#### Alphanumeric mode
+##### Alphanumeric mode
 Is designed for decimal 0 through 9 and uppercase characters (not lowercase).
 It also contain the space character and $ % * + - . / :
 
-#### Byte mode
+##### Byte mode
 By default, is for characters from the ISO-8859-1 character set.
 However, some QR code scanners can automatically detect if UTF-8 is used in byte mode instead.
 
-#### Kanji mode
+##### Kanji mode
 Kanji mode is for double-byte characters from the Shift JIS character set. 
 While UTF-8 can encode Kanji characters, it must use three or four bytes to do so.
 Shift JIS, on the other hand, uses just two bytes to encode each Kanji character, so Kanji mode compresses Kanji characters more efficiently.
 If the entire input string consists of characters in the double-byte range of Shift JIS, use Kanji mode.
 It is also possible to use multiple modes within the same QR code, as described later on this page.
 
-### To choose the most efficient mode
+#### To choose the most efficient mode
 We have to check the following condition :
 1. If the input only consist of decimal digits, use **numeric mode**.
 2. If numeric isn't applicable and if all the characters of the input can be found in the alphanumeric, use **alphanumeric**. **REMARK** Alphanumeric only contain uppercase not lowercase.
@@ -56,7 +64,7 @@ We have to check the following condition :
 
 In our project we will only use one mode by Qr-Code.
 
-### How to derive the number of usable data bits
+#### How to derive the number of usable data bits
 
 Essentially the total number of data modules for a chosen symbol version would be the total symbol area less any function pattern modules and format/version information modules:
 
@@ -112,9 +120,9 @@ Caveat
 
 Whilst the character capacity can be derived using the above procedure in practise QR Code permits encoding the input using multiple modes within a single symbol and a decent QR Code generator will switch between modes as often as necessary to optimise the overall data density. This makes the whole business of considering the capacity limits much less useful for open applications since they only describe the pathological case.
 
-## Module Placement in Matrix
+### Module Placement in Matrix
 
-### Overview of Functions Patterns
+#### Overview of Functions Patterns
 
 <img src="https://github.com/Lagon03/EpiCode/tree/cypher/resources/function-patterns.png"/>
 
@@ -132,7 +140,7 @@ Whilst the character capacity can be derived using the above procedure in practi
 
 [Check the images in resources for greater introspection](https://github.com/Lagon03/EpiCode/tree/cypher/resources)
 
-## Localization and Segmentation of 2D High Capacity Color Barcodes
+### Localization and Segmentation of 2D High Capacity Color Barcodes
 
 [Nice PDF about that! ](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.218.125&rep=rep1&type=pdf "COOL PDF") it is focused on color barcodes.
 
