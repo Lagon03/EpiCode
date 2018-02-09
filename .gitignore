@@ -52,4 +52,4 @@ Mkfile.old
 dkms.conf
 
 # Vim swp files
-*.c.swp
+*.swp
