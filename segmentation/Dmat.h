@@ -10,6 +10,10 @@
 
 # include <stdlib.h>
 # include <err.h>
+
+# define foreach_line(_Dmat_)   \
+    mat = _Dmat->mat;           \
+    for (int i = 0; i < _Dmat_->lines; i++)
  
 struct Dmat
 {
