@@ -12,21 +12,21 @@
 # include <err.h>
 
 # define foreach_line(_Dmat_)   \
-    mat = _Dmat->mat;           \
-    for (int i = 0; i < _Dmat_->lines; i++)
+    double **mat = _Dmat_->mat;           \
+    for (size_t i = 0; i < _Dmat_->size; i++)
  
 struct Dmat
 {
     size_t lines, cols, size ;
-    int **mat;
+    double **mat;
 };
 
 static inline
 struct Dmat *init_Dmat (size_t lines, size_t cols)
 {
-    int **mat = malloc(sizeof(int*) * lines);
+    double **mat = malloc(sizeof(double*) * lines);
     for(size_t i = 0; i < lines; i++)
-        mat[i] = calloc(cols, sizeof(int));
+        mat[i] = calloc(cols, sizeof(double));
     
     struct Dmat *nov = malloc(sizeof(struct Dmat));
     nov->lines = lines;
@@ -57,7 +57,7 @@ void copy_Dmat (struct Dmat *src , struct Dmat *dst)
 }
 
 static inline
-void add_Dmat (struct Dmat *mat, int *elm)
+void add_Dmat (struct Dmat *mat, double *elm)
 {   
     if (mat->size >= mat->lines)
     {  
