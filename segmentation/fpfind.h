@@ -12,6 +12,12 @@
 # include "Dvector.h"
 # include "../sdl/mysdl.h"
 
-struct Dmat *findFP(SDL_Surface *img);
+struct FPat
+{
+    struct Dmat *centers; //coords of center of FP
+    struct Dvector *ems_vector; //estimated module size
+};
+
+struct FPat *findFP(SDL_Surface *img);
 
 # endif

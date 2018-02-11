@@ -16,7 +16,7 @@ int main(int argc, char* argv[]){
         img = grayscale(img);
         img = blackAndWhite(img, 0);
         
-        struct Dmat *centersFP = findFP (img);
+        struct FPat *FPs = findFP (img);
         
         display_image(img);  
     }

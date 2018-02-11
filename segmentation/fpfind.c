@@ -382,7 +382,7 @@ int handle_centers(SDL_Surface *img, struct Dmat *centers, int *state,
 
 // Main Functions
 
-struct Dmat *findFP (SDL_Surface *img)
+struct FPat *findFP (SDL_Surface *img)
 {
     struct Dvector *ems_vector = init_Dvector(2);
     struct Dmat *centers = init_Dmat(2 , 2);
@@ -442,8 +442,11 @@ struct Dmat *findFP (SDL_Surface *img)
     }
     
     free(state);
+    struct FPat *foundFP = malloc(sizeof(struct FPat));
+    foundFP->centers = centers;
+    foundFP->ems_vector = ems_vector;
     drawFP(img , centers, ems_vector);
-    return centers;
+    return foundFP;
 }
 
 
