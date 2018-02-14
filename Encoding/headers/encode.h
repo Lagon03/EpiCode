@@ -31,6 +31,12 @@ struct EncData
   int correction_level;
 };
 
+struct Codewords
+{
+    char** words;
+    size_t nb;
+};
+
 // tool functions
 
 size_t sPow(size_t x, int n);
