@@ -53,3 +53,7 @@ dkms.conf
 
 # Vim swp files
 *.swp
+
+# VScode useless files
+.vs/
+.vscode/

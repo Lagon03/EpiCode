@@ -1,5 +1,4 @@
 #include <err.h>
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -10,6 +9,20 @@ struct gf_tables {
     uint8_t gf_exp[512];
     uint8_t gf_log[256];
 };
+
+/*Struct used to store two numbers in a struct.*/
+struct Tuple {
+    uint8_t x[];
+    uint8_t y[];
+}
+
+/*Counts the digits in an int*/
+unsigned int count(unsigned int i)
+{
+    unsigned int ret=1;
+    while (i/=10) ret++;
+    return ret;
+}
 
 /* Add two numbers in a GF(2^8) finite field */
 uint8_t gf_add(uint8_t x, uint8_t y){    return x ^ y;}
@@ -69,23 +82,67 @@ uint8_t gf_inverse(uint8_t x, struct gf_tables gf_table)
 }
 
 /* Multiplies a polynomial by a scalar in a GF(2^8) finite field */
-uint8_t* gf_poly_scale(uint8_t p[], uint8_t x)
+uint8_t* gf_poly_scale(uint8_t p[], uint8_t x, struct gf_tables gf_table)
 {
-    int len = LENGTH(p); 
+    size_t len = LENGTH(p); 
     uint8_t res[len] = {0};
-    for(int i = 0; i < len; i++)
-        res[i] = gf_mul(p[i], x);
+    for(size_t i = 0; i < len; i++)
+        res[i] = gf_mul(p[i], x, gf_table);
     return res;
 }
 
 /* Adds two polynomials in a GF(2^8) finite field */
 uint8_t* gf_poly_add(uint8_t p[], uint8_t q[])
 {
-    int len = LENGTH(p) ? LENGTH(p) > LENGTH[q] : LENGTH[q]; 
+    size_t len = LENGTH(p) ? LENGTH(p) > LENGTH[q] : LENGTH[q]; 
     uint8_t res[len] = {0};
-    for(int i = 0; i < LENGTH(p); i++)
+    for(size_t i = 0; i < LENGTH(p); i++)
         res[i + LENGTH(r) - LENGTH(p)] = p[i];
-    for(int i = 0; i < LENGTH(q); i++)
+    for(size_t i = 0; i < LENGTH(q); i++)
         res[i + LENGTH(r) - LENGTH(q)] ^= q[i];
     return res;
+}
+
+/* Multiplies two polynomials in a GF(2^8) finite field */
+uint8_t* gf_poly_mul(uint8_t p[], uint8_t q[], struct gf_tables gf_table)
+{
+    uint8_t res[LENGTH(p)+LENGTH(q)-1] = {0};
+    for(size_t j = 0; j < LENGTH(q); j++){
+        for(size_t i = 0; i < LENGTH(p); i++)
+            res[i+j] ^= gf_mul(p[i], q[j], gf_table);
+    }
+    return res;
+}
+
+/*Evaluates a polynomial in GF(2^p) given the value for x. This is based on Horner's scheme for maximum efficiency.*/
+uint8_t gf_poly_eval(uint8_t p[], uint8_t x, struct gf_tables gf_table)
+{
+    uint8_t y = p[0];
+    for(size_t i = 1; i < LENGTH{p}; i++)
+        y = gf_mul(y, x, gf_table) ^ p[i];
+    return y;
+}
+
+/*Fast polynomial division by using Extended Synthetic Division and optimized for GF(2^p) computations.*/
+struct Tuple gf_poly_div(uint8_t dividend[], uint8_t divisor[])
+{
+    struct Tuple result;
+    size_t length = LENGTH(dividend);
+    size_t separator = LENGTH(divisor) -1;
+    uint8_t msg_out[length << 1];
+    uint8_t msg_out2[length];
+    
+    for(size_t i = 0; i < length; i++){ msg_out[i] = dividend[i]; }
+
+    for(size_t i = 0; i < LENGTH(dividend) - (LENGTH(divisor) - 1)){
+        uint8_t coef = msg_out[i];
+        if(coef != 0){
+            for(size_t j = 1; j < LENGTH(divisor)){
+                if(divisor[j] != 0)
+                    msg_out[i + j] ^= gf_mul(divisor[j], coef);
+            }
+        }
+    }
+
+    for(size_t i = 0; )
 }
