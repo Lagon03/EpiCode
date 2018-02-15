@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define LENGTH(x)  (sizeof(x) / sizeof((x)[0]))
+
 /*Struct containing the exponential and logarithmic tables for faster computations*/
 struct gf_tables {
     uint8_t gf_exp[512];
@@ -64,4 +66,26 @@ uint8_t gf_pow(uint8_t x, uint8_t power, struct gf_tables gf_table)
 uint8_t gf_inverse(uint8_t x, struct gf_tables gf_table)
 {
     return gf_table.gf_exp[255 - gf_table.gf_log[x]];
+}
+
+/* Multiplies a polynomial by a scalar in a GF(2^8) finite field */
+uint8_t* gf_poly_scale(uint8_t p[], uint8_t x)
+{
+    int len = LENGTH(p); 
+    uint8_t res[len] = {0};
+    for(int i = 0; i < len; i++)
+        res[i] = gf_mul(p[i], x);
+    return res;
+}
+
+/* Adds two polynomials in a GF(2^8) finite field */
+uint8_t* gf_poly_add(uint8_t p[], uint8_t q[])
+{
+    int len = LENGTH(p) ? LENGTH(p) > LENGTH[q] : LENGTH[q]; 
+    uint8_t res[len] = {0};
+    for(int i = 0; i < LENGTH(p); i++)
+        res[i + LENGTH(r) - LENGTH(p)] = p[i];
+    for(int i = 0; i < LENGTH(q); i++)
+        res[i + LENGTH(r) - LENGTH(q)] ^= q[i];
+    return res;
 }
