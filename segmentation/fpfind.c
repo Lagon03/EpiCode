@@ -50,10 +50,10 @@ void drawFP(SDL_Surface *img, struct Dmat *centers, struct Dvector *ems_vector)
         double corner_tl_y = center_y - ems * 3.5;
         double corner_br_x = center_x + ems * 3.5;
         double corner_br_y = center_y + ems * 3.5;
-        draw_line(img, (int)corner_tl_x - wline , (int)corner_tl_y - wline, (int)corner_tl_x, (int)corner_br_y + wline);
-        draw_line(img, (int)corner_br_x, (int)corner_tl_y - wline, (int)corner_br_x + wline, (int)corner_br_y + wline);
-        draw_line(img, (int)corner_tl_x , (int)corner_tl_y - wline, (int)corner_br_x, (int)corner_tl_y);
-        draw_line(img, (int)corner_tl_x , (int)corner_br_y, (int)corner_br_x, (int)corner_br_y + wline);
+        //draw_line(img, (int)corner_tl_x - wline , (int)corner_tl_y - wline, (int)corner_tl_x, (int)corner_br_y + wline);
+        //draw_line(img, (int)corner_br_x, (int)corner_tl_y - wline, (int)corner_br_x + wline, (int)corner_br_y + wline);
+        //draw_line(img, (int)corner_tl_x , (int)corner_tl_y - wline, (int)corner_br_x, (int)corner_tl_y);
+        //draw_line(img, (int)corner_tl_x , (int)corner_br_y, (int)corner_br_x, (int)corner_br_y + wline);
         
     }
 }
@@ -83,6 +83,7 @@ int check_ratio(int *state)
         return 0;
 }
 
+static inline
 int get_BW(SDL_Surface *img, int x, int y) //returns 0 if black, 1 if white
 {
     Uint32 pixel = getpixel(img, x, y);
@@ -95,6 +96,7 @@ int get_BW(SDL_Surface *img, int x, int y) //returns 0 if black, 1 if white
         return 1;
 }
 
+static inline
 double get_center(int totalsize, int x)
 {
     double half_segment = (double)totalsize / 2.0;
@@ -102,6 +104,7 @@ double get_center(int totalsize, int x)
     return center;
 }
 
+static inline
 double check_ver(SDL_Surface *img, int start_y, int center_x, int state_2, int totalsize)
 {
     int h = img->h;
@@ -177,6 +180,7 @@ double check_ver(SDL_Surface *img, int start_y, int center_x, int state_2, int t
     return 0;    
 }
 
+static inline
 double check_hor(SDL_Surface *img, int center_y, int start_x, int state_2, int totalsize)
 {
     int w = img->w;
@@ -252,6 +256,7 @@ double check_hor(SDL_Surface *img, int center_y, int start_x, int state_2, int t
     return 0;    
 }
 
+static inline
 double check_diag(SDL_Surface *img, int center_y, int center_x, int state_2, int totalsize)
 {
     int state_check[5] = {0};
@@ -328,6 +333,7 @@ double check_diag(SDL_Surface *img, int center_y, int center_x, int state_2, int
     return 0;    
 }
 
+static inline
 int handle_centers(SDL_Surface *img, struct Dmat *centers, int *state,
                    int y, int x, struct Dvector *ems_vector, int totalsize)
 {
@@ -372,10 +378,13 @@ int handle_centers(SDL_Surface *img, struct Dmat *centers, int *state,
 
     if( found == 0)
     {
+        //warn("adding to Dmat");
         add_Dmat(centers, new_center);
+        //warn("adding to Dvector");
         add_Dvector(ems_vector, new_ems);
     }
- 
+    
+    //warn("end"); 
     free(new_center);
     return 1;
 }
@@ -384,7 +393,7 @@ int handle_centers(SDL_Surface *img, struct Dmat *centers, int *state,
 
 struct FPat *findFP (SDL_Surface *img)
 {
-    struct Dvector *ems_vector = init_Dvector(2);
+    struct Dvector *ems_vector = init_Dvector(4);
     struct Dmat *centers = init_Dmat(2 , 2);
     int *state = calloc(5, sizeof(int));
     int state_count = 0;
