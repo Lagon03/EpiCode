@@ -14,7 +14,7 @@ struct gf_tables {
 struct Tuple {
     uint8_t x[];
     uint8_t y[];
-}
+};
 
 /*Counts the digits in an int*/
 unsigned int count(unsigned int i)
@@ -22,6 +22,14 @@ unsigned int count(unsigned int i)
     unsigned int ret=1;
     while (i/=10) ret++;
     return ret;
+}
+
+/*Merges two lists*/
+uint8_t* merge(uint8_t l1[], uint8_t l2[], uint8_t s1, uint8_t s2)
+{
+	uint8_t size = s1 + s2;
+	uint8_t* l = malloc(sizeof(uint8_t) * (s1 + s2));
+
 }
 
 /* Add two numbers in a GF(2^8) finite field */
@@ -118,7 +126,7 @@ uint8_t* gf_poly_mul(uint8_t p[], uint8_t q[], struct gf_tables gf_table)
 uint8_t gf_poly_eval(uint8_t p[], uint8_t x, struct gf_tables gf_table)
 {
     uint8_t y = p[0];
-    for(size_t i = 1; i < LENGTH{p}; i++)
+    for(size_t i = 1; i < LENGTH[p]; i++)
         y = gf_mul(y, x, gf_table) ^ p[i];
     return y;
 }
