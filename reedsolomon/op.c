@@ -144,5 +144,10 @@ struct Tuple gf_poly_div(uint8_t dividend[], uint8_t divisor[])
         }
     }
 
-    for(size_t i = 0; )
+    for(size_t i = separator; i < length << 1; i++){
+		msg_out2[i - separator] = msg_out[separator];
+	}
+	result.x = msg_out[];
+	result.y = msg_out2[];
+	return result;
 }
