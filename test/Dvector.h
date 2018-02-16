@@ -27,24 +27,20 @@ struct Dvector *init_Dvector (size_t capacity)
     struct Dvector *vec = malloc(sizeof(struct Dvector));
     vec->array = array;
     vec->size = 0;
-    vec->capacity = capacity;
     return vec;
 }
 
 static inline
 void add_Dvector (struct Dvector *vec, double elm)
 {   
-    if (vec->capacity <= vec->size - 10)
+    if (vec->capacity <= vec->size - 1)
     {  
         vec->capacity *= 2;
-        //warn("reallocking");
-        vec->array = realloc(vec->array, vec->capacity);
+        realloc(vec->array, vec->capacity);
     }
     
-    //warn("size/capacity = %lu/%lu", vec->size, vec->capacity);
     vec->array[vec->size] = elm;
     vec->size++;
-    //warn("done");
 }
 
 static inline
