@@ -19,8 +19,10 @@ void demask0(char **mat, size_t size)
             {
                 if(mat[i][j] == '1')
                     mat[i][j] = '0';
-                else
+                else if(mat[i][j] == '0')
                     mat[i][j] = '1';
+                else
+                    continue;
             }
         }
     }
@@ -37,7 +39,7 @@ void demask1(char **mat, size_t size)
             {
                 if(mat[i][j] == '1')
                     mat[i][j] = '0';
-                else
+                else if(mat[i][j] == '0')
                     mat[i][j] = '1';
             }
         }
@@ -55,7 +57,7 @@ void demask2(char **mat, size_t size)
             {
                 if(mat[i][j] == '1')
                     mat[i][j] = '0';
-                else
+                else if(mat[i][j] == '0')
                     mat[i][j] = '1';
             }
         }
@@ -73,7 +75,7 @@ void demask3(char **mat, size_t size)
             {
                 if(mat[i][j] == '1')
                     mat[i][j] = '0';
-                else
+                else if(mat[i][j] == '0')
                     mat[i][j] = '1';
             }
         }
@@ -91,7 +93,7 @@ void demask4(char **mat, size_t size)
             {
                 if(mat[i][j] == '1')
                     mat[i][j] = '0';
-                else
+                else if(mat[i][j] == '0')
                     mat[i][j] = '1';
             }
         }
@@ -109,7 +111,7 @@ void demask5(char **mat, size_t size)
             {
                 if(mat[i][j] == '1')
                     mat[i][j] = '0';
-                else
+                else if(mat[i][j] == '0')
                     mat[i][j] = '1';
             }
         }
@@ -127,7 +129,7 @@ void demask6(char **mat, size_t size)
             {
                 if(mat[i][j] == '1')
                     mat[i][j] = '0';
-                else
+                else if(mat[i][j] == '0')
                     mat[i][j] = '1';
             }
         }
@@ -145,7 +147,7 @@ void demask7(char **mat, size_t size)
             {
                 if(mat[i][j] == '1')
                     mat[i][j] = '0';
-                else
+                else if(mat[i][j] == '0')
                     mat[i][j] = '1';
             }
         }
