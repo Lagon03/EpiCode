@@ -25,11 +25,24 @@ unsigned int count(unsigned int i)
 }
 
 /*Merges two lists*/
-uint8_t* merge(uint8_t l1[], uint8_t l2[], uint8_t s1, uint8_t s2)
+uint8_t* merge(uint8_t l1[], uint8_t l2[], size_t s1, size_t s2)
 {
 	uint8_t size = s1 + s2;
 	uint8_t* l = malloc(sizeof(uint8_t) * (s1 + s2));
+	for(size_t i = 0; i < s1; i++)
+		l[i] = l1[i];
+	for(size_t i = 0; i < s2; i++)
+		l[s1+i] = l2[i];
+	return l;
+}
 
+uint8_t* reverse_arr(uint8_t l[])
+{
+	size_t c, d;
+	uint8_t res[LENGTH(l)];
+	for (c = LENGTH(l) - 1, d = 0; c >= 0; c--, d++)
+		res[d] = l[c];
+	return res;
 }
 
 /* Add two numbers in a GF(2^8) finite field */
@@ -155,7 +168,7 @@ struct Tuple gf_poly_div(uint8_t dividend[], uint8_t divisor[])
     for(size_t i = separator; i < length << 1; i++){
 		msg_out2[i - separator] = msg_out[separator];
 	}
-	result.x = msg_out[];
-	result.y = msg_out2[];
+	result.x = msg_out;
+	result.y = msg_out2;
 	return result;
 }
