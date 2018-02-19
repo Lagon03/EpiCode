@@ -1,17 +1,5 @@
 #include "op.h"
 
-/*Struct containing the exponential and logarithmic tables for faster computations*/
-struct gf_tables {
-    uint8_t *gf_exp;
-    uint8_t *gf_log;
-};
-
-/*Struct used to store two numbers in a struct.*/
-struct Tuple {
-    uint8_t *x;
-    uint8_t *y;
-};
-
 /*Counts the digits in an int*/
 unsigned int count(unsigned int i)
 {
@@ -34,11 +22,26 @@ uint8_t* merge(uint8_t *l1, uint8_t *l2, size_t s1, size_t s2)
 
 uint8_t* reverse_arr(uint8_t *l)
 {
-	size_t c, d;
-	uint8_t *res = malloc(sizeof(LENGTH(l)));
-	for (c = LENGTH(l) - 1, d = 0; c >= 0; c--, d++)
-		res[d] = l[c];
-	return res;
+  int c, d;
+  uint8_t *res = malloc(sizeof(LENGTH(l)));
+  for (c = LENGTH(l) - 1, d = 0; c >= 0; c--, d++)
+    res[d] = l[c];
+  return res;
+}
+
+uint8_t* copy_arr(uint8_t* l1, uint8_t* l2, size_t s)
+{
+  for(size_t i = 0; i < s; i++)
+    l2[i] = l1[i];
+  return l2;
+}
+
+uint8_t* pop_arr(uint8_t* l)
+{
+  for(size_t i = 0; i < LENGTH(l); i++)
+    l[i] = l[i+1];
+  l[LENGTH(l)] = 0;
+  return l;
 }
 
 /* Add two numbers in a GF(2^8) finite field */
@@ -46,27 +49,6 @@ uint8_t gf_add(uint8_t x, uint8_t y){    return x ^ y;}
 
 /* Subtract two numbers in a GF(2^8) finite field */
 uint8_t gf_sub(uint8_t x, uint8_t y){    return x ^ y;}
-
-/*Precompute the logarithm and anti-log tables for faster computation later, using the provided primitive polynomial.*/
-struct gf_tables* init_tables(uint16_t prim)
-{
-    struct gf_tables *gf_table = malloc(sizeof(struct gf_table*));
-    prim = 0x11d;
-    uint8_t *gf_expp = malloc(sizeof(uint8_t) * 512);
-    uint8_t *gf_logg = malloc(sizeof(uint8_t) * 256);
-    uint8_t x = 1;
-    for(int i = 0; i < 256; i++){
-        gf_expp[i] = x;
-        gf_logg[x] = i;
-        x <<= 1;
-    }
-    for(int i = 255; i < 512; i++){
-        gf_expp[i] = gf_expp[i - 255];
-    }
-    gf_table->gf_exp = gf_expp;
-    gf_table->gf_log = gf_logg;
-    return gf_table;
-}
 
 /* Multiply two numbers in a GF(2^8) finite field */
 uint8_t gf_mul(uint8_t x, uint8_t y, struct gf_tables *gf_table)
@@ -101,11 +83,7 @@ uint8_t gf_inverse(uint8_t x, struct gf_tables *gf_table)
 }
 
 /* Multiplies a polynomial by a scalar in a GF(2^8) finite field */
-<<<<<<< HEAD
-uint8_t* gf_poly_scale(uint8_t *p, uint8_t x, struct gf_tables gf_table)
-=======
 uint8_t* gf_poly_scale(uint8_t *p, uint8_t x, struct gf_tables *gf_table)
->>>>>>> 18d73bae8884ade24ebfa58ccb7905f81890197f
 {
     size_t len = LENGTH(p);
     uint8_t *res = calloc(len, sizeof(uint8_t));
@@ -127,11 +105,7 @@ uint8_t* gf_poly_add(uint8_t *p, uint8_t *q)
 }
 
 /* Multiplies two polynomials in a GF(2^8) finite field */
-<<<<<<< HEAD
-uint8_t* gf_poly_mul(uint8_t *p, uint8_t *q, struct gf_tables gf_table)
-=======
 uint8_t* gf_poly_mul(uint8_t *p, uint8_t *q, struct gf_tables *gf_table)
->>>>>>> 18d73bae8884ade24ebfa58ccb7905f81890197f
 {
     uint8_t *res = calloc((LENGTH(p)+LENGTH(q)-1), sizeof(uint8_t));
     for(size_t j = 0; j < LENGTH(q); j++){
@@ -142,11 +116,7 @@ uint8_t* gf_poly_mul(uint8_t *p, uint8_t *q, struct gf_tables *gf_table)
 }
 
 /*Evaluates a polynomial in GF(2^p) given the value for x. This is based on Horner's scheme for maximum efficiency.*/
-<<<<<<< HEAD
-uint8_t gf_poly_eval(uint8_t p*, uint8_t x, struct gf_tables gf_table)
-=======
 uint8_t gf_poly_eval(uint8_t *p, uint8_t x, struct gf_tables *gf_table)
->>>>>>> 18d73bae8884ade24ebfa58ccb7905f81890197f
 {
     uint8_t y = p[0];
     for(size_t i = 1; i < LENGTH(p); i++)
@@ -155,11 +125,7 @@ uint8_t gf_poly_eval(uint8_t *p, uint8_t x, struct gf_tables *gf_table)
 }
 
 /*Fast polynomial division by using Extended Synthetic Division and optimized for GF(2^p) computations.*/
-<<<<<<< HEAD
-struct Tuple gf_poly_div(uint8_t *dividend, uint8_t *divisor)
-=======
 struct Tuple* gf_poly_div(uint8_t *dividend, uint8_t *divisor, struct gf_tables *gf_table)
->>>>>>> 18d73bae8884ade24ebfa58ccb7905f81890197f
 {
     struct Tuple *result = malloc(sizeof(struct Tuple));
     size_t length = LENGTH(dividend);
@@ -170,27 +136,19 @@ struct Tuple* gf_poly_div(uint8_t *dividend, uint8_t *divisor, struct gf_tables 
     for(size_t i = 0; i < length; i++){ msg_out[i] = dividend[i]; }
 
     for(size_t i = 0; i < LENGTH(dividend) - (LENGTH(divisor) - 1); i++){
-        uint8_t coef = msg_out[i];
-        if(coef != 0){
-	  for(size_t j = 1; j < LENGTH(divisor); j++){
-                if(divisor[j] != 0)
-		  msg_out[i + j] ^= gf_mul(divisor[j], coef, gf_table);
-            }
-        }
+      uint8_t coef = msg_out[i];
+      if(coef != 0){
+	for(size_t j = 1; j < LENGTH(divisor); j++){
+	  if(divisor[j] != 0)
+	    msg_out[i + j] ^= gf_mul(divisor[j], coef, gf_table);
+	}
+      }
     }
 
     for(size_t i = separator; i < length << 1; i++){
-<<<<<<< HEAD
-		msg_out2[i - separator] = msg_out[separator];
-	}
-	result.x = msg_out;
-	result.y = msg_out2;
-	return result;
-=======
       msg_out2[i - separator] = msg_out[separator];
     }
     result->x = msg_out;
     result->y = msg_out2;
     return result;
->>>>>>> 18d73bae8884ade24ebfa58ccb7905f81890197f
 }
