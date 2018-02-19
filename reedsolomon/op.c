@@ -25,7 +25,7 @@ unsigned int count(unsigned int i)
 }
 
 /*Merges two lists*/
-uint8_t* merge(uint8_t l1[], uint8_t l2[], size_t s1, size_t s2)
+uint8_t* merge(uint8_t *l1, uint8_t *l2, size_t s1, size_t s2)
 {
 	uint8_t size = s1 + s2;
 	uint8_t* l = malloc(sizeof(uint8_t) * (s1 + s2));
@@ -36,7 +36,7 @@ uint8_t* merge(uint8_t l1[], uint8_t l2[], size_t s1, size_t s2)
 	return l;
 }
 
-uint8_t* reverse_arr(uint8_t l[])
+uint8_t* reverse_arr(uint8_t *l)
 {
 	size_t c, d;
 	uint8_t res[LENGTH(l)];
@@ -103,7 +103,7 @@ uint8_t gf_inverse(uint8_t x, struct gf_tables gf_table)
 }
 
 /* Multiplies a polynomial by a scalar in a GF(2^8) finite field */
-uint8_t* gf_poly_scale(uint8_t p[], uint8_t x, struct gf_tables gf_table)
+uint8_t* gf_poly_scale(uint8_t *p, uint8_t x, struct gf_tables gf_table)
 {
     size_t len = LENGTH(p); 
     uint8_t res[len] = {0};
@@ -113,7 +113,7 @@ uint8_t* gf_poly_scale(uint8_t p[], uint8_t x, struct gf_tables gf_table)
 }
 
 /* Adds two polynomials in a GF(2^8) finite field */
-uint8_t* gf_poly_add(uint8_t p[], uint8_t q[])
+uint8_t* gf_poly_add(uint8_t *p, uint8_t *q)
 {
     size_t len = LENGTH(p) ? LENGTH(p) > LENGTH[q] : LENGTH[q]; 
     uint8_t res[len] = {0};
@@ -125,7 +125,7 @@ uint8_t* gf_poly_add(uint8_t p[], uint8_t q[])
 }
 
 /* Multiplies two polynomials in a GF(2^8) finite field */
-uint8_t* gf_poly_mul(uint8_t p[], uint8_t q[], struct gf_tables gf_table)
+uint8_t* gf_poly_mul(uint8_t *p, uint8_t *q, struct gf_tables gf_table)
 {
     uint8_t res[LENGTH(p)+LENGTH(q)-1] = {0};
     for(size_t j = 0; j < LENGTH(q); j++){
@@ -136,7 +136,7 @@ uint8_t* gf_poly_mul(uint8_t p[], uint8_t q[], struct gf_tables gf_table)
 }
 
 /*Evaluates a polynomial in GF(2^p) given the value for x. This is based on Horner's scheme for maximum efficiency.*/
-uint8_t gf_poly_eval(uint8_t p[], uint8_t x, struct gf_tables gf_table)
+uint8_t gf_poly_eval(uint8_t p*, uint8_t x, struct gf_tables gf_table)
 {
     uint8_t y = p[0];
     for(size_t i = 1; i < LENGTH[p]; i++)
@@ -145,7 +145,7 @@ uint8_t gf_poly_eval(uint8_t p[], uint8_t x, struct gf_tables gf_table)
 }
 
 /*Fast polynomial division by using Extended Synthetic Division and optimized for GF(2^p) computations.*/
-struct Tuple gf_poly_div(uint8_t dividend[], uint8_t divisor[])
+struct Tuple gf_poly_div(uint8_t *dividend, uint8_t *divisor)
 {
     struct Tuple result;
     size_t length = LENGTH(dividend);

@@ -27,6 +27,63 @@ const size_t TOTAL_DECC[4][41] = {
         793, 845, 901, 961, 986, 1054, 1096, 1142, 1222, 1276}  // High
 };
 
+//  If group 1 or 2 ------------|
+const size_t GROUP_CODEWORDS[4][2][41] = {
+    { 
+        {-1, 19, 34, 55, 80, 108, 68, 78, 97, 116, 68, 81, 92, 107, 115, 87, 98, 
+            107, 120, 113, 107, 116, 111, 121, 117, 106, 114, 122, 117, 116, 115,
+            115, 115, 115, 115, 121, 121, 122, 122, 117, 118},
+        {-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 69, 0, 93, 0, 116, 88, 99, 108, 121, 114,
+            108, 117, 112, 122, 118, 107, 115, 123, 118, 117, 116, 116, 0, 116, 116,
+            122, 122, 123, 123, 118, 119 } 
+    }, // Low
+    { 
+        {-1, 16, 28, 44, 32, 43, 27, 31, 38, 36, 43, 50, 36, 37, 40, 41, 45, 46,
+            43, 44, 41, 42, 46, 47, 45, 47, 46, 45, 45, 45, 47, 46, 46, 46, 46,
+            47, 47, 46, 46, 47, 47},
+        {-1, 0, 0, 0, 0, 0, 0, 0, 39, 37, 44, 51, 37, 38, 41, 42, 46, 47, 44, 45,
+            42, 0, 0, 48, 46, 48, 47, 46, 46, 46, 48, 47, 47, 47, 47, 48, 48,
+            47, 47, 48, 48}
+    }, // Medium
+    {
+        {-1, 13, 22, 17, 24, 15, 19, 14, 18, 16, 19, 22, 20, 20, 16, 24, 19, 22,
+            22, 21, 24, 22, 24, 24, 24, 24, 22, 23, 24, 23, 24, 24, 24, 24, 24,
+            24, 24, 24, 24, 24, 24},
+        {-1, 0, 0, 0, 0, 16, 0, 15, 19, 17, 20, 23, 21, 21, 17, 25, 20, 23, 23,
+            22, 25, 23, 25, 25, 25, 25, 23, 24, 25, 24, 25, 25, 25, 25, 25, 25,
+            25, 25, 25, 25, 25} 
+    },// Quartile
+    {
+        {-1,9,16,13,9,11,15,13,14,12,15,12,14,11,12,12,15,14,14,13,15,16,13,15,16,
+            15,16,15,15,15,15,15,15,15,16,15,15,15,15,15,15 },
+        {-1, 0,0,0,0,12,0,14,15,13,16,13,15,12,13,13,16,15,15,14,16,17,0,16,17,16,
+            17,16,16,16,16,16,16,16,17,16,16,16,16,16,16} 
+    } // High
+};
+
+const size_t GROUP_BLOCK_CODEWORDS[2][4][41] = {
+    {
+        {-1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 4, 2, 4, 3, 5, 5, 1, 5, 3, 3, 4, 2, 4, 6,
+            8, 10, 8, 3, 7, 5, 13, 17, 17, 13, 12, 6, 17, 4, 20, 19},
+        {-1, 1, 1, 1, 2, 2, 4, 4, 2, 3, 4, 1, 6, 8, 4, 5, 7, 10, 9, 3, 3, 17, 17, 
+            4, 6, 8, 19, 22, 3, 21, 19, 2, 10, 14, 14, 12, 6, 29, 13, 40, 18},
+        {-1, 1, 1, 2, 2, 2, 4, 2, 4, 4, 6, 4, 4, 8, 11, 5, 15, 1, 17, 17, 15, 17,
+            7, 11, 11, 7, 28, 8, 4, 1, 15, 42, 10, 29, 44, 39, 46, 49, 48, 43, 34},
+        {-1, 1, 1, 2, 4, 2, 4, 4, 4, 4, 6, 3, 7, 12, 11, 11, 3, 2, 2, 9, 15, 19, 34,
+            16, 30, 22, 33, 12, 11, 19, 23, 23, 19, 11, 59, 22, 2, 24, 42, 10, 20}
+    },
+    {
+        {-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2, 0, 1, 1, 1, 5, 1, 4, 5, 4, 7, 5, 4,
+            4, 2, 4, 10, 7, 10, 3, 0, 1, 6, 7, 14, 4, 18, 4, 6},
+        {-1, 0, 0, 0, 0, 0, 0, 0, 2, 2, 1, 4, 2, 1, 5, 5, 3, 1, 4, 11, 13, 0, 0, 14,
+            14, 13, 4, 3, 23, 7, 10, 29, 23, 21, 23, 26, 34, 14, 32, 7, 31},
+        {-1, 0, 0, 0, 0, 2, 0, 4, 2, 4, 2, 4, 6, 4, 5, 7, 2, 15, 1, 4, 5, 6, 16, 14,
+            16, 22, 6, 26, 31, 37, 25, 1, 35, 19, 7, 14, 10, 10, 14, 22, 34},
+        {-1, 0, 0, 0, 0, 0, 2, 0, 1, 2, 4, 2, 8, 4, 5, 7, 13, 17, 19, 16, 10, 6, 0, 14,
+            2, 13, 4, 28, 31, 26, 25, 28, 35, 46, 1, 41, 64, 46, 32, 67, 61}
+    }
+};
+
 const int8_t ECC_CODEWORDS_PER_BLOCK[4][41] = {
     // Version: (note that index 0 is for padding, and is set to an illegal value)
     {-1,  7, 10, 15, 20, 26, 18, 20, 24, 30, 18, 20, 24, 26, 30, 22, 24, 28, 30,
@@ -79,6 +136,7 @@ const size_t L_LEVEL[3][41] = {
         1528, 1628, 1732, 1840, 1952, 2068, 2188, 2303, 2431, 2563, 2699, 2809, 2953}
     // Byte 
 };
+
 
 const size_t M_LEVEL[3][41] = {
     { -1, 34, 63, 101, 149, 202, 255, 293, 365, 432, 513, 604, 691, 796, 871,
@@ -309,6 +367,8 @@ void adjustBits(struct EncData *input, size_t length)
 
 struct Codewords* breakCodeword(struct EncData* data)
 {
+    size_t correction = data->correction_level;
+    size_t version = data->version;
     size_t f_size = getSize(data->character_count_ind) 
         + 4 + getSize(data->encoded_data) + 1;
     char *full_data = malloc(f_size * sizeof(char));
@@ -318,24 +378,79 @@ struct Codewords* breakCodeword(struct EncData* data)
     full_data = strcat(full_data, data->encoded_data);
 
     // Number of codewords
-    int nb_cw = TOTAL_DECC[data->correction_level][data->version];
+    int nb_cw = TOTAL_DECC[correction][version];
     // Current position in encoded data
     int cur = 0;
 
     struct Codewords *codewords = malloc(sizeof(struct Codewords));
-    codewords->words = malloc(nb_cw * sizeof(char*));
-    codewords->nb = nb_cw;
-    for(int id = 0; id < nb_cw; ++id) { // we set the codewords
-        codewords->words[id] = malloc(9 * sizeof(char));
-        codewords->words[id][8] = '\0';
-        for(int i = 0; i < 8; ++i, ++cur)
-            codewords->words[id][i] = full_data[cur];
-        // debug info
-        printf("\t Codeword n°%3i: %s | value = %li\n", id, codewords->words[id], 
-                convertToDec(codewords->words[id]));
+    size_t group = GROUP_BLOCK_CODEWORDS[0][correction][version];
+    size_t group_ = GROUP_BLOCK_CODEWORDS[1][correction][version]; 
+    if(group != 0 && group_ == 0)
+    {
+        codewords->group = malloc(sizeof(struct Group*));
+        codewords->size = 1; 
+    }
+    else
+    {
+        codewords->group = malloc(2 * sizeof(struct Group*));
+        codewords->size = 2;
+    }
+    codewords->words = nb_cw;
+
+    printf("Version %li\n", version);
+    for(size_t g = 0; g < codewords->size; ++g) {
+        printf("Group %2li:\n", g + 1);
+        size_t block_nb = GROUP_BLOCK_CODEWORDS[g][correction][version];
+        printf("Number of block : %li | Number of words : %i\n", block_nb, nb_cw);
+        if(block_nb != 0) {
+            codewords->group[g] = malloc(sizeof(struct Group));
+            codewords->group[g]->blocks = malloc(block_nb * sizeof(struct Block*));
+
+            codewords->group[g]->id = g;
+            codewords->group[g]->size = block_nb;
+
+            for(size_t b = 0; b < block_nb; ++b) {
+                printf("\tBlock %2li:\n", b + 1);
+                size_t data_cd = GROUP_CODEWORDS[correction][g][version];
+                printf("\tNumber of word : %li\n", data_cd);
+
+                codewords->group[g]->blocks[b] = malloc(sizeof(struct Block));
+                codewords->group[g]->blocks[b]->words = malloc(data_cd * sizeof(char*));
+
+                codewords->group[g]->blocks[b]->id = g;
+                codewords->group[g]->blocks[b]->size = data_cd;
+
+                for(size_t w = 0; w < data_cd; ++w) {
+                    codewords->group[g]->blocks[b]->words[w] = malloc(9 * sizeof(char));
+                    codewords->group[g]->blocks[b]->words[w][8] = '\0';
+                    codewords->group[g]->blocks[b]->words[w][1] = '6';
+                    for(int i = 0; i < 8; ++i, ++cur) {
+                        codewords->group[g]->blocks[b]->words[w][i] = full_data[cur];
+                    }
+                    printf("\t\tCodeword %2li: %s\n", w + 1, 
+                            codewords->group[g]->blocks[b]->words[w]);
+                }
+            }
+        }
     }
     free(full_data);
     return codewords;
+}
+
+static void freeCodeWords(struct Codewords* codewords) {
+    for(size_t g = 0; g < codewords->size; ++g) {
+        for(size_t b = 0; b < codewords->group[g]->size; ++b ) {
+            for(size_t i = 0; i < codewords->group[g]->blocks[b]->size; ++i) {
+                free(codewords->group[g]->blocks[b]->words[i]);
+            }
+            free(codewords->group[g]->blocks[b]->words);
+            free(codewords->group[g]->blocks[b]);
+        }
+        free(codewords->group[g]->blocks);
+        free(codewords->group[g]);
+    }
+    free(codewords->group);
+    free(codewords);
 }
 
 struct EncData* getEncodedSize(struct options *arg)
@@ -420,13 +535,8 @@ struct EncData* getEncodedSize(struct options *arg)
     // encoded data) into 8-bits Codewords to prepare the error correction
     adjustBits(data, full_size);
     struct Codewords *codewords = breakCodeword(data);
-
-    // Debug free hereunder
-    for(size_t i = 0; i < codewords->nb; ++i)
-        free(codewords->words[i]);
-    free(codewords->words);
-    free(codewords);
-    // End Debug free
+    
+    freeCodeWords(codewords);
 
     // Now we must group the codewords according to the error correction table
 
