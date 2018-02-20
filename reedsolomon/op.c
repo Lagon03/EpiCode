@@ -85,21 +85,24 @@ uint8_t gf_inverse(uint8_t x, struct gf_tables *gf_table)
 /*Precompute the logarithm and anti-log tables for faster computation later, using the provided primitive polynomial.*/
 struct gf_tables* init_tables()
 {
-    struct gf_tables *gf_table = malloc(sizeof(struct gf_table*));
-    uint8_t *gf_expp = malloc(sizeof(uint8_t) * 512);
-    uint8_t *gf_logg = malloc(sizeof(uint8_t) * 256);
-    uint8_t x = 1;
-    for(int i = 0; i < 256; i++){
-        gf_expp[i] = x;
-        gf_logg[x] = i;
-        x <<= 1;
-    }
-    for(int i = 255; i < 512; i++){
-        gf_expp[i] = gf_expp[i - 255];
-    }
-    gf_table->gf_exp = gf_expp;
-    gf_table->gf_log = gf_logg;
-    return gf_table;
+  struct gf_tables *gf_table = malloc(sizeof(struct gf_table*));
+  uint8_t *gf_expp = malloc(sizeof(uint8_t) * 512);
+  uint8_t *gf_logg = malloc(sizeof(uint8_t) * 256);
+  uint32_t x = 1;
+  uint32_t prim = 0x11d;
+  for(int i = 0; i < 256; i++){
+    gf_expp[i] = x;
+    gf_logg[x] = i;
+    x <<= 1;
+    if(x & 0x100)
+      x ^= prim;
+  }
+  for(int i = 255; i < 512; i++){
+    gf_expp[i] = gf_expp[i - 255];
+  }
+  gf_table->gf_exp = gf_expp;
+  gf_table->gf_log = gf_logg;
+  return gf_table;
 }
 
 /* Multiplies a polynomial by a scalar in a GF(2^8) finite field */
@@ -128,6 +131,7 @@ uint8_t* gf_poly_add(uint8_t *p, uint8_t *q)
 uint8_t* gf_poly_mul(uint8_t *p, uint8_t *q, struct gf_tables *gf_table)
 {
     uint8_t *res = calloc((LENGTH(p)+LENGTH(q)-1), sizeof(uint8_t));
+    printf("len(p) = %lu and len(q) = %lu", LENGTH(p), LENGTH(q)); 
     for(size_t j = 0; j < LENGTH(q); j++){
         for(size_t i = 0; i < LENGTH(p); i++)
             res[i+j] ^= gf_mul(p[i], q[j], gf_table);
@@ -147,28 +151,28 @@ uint8_t gf_poly_eval(uint8_t *p, uint8_t x, struct gf_tables *gf_table)
 /*Fast polynomial division by using Extended Synthetic Division and optimized for GF(2^p) computations.*/
 struct Tuple* gf_poly_div(uint8_t *dividend, uint8_t *divisor, struct gf_tables *gf_table)
 {
-    struct Tuple *result = malloc(sizeof(struct Tuple));
-    size_t length = LENGTH(dividend);
-    size_t separator = LENGTH(divisor) -1;
-    uint8_t *msg_out = malloc(sizeof(uint8_t) * length << 1);
-    uint8_t *msg_out2 = malloc(sizeof(uint8_t) * length);
-    
-    for(size_t i = 0; i < length; i++){ msg_out[i] = dividend[i]; }
-
-    for(size_t i = 0; i < LENGTH(dividend) - (LENGTH(divisor) - 1); i++){
-      uint8_t coef = msg_out[i];
-      if(coef != 0){
-	for(size_t j = 1; j < LENGTH(divisor); j++){
-	  if(divisor[j] != 0)
-	    msg_out[i + j] ^= gf_mul(divisor[j], coef, gf_table);
-	}
+  struct Tuple *result = malloc(sizeof(struct Tuple));
+  size_t length = LENGTH(dividend);
+  size_t separator = LENGTH(divisor) -1;
+  uint8_t *msg_out = malloc(sizeof(uint8_t) * length << 1);
+  uint8_t *msg_out2 = malloc(sizeof(uint8_t) * length);
+  
+  for(size_t i = 0; i < length; i++){ msg_out[i] = dividend[i]; }
+  
+  for(size_t i = 0; i < LENGTH(dividend) - (LENGTH(divisor) - 1); i++){
+    uint8_t coef = msg_out[i];
+    if(coef != 0){
+      for(size_t j = 1; j < LENGTH(divisor); j++){
+	if(divisor[j] != 0)
+	  msg_out[i + j] ^= gf_mul(divisor[j], coef, gf_table);
       }
     }
-
-    for(size_t i = separator; i < length << 1; i++){
-      msg_out2[i - separator] = msg_out[separator];
-    }
-    result->x = msg_out;
-    result->y = msg_out2;
-    return result;
+  }
+  
+  for(size_t i = separator; i < length << 1; i++){
+    msg_out2[i - separator] = msg_out[separator];
+  }
+  result->x = msg_out;
+  result->y = msg_out2;
+  return result;
 }

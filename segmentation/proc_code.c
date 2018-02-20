@@ -268,6 +268,52 @@ void color_alignment(char **mat, int version)
 }
 
 static inline
+void color_version1(char **mat, int size)
+{
+    mat[size - 9][0] = 'v';
+    mat[size - 9][1] = 'v';
+    mat[size - 9][2] = 'v';
+    mat[size - 9][3] = 'v';
+    mat[size - 9][4] = 'v';
+    mat[size - 9][5] = 'v';
+    mat[size - 10][0] = 'v';
+    mat[size - 10][1] = 'v';
+    mat[size - 10][2] = 'v';
+    mat[size - 10][3] = 'v';
+    mat[size - 10][4] = 'v';
+    mat[size - 10][5] = 'v';
+    mat[size - 11][0] = 'v';
+    mat[size - 11][1] = 'v';
+    mat[size - 11][2] = 'v';
+    mat[size - 11][3] = 'v';
+    mat[size - 11][4] = 'v';
+    mat[size - 11][5] = 'v';
+}
+
+static inline
+void color_version2(char **mat, int size)
+{
+    mat[0][size - 9] = 'v';
+    mat[1][size - 9] = 'v';
+    mat[2][size - 9] = 'v';
+    mat[3][size - 9] = 'v';
+    mat[4][size - 9] = 'v';
+    mat[5][size - 9] = 'v';
+    mat[0][size - 10] = 'v';
+    mat[1][size - 10] = 'v';
+    mat[2][size - 10] = 'v';
+    mat[3][size - 10] = 'v';
+    mat[4][size - 10] = 'v';
+    mat[5][size - 10] = 'v';
+    mat[0][size - 11] = 'v';
+    mat[1][size - 11] = 'v';
+    mat[2][size - 11] = 'v';
+    mat[3][size - 11] = 'v';
+    mat[4][size - 11] = 'v';
+    mat[5][size - 11] = 'v';
+}
+
+static inline
 void color_spec_pat(char **mat, int version)
 {
     int size = 4 * version + 17;
@@ -281,6 +327,12 @@ void color_spec_pat(char **mat, int version)
     color_timing_pat(mat, size);
     warn("a");
     color_alignment(mat, version);
+    warn("v");
+    if(version >= 7)
+    {
+        color_version1(mat, size);
+        color_version2(mat, size);
+    }
     warn("end");
 }   
 

@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <err.h>
 
-#define LENGTH(type) ((char*)(&type+1) - (char*)(&type))
+#define LENGTH(x) (sizeof(x) / sizeof((x)[0]))
 
 /*Struct containing the exponential and logarithmic tables for faster computations*/
 struct gf_tables {
@@ -15,6 +15,12 @@ struct gf_tables {
 struct Tuple {
   uint8_t *x;
   uint8_t *y;
+};
+
+struct Array{
+  uint8_t *array;
+  size_t used;
+  size_t size;
 };
 
 struct gf_tables* init_tables();
