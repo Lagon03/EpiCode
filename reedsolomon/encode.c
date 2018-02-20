@@ -9,26 +9,29 @@ uint8_t* array2(uint8_t a, uint8_t b)
 }
 
 /*Generate an irreducible generator polynomial (necessary to encode a message into Reed-Solomon)*/
-uint8_t* rs_generator_poly(uint8_t num, struct gf_tables *gf_table)
+uint8_t* rs_generator_poly(uint8_t nsym, struct gf_tables *gf_table)
 {
-  uint8_t *g = malloc(sizeof(uint8_t) * gf_pow(2, num, gf_table));
+  uint8_t *g = malloc(sizeof(uint8_t) * gf_pow(2, nsym, gf_table));
   g[0] = 1; 
-  for(uint8_t i = 0; i < num; i++)
-    g = gf_poly_mul(g, array2(1, gf_mul(2, i, gf_table)), gf_table);
+  for(uint8_t i = 0; i < nsym; i++)
+    g = gf_poly_mul(g, array2(1, gf_pow(2, i, gf_table)), gf_table);
   return g;
 }
 
 /*Reed-Solomon main encoding function*/
-uint8_t* rs_encode_msg(uint8_t *msg_in, uint8_t nsym, struct gf_tables *gf_table)
+uint8_t* rs_encode_msg(uint8_t *msg_in, uint8_t nsym, size_t msg_size, struct gf_tables *gf_table)
 {
-  uint8_t *gen = malloc(sizeof(uint8_t) * gf_pow(2, nsym, gf_table));
+  size_t len_gen = gf_pow(2, nsym, gf_table);
+  uint8_t *gen = malloc(sizeof(uint8_t) * len_gen);
   gen = rs_generator_poly(nsym, gf_table);
-  uint8_t *empty_l = calloc(LENGTH(gen)-1, sizeof(uint8_t));
-  uint8_t *list = malloc(sizeof(uint8_t) * (LENGTH(msg_in)+LENGTH(gen)-1));
-  list = merge(msg_in, empty_l, LENGTH(msg_in), LENGTH(gen)-1);
+  for(int i = 0; i < 12; i++)
+    printf("%u, ",gen[i]);
+  uint8_t *empty_l = calloc(len_gen-1, sizeof(uint8_t));
+  uint8_t *list = malloc(sizeof(uint8_t) * (msg_size + len_gen - 1)));
+  list = merge(msg_in, empty_l, msg_size, len_gen-1);
   struct Tuple *res = malloc(sizeof(struct Tuple));
   res =  gf_poly_div(list, gen, gf_table);
-  uint8_t *msg_out = malloc(sizeof(uint8_t) * (LENGTH(msg_in)+LENGTH(res->y)));
-  msg_out = merge(msg_in, res->y, LENGTH(msg_in), LENGTH(res->y));
+  uint8_t *msg_out = malloc(sizeof(uint8_t) * (msg_size+LENGTH(res->y)));
+  msg_out = merge(msg_in, res->y, msg_size, LENGTH(res->y));
   return msg_out;
 }
