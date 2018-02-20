@@ -10,6 +10,7 @@
 # include <math.h>
 # include "demask.h"
 # include "extcode.h"
+# include "bit_ext.h"
 # include <string.h>
 
 static const int Ap_coord[40][8] = 
@@ -58,6 +59,7 @@ static const int Ap_coord[40][8] =
 
 struct PCode
 {
+    char *version;
     char *err_cor_lvl;
     char *mask;
     char *err_cor;

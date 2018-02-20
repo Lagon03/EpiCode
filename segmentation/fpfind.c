@@ -50,10 +50,10 @@ void drawFP(SDL_Surface *img, struct Dmat *centers, struct Dvector *ems_vector)
         double corner_tl_y = center_y - ems * 3.5;
         double corner_br_x = center_x + ems * 3.5;
         double corner_br_y = center_y + ems * 3.5;
-        //draw_line(img, (int)corner_tl_x - wline , (int)corner_tl_y - wline, (int)corner_tl_x, (int)corner_br_y + wline);
-        //draw_line(img, (int)corner_br_x, (int)corner_tl_y - wline, (int)corner_br_x + wline, (int)corner_br_y + wline);
-        //draw_line(img, (int)corner_tl_x , (int)corner_tl_y - wline, (int)corner_br_x, (int)corner_tl_y);
-        //draw_line(img, (int)corner_tl_x , (int)corner_br_y, (int)corner_br_x, (int)corner_br_y + wline);
+        draw_line(img, (int)corner_tl_x - wline , (int)corner_tl_y - wline, (int)corner_tl_x, (int)corner_br_y + wline);
+        draw_line(img, (int)corner_br_x, (int)corner_tl_y - wline, (int)corner_br_x + wline, (int)corner_br_y + wline);
+        draw_line(img, (int)corner_tl_x , (int)corner_tl_y - wline, (int)corner_br_x, (int)corner_tl_y);
+        draw_line(img, (int)corner_tl_x , (int)corner_br_y, (int)corner_br_x, (int)corner_br_y + wline);
         
     }
 }
