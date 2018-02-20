@@ -130,7 +130,7 @@ char* byte_encoding(char* data, size_t len)
   size_t size = 0;
   size_t i = 0;
   while(i < len)
-  {
+  { 
     size_t numC = (size_t)data[i];
     char *bits = convertToByte(numC);
     bits = adjustSize(bits, 8);

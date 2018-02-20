@@ -372,7 +372,7 @@ struct PCode *get_code(struct QrCode *qr)
     
     demask(qr->mat, size, maskv);  
     
-    //char* msg = ext_cyphmsg(qr->mat, size, qr->version);
+    char* msg = ext_cyphmsg(qr->mat, size, qr->version);
      
     return code;
 }
