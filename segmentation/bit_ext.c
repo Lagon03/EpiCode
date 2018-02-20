@@ -9,6 +9,7 @@
 
 // SUB_FUNCTION
 
+static inline
 void upwards(char **mat, char *msg, size_t size, int *ip, int *jp, int *kp)
 {
     int k = *kp;
@@ -33,9 +34,10 @@ void upwards(char **mat, char *msg, size_t size, int *ip, int *jp, int *kp)
     *jp = j;
 }
 
+static inline
 void downwards(char **mat, char *msg, size_t size, int *ip, int *jp, int *kp)
 {
-    size_t k = *kp;
+    int k = *kp;
     int i = *ip;
     int j = *jp;
     
@@ -58,9 +60,10 @@ void downwards(char **mat, char *msg, size_t size, int *ip, int *jp, int *kp)
     *jp = j;    
 }
 
-void check_stop_up(char **mat, size_t size, int *ip, int *jp, size_t *kp)
+static inline
+int check_stop_up(char **mat, size_t size, int *ip, int *jp, int *kp)
 {
-    size_t k = *kp;
+    int k = *kp;
     int i = *ip;
     int j = *jp;
     int ret = 0;
@@ -131,7 +134,7 @@ char *ext_cyphmsg(char **mat, size_t size, int version)
         upwards(mat, msg, size, &i, &j, &k);
         
         //Check why up stopped
-        int stop = check_stop_up(mat, size. &i, &j, &k);
+        int stop = check_stop_up(mat, size, &i, &j, &k);
         switch(stop)
         {
             case 1 :
@@ -148,15 +151,15 @@ char *ext_cyphmsg(char **mat, size_t size, int version)
             }
             case 4 :
             {
-                   
+                //when encountering Version bits
             }
             case 5 :
             {
-                
+               continue; 
             }
             case 6 :
             {
-
+                //special upwards (border alignement pattern)
             }
             default :
             {
