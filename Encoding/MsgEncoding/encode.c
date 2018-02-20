@@ -333,7 +333,12 @@ void adjustBits(struct EncData *input, size_t length)
         mulE += 8;
     char* data = input->encoded_data;
     size_t data_s = getSize(data);
+    
+    printf("\tSize to match : %li | Current message size : %li\n", mulE, data_s);
+    printf("\tTotal size : %li\n", size);
+
     data = realloc(data, (data_s + (mulE - size) + 1) * sizeof(char));
+    printf("\tNew size : %li\n", data_s + (mulE - size) + 1);
     data[data_s + mulE - size] = '\0';
     for(; size < mulE; ++data_s, ++size)
         data[data_s] = '0';
@@ -343,7 +348,11 @@ void adjustBits(struct EncData *input, size_t length)
 
     data[data_s + length - size] = '\0';
     size_t repeat = (length - size) / 8;
-    for(size_t i = 0; i < repeat; ++i) {
+    
+    printf("\tNumber of repeat : %li\n", repeat);
+    printf("\tLength : %li | size = %li | data_s = %li\n", length, size, data_s);
+    
+    for(size_t i = 0; i < repeat; ++i) { 
         for(size_t j = 0; j < 8; ++j, ++data_s, ++size) {
             if(i % 2 == 0)
                 data[data_s] = SpecAdd[0][j];
@@ -437,7 +446,7 @@ struct Codewords* breakCodeword(struct EncData* data)
     return codewords;
 }
 
-static void freeCodeWords(struct Codewords* codewords) {
+void freeCodeWords(struct Codewords* codewords) {
     for(size_t g = 0; g < codewords->size; ++g) {
         for(size_t b = 0; b < codewords->group[g]->size; ++b ) {
             for(size_t i = 0; i < codewords->group[g]->blocks[b]->size; ++i) {
@@ -460,15 +469,15 @@ struct EncData* getEncodedSize(struct options *arg)
     size_t char_count = getSize(arg->message);
     char *count_bits = convertToByte(char_count);
 
-    size_t version = getSmallestVersion(1, char_count, arg->correction); 
+    size_t version = getSmallestVersion(arg->mode, char_count, arg->correction); 
     // need to specify the limit in function of the version and of the mode
     if(version <= 9) {
         if(arg->mode == 0)
-            count_bits = adjustSize(count_bits, 10);
+            count_bits = adjustSize(count_bits, 10);    // Num
         else if(arg->mode == 1)
-            count_bits = adjustSize(count_bits, 9);
+            count_bits = adjustSize(count_bits, 9);     // Alpha
         else
-            count_bits = adjustSize(count_bits, 8);
+            count_bits = adjustSize(count_bits, 8);     // Byte
     }
     else if(version <= 26) {
         if(arg->mode == 0)
@@ -494,6 +503,9 @@ struct EncData* getEncodedSize(struct options *arg)
     data->version = version;
     data->correction_level = arg->correction;
 
+    printf("Setting attribute done.\n");
+    printf("Version is : %li\n", version);
+
     if(arg->mode == 0)
         data->encoded_data = num_encoding(arg->message, char_count);
     else if(arg->mode == 1)
@@ -507,6 +519,9 @@ struct EncData* getEncodedSize(struct options *arg)
     size_t enc_size = data_size + 4 + getSize(data->character_count_ind);
     // full size according to the correction level and version * 8 (bits)
     size_t full_size = TOTAL_DECC[data->correction_level][data->version] * 8;
+    
+    printf("Version size is %li\n", full_size);
+    printf("Current encoded size is %li\n", enc_size);
 
     // We add terminating 0 if neccessary, maximum of 4
     if(enc_size < full_size) {
@@ -528,15 +543,21 @@ struct EncData* getEncodedSize(struct options *arg)
         }
         enc_size += (x + 1);
     }
+
+    //printf("Terminating 0 added.\n");
+
     // if the size of the whole encoded data is still different from a multiple
     // of 8, we must add zero to the left of it
 
     // Now we need to break the whole (mode indicator + characters count +
     // encoded data) into 8-bits Codewords to prepare the error correction
     adjustBits(data, full_size);
-    struct Codewords *codewords = breakCodeword(data);
     
-    freeCodeWords(codewords);
+    //printf("Data bits adjusted.\n");
+
+    struct Codewords *codewords = breakCodeword(data);
+    data->codewords = codewords; 
+    //freeCodeWords(codewords);
 
     // Now we must group the codewords according to the error correction table
 

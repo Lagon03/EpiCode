@@ -63,7 +63,7 @@ size_t getLastInf(size_t x);
 char* adjustSize(char* bits, int limit);
 
 // --------------
-
+void freeCodeWords(struct Codewords* codewords);
 char* convertToByte(size_t input);
 struct EncData* getEncodedSize(struct options *arg);
 
