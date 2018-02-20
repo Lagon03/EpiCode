@@ -29,12 +29,31 @@ struct EncData
   char* encoded_data;
   size_t version;
   int correction_level;
+  struct Codewords* codewords;
 };
 
 struct Codewords
 {
+    // group then block then word then character
+    // words[group][block][word][char]
+    //char**** words;
+    struct Group** group;
+    size_t size;
+    size_t words;
+};
+
+struct Group
+{
+    struct Block** blocks;
+    int id;
+    size_t size;
+};
+
+struct Block
+{
     char** words;
-    size_t nb;
+    size_t size;
+    int id;
 };
 
 // tool functions

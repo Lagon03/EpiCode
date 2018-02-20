@@ -25,6 +25,7 @@ void poly_div(void);
 //                              Main functions
 //=============================================================================
 
+void init_tables(size_t prim);
 // GenPolyCW:   generate a polynomial corresponding to the given set
 //              of codeword
 struct poly* GenPolyCW(struct Codewords);
