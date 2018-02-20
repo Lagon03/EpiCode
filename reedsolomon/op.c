@@ -9,7 +9,7 @@ unsigned int count(unsigned int i)
 }
 
 /*Merges two lists*/
-struct Array merge(struct Array *l1, struct Array *l2)
+struct Array* merge(struct Array *l1, struct Array *l2)
 {
   uint8_t size = l1->size + l2->size;
   struct Array *l = malloc(sizeof(struct Array*));
@@ -43,7 +43,7 @@ struct Array* pop_arr(struct Array *l)
 {
   for(size_t i = 0; i < l->used; i++)
     l[i] = l[i+1];
-  l[l->used] = 0;
+  l->array[l->used] = 0;
   l->used -= 1;
   return l;
 }
@@ -77,7 +77,7 @@ uint8_t gf_div(uint8_t x, uint8_t y, struct gf_tables *gf_table)
 /* Computes the power of a number in a GF(2^8) finite field */
 uint8_t gf_pow(uint8_t x, uint8_t power, struct gf_tables *gf_table)
 {
-    return gf_table->gf_exp[(gf_table->gf_log[x]->array * power) % 255];
+    return gf_table->gf_exp->array[(gf_table->gf_log->array[x] * power) % 255];
 }
 
 /* Computes the inverse of a number in a GF(2^8) finite field */
@@ -138,7 +138,7 @@ struct Array* gf_poly_add(struct Array *p, struct Array *q)
     insertArray(res);
 	}
   for(size_t i = 0; i < q->used; i++){
-    res[i + res->used - q->used] ^= q->array[i];
+    res->array[i + res->used - q->used] ^= q->array[i];
 	  insertArray(res);
 	}
   return res;
@@ -183,7 +183,7 @@ struct Tuple* gf_poly_div(struct Array *dividend, struct Array *divisor, struct 
     insertArray(msg_out);
   }
   
-  for(size_t i = 0; i < dividend->used - (divisor->array - 1); i++){
+  for(size_t i = 0; i < dividend->used - (divisor->used - 1); i++){
     uint8_t coef = msg_out->array[i];
     if(coef != 0){
       for(size_t j = 1; j < divisor->used; j++){

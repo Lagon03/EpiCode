@@ -34,7 +34,7 @@ void deleteArray(struct Array *a)
 }
 
 
-void freeArray(Array *a)
+void freeArray(struct Array *a)
 {
 	free(a->array);
 	a->array = NULL;

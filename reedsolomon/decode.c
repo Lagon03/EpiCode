@@ -41,11 +41,12 @@ struct Array* rs_find_errdata_locator(struct Array *e_pos, struct gf_tables *gf_
 {
   struct Array *e_loc = malloc(sizeof(struct Array*));
   initZArray(e_loc, e_pos->size);
-  e_loc[0] = 1;
+  e_loc->array[0] = 1;
   insertArray(e_loc);
   struct Array *one = malloc(sizeof(struct Array*));
   initZArray(one, 1);
-  one[0] = 1;
+  one->array[0] = 1;
+  insertArray(one);
   for(size_t i = 0; i < e_pos->used; i++){
     uint8_t pow_two = gf_pow(2, i, gf_table);
     struct Array *arr = malloc(sizeof(struct Array*));
@@ -65,7 +66,7 @@ struct Array* rs_find_error_evaluator(struct Array *synd, struct Array *err_loc,
 {
   struct Array *arr = malloc(sizeof(struct Array*));
   initZArray(arr, nsym+2);
-  arr[0] = 1;
+  arr->array[0] = 1;
   insertArray(arr);
   struct Tuple *res = malloc(sizeof(struct Tuple));
   res->x = malloc(sizeof(struct Array*));
@@ -83,7 +84,7 @@ struct Array* rs_correct_errdata(struct Array *msg_in, struct Array *synd, struc
   struct Array *coef_pos = malloc(sizeof(struct Array*));
   initArray(coef_pos, err_pos->size);
   for(size_t i = 0; i < err_pos->used; i++){
-    coef_pos[i] = len - 1 - err_pos[i];
+    coef_pos->array[i] = len - 1 - err_pos->array[i];
     insertArray(coef_pos);
   }
 
@@ -111,7 +112,8 @@ struct Array* rs_correct_errdata(struct Array *msg_in, struct Array *synd, struc
   initZArray(E, len);
   for(size_t i = 0; i < X->used; i++){
     uint8_t Xi_inv = gf_inverse(X->array[i], gf_table);
-    uint8_t err_loc_prime_tmp[X->used];
+    struct Array *err_loc_prime_tmp = malloc(sizeof(struct Array*));
+    initArray(err_loc_prime_tmp, X->size);
     for(size_t j = 0; j < X->used; j++){
       if(j != i){
         err_loc_prime_tmp->array[i] = gf_sub(1, gf_mul(Xi_inv, X->array[j], gf_table));
@@ -139,9 +141,9 @@ struct Array* rs_find_error_locator(struct Array* synd, uint8_t nsym, struct Arr
   initZArray(err_loc, 10);
   struct Array *old_loc = malloc(sizeof(struct Array*));
   initZArray(old_loc, 10);
-  err_loc[0] = 1;
+  err_loc->array[0] = 1;
   insertArray(err_loc);
-  old_loc[0] = 1;
+  old_loc->array[0] = 1;
   insertArray(old_loc);
 
   int synd_shift = 0;
@@ -156,7 +158,7 @@ struct Array* rs_find_error_locator(struct Array* synd, uint8_t nsym, struct Arr
       rev = reverse_arr(err_loc);
       delta ^= gf_mul(rev->array[j - 1], synd->array[K - j], gf_table);
     }
-    old_loc[old_loc->used + 1] = 0;
+    old_loc->array[old_loc->used + 1] = 0;
     insertArray(old_loc);
     if(delta != 0){
       if(old_loc->used > err_loc->used){
@@ -169,7 +171,7 @@ struct Array* rs_find_error_locator(struct Array* synd, uint8_t nsym, struct Arr
       err_loc = gf_poly_add(err_loc, gf_poly_scale(old_loc, delta, gf_table));
     }
   }
-  while(err_loc->used && err_loc[0] == 0)
+  while(err_loc->used && err_loc->array[0] == 0)
     err_loc = pop_arr(err_loc);
   size_t errs = err_loc->used - 1;
   if(errs-erase_count * 2 + erase_count > nsym){
@@ -186,7 +188,7 @@ struct Array* rs_find_errors(struct Array *err_loc, size_t nmess, struct gf_tabl
   initArray(err_pos, errs);
   for(size_t i = 0; i < nmess; i++){
     if(gf_poly_eval(err_loc, gf_pow(2, i, gf_table), gf_table) == 0){
-      err_pos[i] = nmess-1-i;
+      err_pos->array[i] = nmess-1-i;
       insertArray(err_pos);
     }
   }

@@ -16,7 +16,7 @@ struct Array* rs_generator_poly(uint8_t nsym, struct gf_tables *gf_table)
 {
   struct Array *g = malloc(sizeof(struct Array*));
   initArray(g, gf_pow(2, nsym, gf_table));
-  g[0] = 1;
+  g->array[0] = 1;
   for(uint8_t i = 0; i < nsym; i++)
     g = gf_poly_mul(g, array2(1, gf_pow(2, i, gf_table)), gf_table);
   return g;
