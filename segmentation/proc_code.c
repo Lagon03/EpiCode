@@ -1,5 +1,4 @@
 /*
-**  QrCode Code Processor
 **  file: proc_code.c
 **  description : takes in the QrCode struct and returns the PCode struct, which
 **  contains the version, the mask code, the error correction, the 10bits of
@@ -254,7 +253,9 @@ void color_alignment(char **mat, int version)
         for(int j = 1; j < 8; j++)
         { 
             //warn("in loop");
-            if(mat[ap[i]][ap[j]] != '0' && mat[ap[i]][ap[j]] != '1')
+            if((mat[ap[i]][ap[j]] != '0' && mat[ap[i]][ap[j]] != '1' 
+                && mat[ap[i]][ap[j]] != 't') || 
+                ap[i] == 0 || ap[j] == 0)
             {       
                     //warn("bad coord %d %d", ap[i], ap[j]);
                     continue;
@@ -270,11 +271,17 @@ static inline
 void color_spec_pat(char **mat, int version)
 {
     int size = 4 * version + 17;
+    warn("d");
     mat[4 * version + 9][8] = 'd';
+    warn("f");
     color_finders(mat, size);
+    warn("s");
     color_separators(mat, size);
+    warn("t");
     color_timing_pat(mat, size);
+    warn("a");
     color_alignment(mat, version);
+    warn("end");
 }   
 
 // MAIN FUNCTION
@@ -282,19 +289,19 @@ void color_spec_pat(char **mat, int version)
 struct PCode *get_code(struct QrCode *qr)
 {
     struct PCode *code = malloc(sizeof(struct PCode));
-    
+    warn("coloring matrix"); 
     color_spec_pat(qr->mat, qr->version);
     
     char *fmt1 = get_format1(qr->mat);
     char *fmt2 = get_format2(qr->mat, qr->version);
-    //warn("fmt1 %s, fmt2 %s", fmt1, fmt2);
+    warn("fmt1 %s, fmt2 %s", fmt1, fmt2);
     
     if (strcmp(fmt1, fmt2) != 0) // for now we will just use fmt1
         warn("fmt1 != fmt2");
     
     char *key = "101010000010010";
     char *xored = strbinXOR(fmt1, key); 
-    //warn("xored %s", xored);
+    warn("xored %s", xored);
     
     char *err_cor_lvl = calloc(2, sizeof(char));
     char *mask = calloc(3, sizeof(char));
@@ -313,7 +320,7 @@ struct PCode *get_code(struct QrCode *qr)
     
     demask(qr->mat, size, maskv);  
     
-    char* msg = ext_cyphmsg(qr->mat, size, qr->version);
+    //char* msg = ext_cyphmsg(qr->mat, size, qr->version);
      
     return code;
 }

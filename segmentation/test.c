@@ -38,15 +38,17 @@ int main(int argc, char* argv[]){
 
     //QrCode Localization    
     struct FPat *FPs = findFP (img);
-    //warn("check fpfind");
+    warn("check fpfind");
         //ADD CHECKS  - 2nd phase -> if more than 3 FPs / find A, B, C FP
     
     //Size_estimation  - 1st phase
     struct QrCode *qr = extract_QrCode_NoG(img, FPs); 
     
+    warn("extracted code");
     print_mat(qr->mat, qr->version * 4 + 17);
     //Aligment pattern  1st/ 2nd phase
     struct PCode *code = get_code(qr);
+    warn("processed code");
 // End Extraction
     print_mat(qr->mat, qr->version * 4 + 17);
     

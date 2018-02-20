@@ -57,6 +57,57 @@ void downwards(char **mat, char *msg, size_t size, int *ip, int *jp, int *kp)
     *ip = i;
     *jp = j;    
 }
+
+void check_stop_up(char **mat, size_t size, int *ip, int *jp, size_t *kp)
+{
+    size_t k = *kp;
+    int i = *ip;
+    int j = *jp;
+    int ret = 0;
+    
+    //out of upper bounds, go down
+    if(i < 0) //stop 1
+    {
+        j -= 2;
+        i = 0;
+        ret = 1;
+    }
+    else if(mat[i][j] == 'c') //if we are in c, go down, stop 2
+    {
+        j -= 2;
+        i++;
+        ret = 1;
+    }
+    else if(mat[i][j] == 't') //if we are in t
+    {
+        i--;
+        if(mat[i][j] == 'v')//deal with version later
+        {
+            j -= 3;
+            ret = 4;
+        }
+        else
+        {
+            //no V, then continue up
+            ret = 3;
+        }
+    }
+    else if(mat[i][j] == 'a')
+    {
+        ret = 6;   
+        if(mat[i][j - 1] == 'a')
+        {
+            i -= 5;
+            ret = 5;
+        }
+    }
+    
+    *kp = k;
+    *ip = i;
+    *jp = j;
+    return ret; // Unknown stop
+}
+
 // MAIN_FUNCTION
 
 char *ext_cyphmsg(char **mat, size_t size, int version)
@@ -75,70 +126,49 @@ char *ext_cyphmsg(char **mat, size_t size, int version)
     while(1)
     {
         warn("iter");
-        upwards(mat, msg, size, &i, &j, &k);    
-        warn("2");
-        //verticalism
-    
-        if(mat[i][j] == 't')
+
+        //reading up
+        upwards(mat, msg, size, &i, &j, &k);
+        
+        //Check why up stopped
+        int stop = check_stop_up(mat, size. &i, &j, &k);
+        switch(stop)
         {
-            i--;
-            if(mat[i][j] == 'v')
+            case 1 :
             {
-                //do version module
+                downwards(mat, msg, size, &i, &j, &k);   
             }
-            upwards(mat, msg, size, &i, &j, &k);
-            i += 1;
-            j++; 
-        }   
-    
-        warn("3");
-        if(mat[i][j] == 'a')
-        {   
-            if(mat[i][j - 1] == 'a')
+            case 2 :
             {
-                i -= 5;
-                upwards(mat, msg, size, &i, &j, &k);
+                downwards(mat, msg, size, &i, &j, &k);
             }
-            else
+            case 3 :
             {
-                j--;
-                msg[k] = mat[i][j];
-                k++;
-                i--;
-                while(mat[i][j + 1] == 'a')
-                {
-                    msg[k] = mat[i][j];
-                    i--;
-                    k++;
-                }
-                j++;
-                upwards(mat, msg, size, &i, &j, &k);
+                continue;
+            }
+            case 4 :
+            {
+                   
+            }
+            case 5 :
+            {
+                
+            }
+            case 6 :
+            {
+
+            }
+            default :
+            {
+                err(EXIT_FAILURE, "error in bit_extraction");
             }
         }
-    
-        warn("3");
-        //before going down
-        i++;
-        
-        if(0 > j - 2)
-            break;
-        else
-            j -= 2;
-        
-        if(mat[i][j] == 't')
-            j--;
-    
-        warn("4");
+
+        //reading down
         downwards(mat, msg, size, &i, &j, &k);
         
-        if(i < size & j < size && mat[i][j] == 't')
-        {
-            i++;
-            downwards(mat, msg, size, &i, &j, &k);
-        }
-        i--;
-        j--;
-            
+        //preparing going up
+        
     }
     warn("end"); 
     warn("output : %s", msg);

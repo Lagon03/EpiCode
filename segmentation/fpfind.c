@@ -454,7 +454,7 @@ struct FPat *findFP (SDL_Surface *img)
     struct FPat *foundFP = malloc(sizeof(struct FPat));
     foundFP->centers = centers;
     foundFP->ems_vector = ems_vector;
-    drawFP(img , centers, ems_vector);
+    //drawFP(img , centers, ems_vector);
     return foundFP;
 }
 
