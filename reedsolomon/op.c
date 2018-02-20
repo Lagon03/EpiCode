@@ -11,13 +11,13 @@ unsigned int count(unsigned int i)
 /*Merges two lists*/
 uint8_t* merge(uint8_t *l1, uint8_t *l2, size_t s1, size_t s2)
 {
-	uint8_t size = s1 + s2;
-	uint8_t* l = malloc(sizeof(uint8_t) * (s1 + s2));
-	for(size_t i = 0; i < s1; i++)
-		l[i] = l1[i];
-	for(size_t i = 0; i < s2; i++)
-		l[s1+i] = l2[i];
-	return l;
+  uint8_t size = s1 + s2;
+  uint8_t* l = malloc(sizeof(uint8_t) * size);
+  for(size_t i = 0; i < s1; i++)
+    l[i] = l1[i];
+  for(size_t i = 0; i < s2; i++)
+    l[s1+i] = l2[i];
+  return l;
 }
 
 uint8_t* reverse_arr(uint8_t *l)
@@ -29,14 +29,14 @@ uint8_t* reverse_arr(uint8_t *l)
   return res;
 }
 
-uint8_t* copy_arr(uint8_t* l1, uint8_t* l2, size_t s)
+uint8_t* copy_arr(uint8_t *l1, uint8_t *l2, size_t s)
 {
   for(size_t i = 0; i < s; i++)
     l2[i] = l1[i];
   return l2;
 }
 
-uint8_t* pop_arr(uint8_t* l)
+uint8_t* pop_arr(uint8_t *l)
 {
   for(size_t i = 0; i < LENGTH(l); i++)
     l[i] = l[i+1];
@@ -80,6 +80,26 @@ uint8_t gf_pow(uint8_t x, uint8_t power, struct gf_tables *gf_table)
 uint8_t gf_inverse(uint8_t x, struct gf_tables *gf_table)
 {
     return gf_table->gf_exp[255 - gf_table->gf_log[x]];
+}
+
+/*Precompute the logarithm and anti-log tables for faster computation later, using the provided primitive polynomial.*/
+struct gf_tables* init_tables()
+{
+    struct gf_tables *gf_table = malloc(sizeof(struct gf_table*));
+    uint8_t *gf_expp = malloc(sizeof(uint8_t) * 512);
+    uint8_t *gf_logg = malloc(sizeof(uint8_t) * 256);
+    uint8_t x = 1;
+    for(int i = 0; i < 256; i++){
+        gf_expp[i] = x;
+        gf_logg[x] = i;
+        x <<= 1;
+    }
+    for(int i = 255; i < 512; i++){
+        gf_expp[i] = gf_expp[i - 255];
+    }
+    gf_table->gf_exp = gf_expp;
+    gf_table->gf_log = gf_logg;
+    return gf_table;
 }
 
 /* Multiplies a polynomial by a scalar in a GF(2^8) finite field */
