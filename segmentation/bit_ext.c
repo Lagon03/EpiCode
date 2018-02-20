@@ -79,6 +79,10 @@ int check_stop_up(char **mat, size_t size, int *ip, int *jp, int *kp)
     {
         j -= 2;
         i++;
+        if (mat[i][j] == 't')
+        {
+            j--;
+        }
         ret = 1;
     }
     else if(mat[i][j] == 't') //if we are in t
@@ -111,6 +115,52 @@ int check_stop_up(char **mat, size_t size, int *ip, int *jp, int *kp)
     return ret; // Unknown stop
 }
 
+static inline
+int check_stop_down(char **mat, size_t size, int *ip, int *jp, int *kp)
+{
+    int k = *kp;
+    int i = *ip;
+    int j = *jp;
+    int ret = 0;
+    
+    //out of bottom bounds, go up
+    warn("checking down");
+    warn("i/size : %d/%lu", i, size);
+    if (i >= size)
+    {
+        j -= 2;
+        i = size - 1;
+        if (mat[i][j] == 'c')
+        {
+            i = size - 9;
+        }
+        ret = 1;
+    }
+    else if(mat[i][j] == 't')
+    {
+        i++;
+        ret = 2;
+    }
+    else if(mat[i][j] == 'a')
+    {
+        i += 5;
+        ret = 3;
+    }
+    else if(mat[i][j] == 'v' || mat[i][j] == 's')
+    {
+        j -= 2;
+        i -= 1;
+        ret = 4;
+        if(j < 0)
+            ret = 10;
+    }
+    
+    *kp = k;
+    *ip = i;
+    *jp = j;
+    return ret;
+}
+
 // MAIN_FUNCTION
 
 char *ext_cyphmsg(char **mat, size_t size, int version)
@@ -120,7 +170,7 @@ char *ext_cyphmsg(char **mat, size_t size, int version)
         version_m = 36;
     int nb_ap = Ap_coord[version - 1][0];
     int totnb_bit = size * size - ( 3*8*8 + nb_ap*5*5 + 2*(size - 8*2)) - 
-                       31 - version_m;
+                                                           31 - version_m;
     char *msg = calloc(totnb_bit, sizeof(char));
     int i = size - 1;
     int j = size - 1;
@@ -135,43 +185,105 @@ char *ext_cyphmsg(char **mat, size_t size, int version)
         
         //Check why up stopped
         int stop = check_stop_up(mat, size, &i, &j, &k);
-        switch(stop)
+        
+        if (stop == 1) // out of bound
+        {   
+            warn("up 1");
+            warn("%d %d", i, j);
+            downwards(mat, msg, size, &i, &j, &k);
+            warn("%d %d", i, j);
+        }
+        else if (stop == 2) // in a c (maybe c then t)
         {
-            case 1 :
+            warn("up 2");
+            downwards(mat, msg, size, &i, &j, &k);
+        }
+        else if (stop == 3) // in a t
+        {
+            warn("up 3");
+            continue;
+        }
+        else if (stop == 4)//in a t->v
+        {
+            warn("up 4");
+            for(int h = 0; h < 6; h++)
             {
-                downwards(mat, msg, size, &i, &j, &k);   
+                msg[k] = mat[i][j];
+                i--;
+                k++;
             }
-            case 2 :
+            i++;
+            j -= 3;
+            warn("%d %d", i,j);
+            downwards(mat, msg, size, &i, &j, &k);
+        }
+        else if (stop == 5)//in a aaaaa
+        {
+            warn("up 5");
+            continue;
+        }
+        else if (stop == 6)//in 1a or 0a
+        {
+            warn("up 6");
+            j--;
+            for(int h = 0; h < 5; h++)
             {
+                msg[k] = mat[i][j];
+                i--;
+                k++;
+            }
+            j++;
+            continue;
+        }
+        else
+        {
+            err(EXIT_FAILURE, "error in bit extraction");
+        }   
+         
+        //done reading down
+        warn("2nd half");
+        
+        stop = check_stop_down(mat, size, &i, &j, &k);
+        
+        while( stop != 1)
+        {
+            //stop = check_stop_down(mat, size, &i, &j, &k);
+            
+            if (stop == 1) // out of bound + ?c 
+            {
+                warn("down 1");
+                break;
+            }
+            else if (stop == 2) // in a t
+            {
+                warn("down 2");
                 downwards(mat, msg, size, &i, &j, &k);
             }
-            case 3 :
-            {
-                continue;
+            else if (stop == 3) // in a a
+            {   
+                warn("down 3");
+                downwards(mat, msg, size, &i, &j, &k);
+            }   
+            else if (stop == 4) // in a v or s
+            {   
+                warn("down 4");
+                break;
             }
-            case 4 :
+            else if (stop == 10)
             {
-                //when encountering Version bits
+                warn("end");
+                break;
             }
-            case 5 :
+            else
             {
-               continue; 
+                err(EXIT_FAILURE, "error in bit extraction");
             }
-            case 6 :
-            {
-                //special upwards (border alignement pattern)
-            }
-            default :
-            {
-                err(EXIT_FAILURE, "error in bit_extraction");
-            }
+            
+            stop = check_stop_down(mat, size, &i, &j, &k);
         }
-
-        //reading down
-        downwards(mat, msg, size, &i, &j, &k);
-        
-        //preparing going up
-        
+        warn("%d, %d end loop", i, j);
+        if(stop == 10)
+            break;
     }
     warn("end"); 
     warn("output : %s", msg);
