@@ -177,7 +177,78 @@ const char SpecAdd[2][8] = { {'1','1','1','0','1', '1', '0', '0'},
 const size_t Remainder_bits[41] = { -1, 0, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3,
     3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0 };
 
+const char S_bits[4][8][15] =
+{ { "111011111000100", // Low
+    "111001011110011",
+    "111001011110011",
+    "111100010011101",
+    "110011000101111",
+    "110001100011000",
+    "110110001000001",
+    "110100101110110", }, { 
+        "110100101110110", // Medium
+        "101000100100101",
+        "101111001111100",
+        "101101101001011",
+        "100010111111001",
+        "100000011001110",
+        "100111110010111",
+        "100101010100000", }, {
+            "011010101011111", // Quartile
+            "011000001101000",
+            "011000001101000",
+            "011101000000110",
+            "011101000000110",
+            "010000110000011",
+            "010111011011010",
+            "010101111101101", }, {
+                "001011010001001", // High
+                "001011010001001",
+                "001011010001001",
+                "001100111010000",
+                "000011101100010",
+                "000001001010101",
+                "000110100001100",
+                "000100000111011" }
+};
 
+const char V_bits[34][18] =
+{
+    "000111110010010100",   //7
+    "001000010110111100",   //8
+    "001001101010011001",   //9
+    "001010010011010011",   //10
+    "001011101111110110",   //11
+    "001100011101100010",   //12
+    "001101100001000111",   //13
+    "001110011000001101",  //14
+    "001111100100101000",  //15
+    "010000101101111000",  //16
+    "010001010001011101",  //17
+    "010010101000010111",  //18
+    "010011010100110010",  //19
+    "010100100110100110",  //20
+    "010101011010000011",  //21
+    "010110100011001001",  //22
+    "010111011111101100",  //23
+    "011000111011000100",  //24
+    "011001000111100001",  //25
+    "011010111110101011",  //26
+    "011011000010001110",  //27
+    "011100110000011010",  //28
+    "011101001100111111",  //29
+    "011110110101110101",  //30
+    "011111001001010000",  //31
+    "100000100111010101",  //32
+    "100001011011110000",  //33
+    "100010100010111010",  //34
+    "100011011110011111",  //35
+    "100101010000101110",  //36
+    "100101010000101110",  //37
+    "100110101001100100",  //38
+    "100111010101000001",  //39
+    "101000110001101001"   //40  
+};
 //-----------------------------------------------------------------------------
 //                            END OF HARD CODE
 //-----------------------------------------------------------------------------
@@ -335,7 +406,7 @@ void adjustBits(struct EncData *input, size_t length)
         mulE += 8;
     char* data = input->encoded_data;
     size_t data_s = getSize(data);
-    
+
     printf("\tSize to match : %li | Current message size : %li\n", mulE, data_s);
     printf("\tTotal size : %li\n", size);
 
@@ -350,10 +421,10 @@ void adjustBits(struct EncData *input, size_t length)
 
     data[data_s + length - size] = '\0';
     size_t repeat = (length - size) / 8;
-    
+
     printf("\tNumber of repeat : %li\n", repeat);
     printf("\tLength : %li | size = %li | data_s = %li\n", length, size, data_s);
-    
+
     for(size_t i = 0; i < repeat; ++i) { 
         for(size_t j = 0; j < 8; ++j, ++data_s, ++size) {
             if(i % 2 == 0)
@@ -409,12 +480,12 @@ struct Codewords* breakCodeword(struct EncData* data)
     codewords->words = nb_cw;
     codewords->nb_block = 0;
 
-    printf("Version %li\n", version);
+    //printf("Version %li\n", version);
     for(size_t g = 0; g < codewords->size; ++g) {
-        printf("Group %2li:\n", g + 1);
+        //printf("Group %2li:\n", g + 1);
         size_t block_nb = GROUP_BLOCK_CODEWORDS[g][correction][version];
         codewords->nb_block += block_nb;
-        printf("Number of block : %li | Number of words : %i\n", block_nb, nb_cw);
+        //printf("Number of block : %li | Number of words : %i\n", block_nb, nb_cw);
         if(block_nb != 0) {
             codewords->group[g] = malloc(sizeof(struct Group));
             codewords->group[g]->blocks = malloc(block_nb * sizeof(struct Block*));
@@ -423,9 +494,9 @@ struct Codewords* breakCodeword(struct EncData* data)
             codewords->group[g]->size = block_nb;
 
             for(size_t b = 0; b < block_nb; ++b) {
-                printf("\tBlock %2li:\n", b + 1);
+                //printf("\tBlock %2li:\n", b + 1);
                 size_t data_cd = GROUP_CODEWORDS[correction][g][version];
-                printf("\tNumber of word : %li\n", data_cd);
+                //printf("\tNumber of word : %li\n", data_cd);
 
                 codewords->group[g]->blocks[b] = malloc(sizeof(struct Block));
                 codewords->group[g]->blocks[b]->words = malloc(data_cd * sizeof(char*));
@@ -440,9 +511,9 @@ struct Codewords* breakCodeword(struct EncData* data)
                     for(int i = 0; i < 8; ++i, ++cur) {
                         codewords->group[g]->blocks[b]->words[w][i] = full_data[cur];
                     }
-                    printf("\t\tCodeword %2li: %s | value : %ld\n", w + 1, 
-                            codewords->group[g]->blocks[b]->words[w], 
-                            convertToDec(codewords->group[g]->blocks[b]->words[w]));
+                    //printf("\t\tCodeword %2li: %s | value : %ld\n", w + 1, 
+                    //        codewords->group[g]->blocks[b]->words[w], 
+                    //        convertToDec(codewords->group[g]->blocks[b]->words[w]));
                 }
             }
         }
@@ -525,7 +596,7 @@ struct EncData* getEncodedSize(struct options *arg)
     size_t enc_size = data_size + 4 + getSize(data->character_count_ind);
     // full size according to the correction level and version * 8 (bits)
     size_t full_size = TOTAL_DECC[data->correction_level][data->version] * 8;
-    
+
     printf("Version size is %li\n", full_size);
     printf("Current encoded size is %li\n", enc_size);
 
@@ -558,7 +629,7 @@ struct EncData* getEncodedSize(struct options *arg)
     // Now we need to break the whole (mode indicator + characters count +
     // encoded data) into 8-bits Codewords to prepare the error correction
     adjustBits(data, full_size);
-    
+
     //printf("Data bits adjusted.\n");
 
     struct Codewords *codewords = breakCodeword(data);

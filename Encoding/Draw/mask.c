@@ -547,7 +547,7 @@ void initMatrix(struct QrCode_Enc* data) {
     // Set alignment pattern at fixed position
     setAlignment(data);
     // Set Dark Module
-    mat[(4 * data->data->version) + 9][8] = 'd';//'9';
+    mat[(4 * data->data->version) + 9][8] = '1';//'9';
 
     // Reserve the format information area
     for(size_t x = 0; x < 8; ++x) { 
