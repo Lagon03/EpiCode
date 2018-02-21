@@ -26,6 +26,7 @@ struct QrCode
     struct Finder *A;   // top left
     struct Finder *B;   // top right
     struct Finder *C;   // bot left
+    double *coords;
     int  version;
     double m_size;
     char **mat;
