@@ -6,6 +6,8 @@
 */
 
 # include "../headers/gen_img.h"
+# include "../headers/encode.h"
+# include <string.h>
 
 static inline
 void white_map(SDL_Surface *img)
@@ -59,6 +61,12 @@ void Generate_QrCode(char **mat, int version, const char* name, int mod_size)
     
     //warn("3");
     display_image(img);
-    save_image(img, name);
+    // output path : "../output/.." -> 10 characters
+    char * output = malloc((strlen(name) + 10) * sizeof(char));
+    output[0] = '\0';
+    strcat(output, "./output/");
+    strcat(output, name);
+
+    save_image(img, output);
     SDL_Quit();
 }

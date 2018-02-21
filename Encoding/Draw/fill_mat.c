@@ -17,7 +17,8 @@ void upwards(char **mat, char *msg, size_t size, int *ip, int *jp, int *kp)
     int k = *kp;
     int i = *ip;
     int j = *jp;
-    while(j < size && i < size && i >= 0 && j  >= 0 && (mat[i][j] == 0))
+    while(((size_t)j < size && (size_t)i < size) && 
+            (i >= 0 && j  >= 0) && (mat[i][j] == 0))
     {
         //warn("1 going up %d %d", i, j);
         mat[i][j] = msg[k];
@@ -45,7 +46,8 @@ void downwards(char **mat, char *msg, size_t size, int *ip, int *jp, int *kp)
     int i = *ip;
     int j = *jp;
     
-    while(j < size && i < size && j >= 0 && i >= 0 && (mat[i][j] == 0))
+    while(((size_t)j < size && (size_t)i < size) && 
+            (j >= 0 && i >= 0) && (mat[i][j] == 0))
     {
         //warn("1 going down %d %d", i, j);
         mat[i][j] = msg[k];
@@ -67,7 +69,7 @@ void downwards(char **mat, char *msg, size_t size, int *ip, int *jp, int *kp)
 }
 
 static inline
-int check_stop_up(char **mat, size_t size, int *ip, int *jp, int *kp)
+int check_stop_up(char **mat, int *ip, int *jp, int *kp)
 {
     int k = *kp;
     int i = *ip;
@@ -115,6 +117,10 @@ int check_stop_up(char **mat, size_t size, int *ip, int *jp, int *kp)
         }
     }
     
+    if(i > 0 && j > 0)
+        printf("mat[%i][%i] = %c\n", i, j, mat[i][j]);
+    printf("return : %i\n", ret);
+    
     *kp = k;
     *ip = i;
     *jp = j;
@@ -128,12 +134,12 @@ int check_stop_down(char **mat, size_t size, int *ip, int *jp, int *kp)
     int i = *ip;
     int j = *jp;
     int ret = 0;
-    
+
     //out of bottom bounds, go up
     //warn("checking down");
     //warn("i/size : %d/%lu", i, size);
     //warn("%d %d", i , j);
-    if (i >= size)
+    if ((size_t)i >= size)
     {
         j -= 2;
         i = size - 1;
@@ -195,8 +201,8 @@ void fill_mat(char **mat, size_t size, int version, char *msg, size_t msg_length
     int totnb_bit = size * size - ( 3*8*8 + nb_ap*5*5 + 2*(size - 8*2)) - 31 -
                     version_m + nv * 5;
     //verify the msg length and the totnb_bit possible
-    if(totnb_bit != msg_length)    
-        warn("size error in fill mat | Size to match : %li; Current : %li\n", totnb_bit, msg_length);
+    if((size_t)totnb_bit != msg_length)    
+        warn("size error in fill mat | Size to match : %i; Current : %li\n", totnb_bit, msg_length);
 
     int i = size - 1;
     int j = size - 1;
@@ -210,7 +216,7 @@ void fill_mat(char **mat, size_t size, int version, char *msg, size_t msg_length
         upwards(mat, msg, size, &i, &j, &k);
         
         //Check why up stopped
-        int stop = check_stop_up(mat, size, &i, &j, &k);
+        int stop = check_stop_up(mat, &i, &j, &k);
         
         if (stop == 1) // out of bound
         {   
@@ -270,7 +276,7 @@ void fill_mat(char **mat, size_t size, int version, char *msg, size_t msg_length
         }
         else
         {
-            printf("%li | %li | stop : %li\n", i, j, stop);
+            printf("%i | %i | stop : %i\n", i, j, stop);
             err(EXIT_FAILURE, "error in fill_mat");
         }   
          
@@ -342,5 +348,4 @@ void fill_mat(char **mat, size_t size, int version, char *msg, size_t msg_length
     }
     //warn("end"); 
     //warn("output length %d / %d : %s", totnb_bit, k, msg);
-    return msg;
 }
