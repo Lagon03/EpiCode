@@ -112,7 +112,7 @@ struct QrCode *extract_QrCode_NoG(SDL_Surface *img, struct FPat *finders)
     
     qr->version = estimate_version_NoG(qr->A, qr->B, m_size);
     
-    warn("Result : version v%02d, module size %lf", qr->version, qr->m_size);
+    //warn("Result : version v%02d, module size %lf", qr->version, qr->m_size);
     
     int code_size = 17 + 4 * qr->version;
     //warn("B version size %d %d", qr->version, code_size);

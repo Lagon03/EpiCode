@@ -82,12 +82,12 @@ int main(int argc, char* argv[]){
     struct FPat *FPs = findFP (proc);
     //warn("check fpfind");
     SDL_Surface *show = load_image(file);
-    //drawFP(show, FPs->centers, FPs->ems_vector);
-    //display_image(show);
+    drawFP(show, FPs->centers, FPs->ems_vector);
+    display_image(show);
     
     struct QrCode *qr = extract_QrCode_NoG(proc, FPs); 
-    drawBox(show,qr->coords); 
-    display_image(show);
+    //drawBox(show,qr->coords); 
+    //display_image(show);
     //warn("extracted code");
     print_mat(qr->mat, qr->version * 4 + 17);
     struct PCode *code = get_code(qr);

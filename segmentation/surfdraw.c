@@ -56,7 +56,11 @@ void drawBox(SDL_Surface *img, double *coords)
     double corner_tl_x = coords[0];                              
     double corner_tl_y = coords[1];                              
     double corner_br_x = coords[2];                              
-    double corner_br_y = coords[3];                              
+    double corner_br_y = coords[3];
+   
+    //double center_x = (corner_tl_x + corner_br_x) / 2;
+    //double center_y = (cornet_tl_y + corner_br_y) / 2;
+                                  
     draw_line(img, (int)corner_tl_x - wline , (int)corner_tl_y - wline,
                    (int)corner_tl_x, (int)corner_br_y + wline);
     draw_line(img, (int)corner_br_x, (int)corner_tl_y - wline,
