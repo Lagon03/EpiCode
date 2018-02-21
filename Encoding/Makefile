@@ -1,6 +1,6 @@
 # Cypher Makefile
 
-CC= gcc -fsanitize=address -fsanitize=address
+CC= gcc
 CPPFLAGS= `pkg-config --cflags sdl` -MMD
 CFLAGS= -Wall -Wextra -std=c99 -O2
 LDFLAGS=
