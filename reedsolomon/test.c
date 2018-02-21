@@ -15,10 +15,10 @@ int main()
     //}
   uint8_t x = 12;
   uint8_t y = 10;
-  uint8_t res1 = gf_mul(x,y,gf_table);
+  uint8_t res1 = gf_mul(x, y, gf_table);
   uint8_t res2 = gf_div(x, y, gf_table);
-  printf("res1: %u", res1);
-  printf("res2: %u", res2);
+  printf("res1: %u\n", res1);
+  printf("res2: %u\n", res2);
   //for(int i =0; i < LENGTH(gf_table->gf_log); i++)
   //  printf("elem %d: %u", i, gf_table->gf_log[i]);
   struct Array *msg_in = malloc(sizeof(struct Array));
@@ -45,7 +45,8 @@ int main()
   
   msg = rs_encode_msg(msg_in, 10, gf_table);
   for(int i =0; i < msg->used; i++)
-    printf("\n%u ,", msg->array[i]);
+    printf("\n%u", msg->array[i]);
+  printf("\n");
   
   return 0;
 }

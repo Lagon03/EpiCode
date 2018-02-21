@@ -131,21 +131,6 @@ int main (int argc, char* argv[])
     }
     //weave->size = weave->size + Remainder_bits[data->version];
 
-    printf("-----");
-    for(int i = 0; i < QrCode->size;++i)
-        printf("%2i", i);
-    printf("\n");
-    for(size_t x = 0; x < QrCode->size; ++x) {
-        printf("%4li [", x);
-        for(size_t y = 0; y < QrCode->size; ++y) {
-            if(QrCode->mat[x][y] == 0)
-                printf("  ");
-            else
-                printf("%c ", QrCode->mat[x][y]);
-        }
-        printf("]\n");
-    }
-
     fill_mat(QrCode->mat, QrCode->size, data->version, weave_trans, (weave->size
                 * 8) + Remainder_bits[data->version]);
 
@@ -178,15 +163,15 @@ int main (int argc, char* argv[])
     }
 
     for(size_t x = 0; x < QrCode->size; ++x) {
-        printf("[");
+        /*printf("[");
         for(size_t y = 0; y < QrCode->size; ++y) {
             if(QrCode->mat[x][y] == 0)
                 printf("  ");
             else
                 printf("%c ", QrCode->mat[x][y]);
-        }
+        }*/
         free(QrCode->mat[x]);
-        printf("]\n");
+        //printf("]\n");
     }
     free(QrCode->mat);
     free(QrCode);
