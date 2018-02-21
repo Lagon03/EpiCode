@@ -65,6 +65,21 @@ SDL_Surface* display_image(SDL_Surface *img) {
   return screen;
 }
 
+// Create an image
+SDL_Surface* create_image(int size)
+{
+    SDL_Surface* img = SDL_CreateRGBSurface(0, size, size, 32, 0, 0, 0, 0);
+    if(img == NULL)
+        errx(1,"Could not create an RGB SDL_Surface: %s, \n", SDL_GetError());
+    return img;
+}
+
+void save_image(SDL_Surface *img, const char* file)
+{
+    if(SDL_SaveBMP(img, file) < 0)
+        errx(1,"Could not save SDL_Surface to BMP: %s, \n", SDL_GetError());
+}
+
 static inline Uint8* pixelref(SDL_Surface *surf, unsigned x, unsigned y) {
   int bpp = surf->format->BytesPerPixel;
   return (Uint8*)surf->pixels + y * surf->pitch + x * bpp;
