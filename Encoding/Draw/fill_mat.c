@@ -17,7 +17,7 @@ void upwards(char **mat, char *msg, size_t size, int *ip, int *jp, int *kp)
     int k = *kp;
     int i = *ip;
     int j = *jp;
-    while(j < size && i < size && i >= 0 && j  >= 0 && (mat[i][j] == '1' || mat[i][j] == '0'))
+    while(j < size && i < size && i >= 0 && j  >= 0 && (mat[i][j] == 0))
     {
         //warn("1 going up %d %d", i, j);
         mat[i][j] = msg[k];
@@ -45,7 +45,7 @@ void downwards(char **mat, char *msg, size_t size, int *ip, int *jp, int *kp)
     int i = *ip;
     int j = *jp;
     
-    while(j < size && i < size && j >= 0 && i >= 0 && (mat[i][j] == '1' || mat[i][j] == '0'))
+    while(j < size && i < size && j >= 0 && i >= 0 && (mat[i][j] == 0))
     {
         //warn("1 going down %d %d", i, j);
         mat[i][j] = msg[k];
@@ -270,6 +270,7 @@ void fill_mat(char **mat, size_t size, int version, char *msg, size_t msg_length
         }
         else
         {
+            printf("%li | %li | stop : %li\n", i, j, stop);
             err(EXIT_FAILURE, "error in fill_mat");
         }   
          
