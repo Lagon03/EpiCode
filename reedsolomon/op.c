@@ -1,3 +1,4 @@
+#include "array.h"
 #include "op.h"
 
 /*Counts the digits in an int*/

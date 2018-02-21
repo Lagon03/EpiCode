@@ -1,3 +1,4 @@
+#include "array.h"
 #include "op.h"
 
 struct Array* array2(uint8_t a, uint8_t b)

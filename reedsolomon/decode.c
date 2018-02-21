@@ -1,5 +1,6 @@
 #include <stdbool.h>
 
+#include "array.h"
 #include "op.h"
 
 /*Given the received codeword msg and the number of error correcting symbols (nsym), computes the
@@ -135,7 +136,7 @@ struct Array* rs_correct_errdata(struct Array *msg_in, struct Array *synd, struc
   return msg_in;
 }
 
-struct Array* rs_find_error_locator(struct Array* synd, uint8_t nsym, struct Array* erase_loc, uint8_t erase_count, struct gf_tables *gf_table)
+struct Array* rs_find_error_locator(struct Array* synd, uint8_t nsym, uint8_t erase_count, struct gf_tables *gf_table)
 {
   struct Array *err_loc = malloc(sizeof(struct Array*));
   initZArray(err_loc, 10);

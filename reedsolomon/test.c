@@ -19,8 +19,22 @@ int main()
   //  printf("elem %d: %u", i, gf_table->gf_log[i]);
   struct Array *msg_in = malloc(sizeof(struct Array));
   initArray(msg_in, 17);
-  msg_in->array = {0x40, 0xd2, 0x75, 0x47, 0x76, 0x17, 0x32, 0x06,
-			0x27, 0x26, 0x96, 0xc6, 0xc6, 0x96,0x70, 0xec};
+  msg_in->array[0] = 0x40;
+  msg_in->array[1] = 0xd2;
+  msg_in->array[2] = 0x75;
+  msg_in->array[3] = 0x47;
+  msg_in->array[4] = 0x76;
+  msg_in->array[5] = 0x17;
+  msg_in->array[6] = 0x32;
+  msg_in->array[7] = 0x06;
+  msg_in->array[8] = 0x27;
+  msg_in->array[9] = 0x26;
+  msg_in->array[10] = 0x96;
+  msg_in->array[11] = 0xc6;
+  msg_in->array[12] = 0xc6;
+  msg_in->array[13] = 0x96;
+  msg_in->array[14] = 0x70;
+  msg_in->array[15] = 0xec;
   msg_in->used = 16;
   struct Array *msg = malloc(sizeof(struct Array));
   initArray(msg, 17);
