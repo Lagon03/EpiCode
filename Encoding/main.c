@@ -8,6 +8,7 @@
 # include "headers/mask.h"
 # include "headers/weaver.h"
 # include "headers/fill_mat.h"
+# include "headers/gen_img.h"
 
 struct options* checkArg(int argc, char* argv[])
 {
@@ -110,11 +111,12 @@ int main (int argc, char* argv[])
     struct QrCode_Enc* QrCode = initQrCode(data);
     struct Weave* weave = interweave(QrCode);
 
-    char* weave_trans = malloc((((weave->size * 8) + Remainder_bits[data->version])
+    char* weave_trans = malloc((((weave->size * 8) + Remainder_bits[data->version] + 1)
                 * sizeof(char)));
     weave_trans[0] = '\0';
     for(size_t w = 0; w < weave->size; ++w) {
         char* word = convertToByte(weave->forest[w]);
+        word = adjustSize(word, 8);
         strcat(weave_trans, word);
         free(word);
     }
@@ -127,12 +129,10 @@ int main (int argc, char* argv[])
         free(r_bits);
     }
     //weave->size = weave->size + Remainder_bits[data->version];
-   
-    for(size_t i = 0; i < (weave->size * 8) + Remainder_bits[data->version]; ++i)
-        printf("%d\n", weave_trans[i]);
 
     fill_mat(QrCode->mat, QrCode->size, data->version, weave_trans, (weave->size
             * 8) + Remainder_bits[data->version]);
+    Generate_QrCode(QrCode->mat, data->version, "test.bmp", 8);
 
     for(size_t x = 0; x < QrCode->size; ++x) {
         printf("[");

@@ -5,7 +5,7 @@
 **  inside.
 */
 
-# include "../header/gen_img.h"
+# include "../headers/gen_img.h"
 
 static inline
 void white_map(SDL_Surface *img)
@@ -14,7 +14,7 @@ void white_map(SDL_Surface *img)
     {
         for(int x = 0; x < img->w; x++)
         {
-            putpixel(img, x, y, SDL_MapRGB(img->format, 255, 255, 255);
+            putpixel(img, x, y, SDL_MapRGB(img->format, 255, 255, 255));
         }
     }
 }
@@ -26,24 +26,24 @@ void fill_black(SDL_Surface *img, int begin_x, int begin_y, int mod_size)
     {
         for(int x = begin_x; x < begin_x + mod_size; x++)
         {
-            putpixel(img, x, y, SDL_MapRGB(img->format, 0, 0, 0);
+            putpixel(img, x, y, SDL_MapRGB(img->format, 0, 0, 0));
         }
     }
 }
 
 void Generate_QrCode(char **mat, int version, const char* name, int mod_size)
 {
-    sdl_init();
+    init_sdl();
     
     int size = mod_size * (version * 4 + 17 + 8); 
     int mat_size = version * 4 + 17;
     
-    SDL_Surface *img = create_img(size);
+    SDL_Surface *img = create_image(size);
     white_map(img);
     
     for(int y = mod_size * 4; y < size - 4 * mod_size; y += mod_size)
     {
-        for(int x = mod_size * 4; j < size - 4 mod_size; x += mod_size)
+        for(int x = mod_size * 4; x < size - 4 * mod_size; x += mod_size)
         {
             if(mat[y/mod_size][x/mod_size] == '1')
             {

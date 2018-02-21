@@ -56,7 +56,7 @@ struct Weave* interweave(struct QrCode_Enc* data) {
     
     // FOR DEBUG
     for(size_t i = 0; i < ecc_count * (nb_block01 + nb_block02); ++i, ++cur) 
-        forest[cur] = 1; //debug value
+        forest[cur] = 255; //debug value
     // END DEBUG
   
 
