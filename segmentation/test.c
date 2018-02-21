@@ -22,6 +22,49 @@ void print_mat(char **mat, int size)
     }
 }
 
+void free_Fpat(struct FPat *f)
+{
+    free_Dmat(f->centers);
+    free_Dvector(f->ems_vector);
+    free(f);
+}
+
+void free_Finder(struct Finder *f)
+{
+    free(f->center);
+    free(f->ul);
+    free(f->dr);
+    free(f);
+}
+
+void free_QrCode(struct QrCode *q)
+{
+    free_Finder(q->A);
+    free_Finder(q->B);
+    free_Finder(q->C);
+    
+    for(int i = 0; i < (q->version * 4 + 17); i++)
+    {
+        free(q->mat[i]);
+    }
+    free(q->mat);
+    free(q);
+}
+
+void free_PCode(struct PCode *c)
+{
+    free(c->msg);
+    free(c->err_cor);
+    free(c);
+}
+
+void free_segmentation(struct FPat *f, struct QrCode *q, struct PCode *c)
+{
+    free_Fpat(f);
+    free_QrCode(q);
+    free_PCode(c);
+}
+
 //-----------------------------------------------------------------------------
 
 int main(int argc, char* argv[]){
@@ -33,31 +76,20 @@ int main(int argc, char* argv[]){
     SDL_Surface *img = load_image(argv[1]);
     img = grayscale(img);
     img = blackAndWhite(img, 0);
-    
-// QRcode Extraction
-
-    //QrCode Localization    
+       
     struct FPat *FPs = findFP (img);
-    warn("check fpfind");
-        //ADD CHECKS  - 2nd phase -> if more than 3 FPs / find A, B, C FP
-    
-    //Size_estimation  - 1st phase
+    //warn("check fpfind");
+
     struct QrCode *qr = extract_QrCode_NoG(img, FPs); 
     
-    warn("extracted code");
+    //warn("extracted code");
     print_mat(qr->mat, qr->version * 4 + 17);
-    //Aligment pattern  1st/ 2nd phase
     struct PCode *code = get_code(qr);
-    warn("processed code");
-// End Extraction
+    //warn("processed code");
     print_mat(qr->mat, qr->version * 4 + 17);
-    
-    //Reed-Solomon  - 1st phase
-
-    //Decode text  - 1st phase
-    
+     
+    //free_segmentation(FPs, qr, code);
     display_image(img);
-  
     SDL_Quit();
     return 1;
 }

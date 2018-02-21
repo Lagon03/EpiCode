@@ -363,9 +363,10 @@ int handle_centers(SDL_Surface *img, struct Dmat *centers, int *state,
     foreach_line(centers)
     {
         
+        //warn("calc distance %lu/%lu", i, centers->size); 
         double dist_x = abs(mat[i][0] - new_center[0]);
         double dist_y = abs(mat[i][1] - new_center[1]);
-        
+        //warn("checking in dmat and dvector");
         if(dist_x < 10 && dist_y < 10)
         {
             mat[i][0] = (mat[i][0] + new_center[0]) / 2.0;
@@ -373,7 +374,8 @@ int handle_centers(SDL_Surface *img, struct Dmat *centers, int *state,
             ems_vector->array[i] = (ems_vector->array[i] + new_ems) / 2.0;
             found = 1;
             break;
-        } 
+        }
+        //warn("check ok"); 
     }
 
     if( found == 0)
@@ -397,7 +399,9 @@ struct FPat *findFP (SDL_Surface *img)
     struct Dmat *centers = init_Dmat(2 , 2);
     int *state = calloc(5, sizeof(int));
     int state_count = 0;
-
+    
+    //warn("start");
+    
     for(int y = 0; y < img->h; y += PRECISION)
     {
         RESET_STATE(state);
@@ -424,7 +428,8 @@ struct FPat *findFP (SDL_Surface *img)
                         if(totalsize >= 1)
                         {
                             //warn("doing Uber check");
-                             handle_centers(img, centers, state, y, x, ems_vector, totalsize);
+                            handle_centers(img, centers, state, y, x, ems_vector, totalsize);
+                            //warn("out"); 
                         }
                         else
                         {
@@ -450,6 +455,7 @@ struct FPat *findFP (SDL_Surface *img)
         }
     }
     
+    //warn("end");
     free(state);
     struct FPat *foundFP = malloc(sizeof(struct FPat));
     foundFP->centers = centers;

@@ -1,11 +1,10 @@
 /*
-**  Extracts bit from data matrix into a single string
-**  file : bit_ext.c
-**  discription : Inorder to go through the Reed-Solomon decoding, a binary
-**  string containing the cyphered message will be needed. 
+**  Fill Qr Data Matrix 
+**  file : fill_mat.c
+**  discription : Writing down the data into the matrix 
 */
 
-# include "bit_ext.h"
+# include "fill_mat.h"
 
 // SUB_FUNCTION
 
@@ -18,13 +17,13 @@ void upwards(char **mat, char *msg, size_t size, int *ip, int *jp, int *kp)
     while(j < size && i < size && i >= 0 && j  >= 0 && (mat[i][j] == '1' || mat[i][j] == '0'))
     {
         //warn("1 going up %d %d", i, j);
-        msg[k] = mat[i][j];
-        mat[i][j] = 'x';
+        mat[i][j] = msg[k];
+        //mat[i][j] = 'x';
         j -= 1;
         k += 1;
         //warn("2 going up %d %d", i, j); 
-        msg[k] = mat[i][j];
-        mat[i][j] = 'x';
+        mat[i][j] = msg[k];
+        //mat[i][j] = 'x';
         j++;
         i--;
         k++;
@@ -46,13 +45,13 @@ void downwards(char **mat, char *msg, size_t size, int *ip, int *jp, int *kp)
     while(j < size && i < size && j >= 0 && i >= 0 && (mat[i][j] == '1' || mat[i][j] == '0'))
     {
         //warn("1 going down %d %d", i, j);
-        msg[k] = mat[i][j];
-        mat[i][j] = 'o';
+        mat[i][j] = msg[k];
+        //mat[i][j] = 'o';
         j--;
         k++;
         //warn("2 going down %d %d", i, j); 
-        msg[k] = mat[i][j];
-        mat[i][j] = 'o';
+        mat[i][j] = msg[k];
+        //mat[i][j] = 'o';
         j++;
         i++;
         k++;
@@ -172,7 +171,7 @@ int check_stop_down(char **mat, size_t size, int *ip, int *jp, int *kp)
 
 // MAIN_FUNCTION
 
-char *ext_cyphmsg(char **mat, size_t size, int version)
+void fill_mat(char **mat, size_t size, int version, char *msg, size_t msg_length)
 {
     size_t version_m = 0;
     int nv = 0;
@@ -189,11 +188,13 @@ char *ext_cyphmsg(char **mat, size_t size, int version)
         if(version >= 35)
             nv = 10; 
     }
-    
     int nb_ap = Ap_coord[version - 1][0];
     int totnb_bit = size * size - ( 3*8*8 + nb_ap*5*5 + 2*(size - 8*2)) - 31 -
                     version_m + nv * 5;
-    char *msg = calloc(totnb_bit, sizeof(char));
+    //verify the msg length and the totnb_bit possible
+    if(totnb_bit != msg_length)    
+        warn("size error in fill mat");
+
     int i = size - 1;
     int j = size - 1;
     int k = 0;
@@ -230,8 +231,8 @@ char *ext_cyphmsg(char **mat, size_t size, int version)
             //warn("up 4");
             for(int h = 0; h < 6; h++)
             {
-                msg[k] = mat[i][j];
-                mat[i][j] = 'd';
+                mat[i][j] = msg[k];
+                //mat[i][j] = 'd';
                 i--;
                 k++;
             }
@@ -256,8 +257,8 @@ char *ext_cyphmsg(char **mat, size_t size, int version)
                     i--;
                     continue;
                 }
-                msg[k] = mat[i][j];
-                mat[i][j] = 'x';
+                mat[i][j] = msg[k];
+                //mat[i][j] = 'x';
                 i--;
                 k++;
             }
@@ -266,7 +267,7 @@ char *ext_cyphmsg(char **mat, size_t size, int version)
         }
         else
         {
-            err(EXIT_FAILURE, "error in bit extraction");
+            err(EXIT_FAILURE, "error in fill_mat");
         }   
          
         //done reading down
@@ -309,9 +310,9 @@ char *ext_cyphmsg(char **mat, size_t size, int version)
                         i++;
                         continue;
                     }
-                    msg[k] = mat[i][j];
+                    mat[i][j] = msg[k];
                     //warn("%c 1", mat[i][j]);
-                    mat[i][j] = 'x';
+                    //mat[i][j] = 'x';
                     i++;
                     k++;
                 }
@@ -326,7 +327,7 @@ char *ext_cyphmsg(char **mat, size_t size, int version)
             }
             else
             {
-                err(EXIT_FAILURE, "error in bit extraction");
+                err(EXIT_FAILURE, "error in fill_mat");
             }
             
             stop = check_stop_down(mat, size, &i, &j, &k);
@@ -336,6 +337,6 @@ char *ext_cyphmsg(char **mat, size_t size, int version)
             break;
     }
     //warn("end"); 
-    warn("output length %d / %d : %s", totnb_bit, k, msg);
+    //warn("output length %d / %d : %s", totnb_bit, k, msg);
     return msg;
 }

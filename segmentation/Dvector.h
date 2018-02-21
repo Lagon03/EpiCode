@@ -34,7 +34,7 @@ struct Dvector *init_Dvector (size_t capacity)
 static inline
 void add_Dvector (struct Dvector *vec, double elm)
 {   
-    if (vec->capacity <= vec->size - 10)
+    if (vec->capacity <= vec->size)
     {  
         vec->capacity *= 2;
         //warn("reallocking");

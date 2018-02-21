@@ -268,7 +268,7 @@ void color_alignment(char **mat, int version)
 }
 
 static inline
-void color_version1(char **mat, int size)
+void get_version1(char **mat, int size)
 {
     mat[size - 9][0] = 'v';
     mat[size - 9][1] = 'v';
@@ -291,7 +291,7 @@ void color_version1(char **mat, int size)
 }
 
 static inline
-void color_version2(char **mat, int size)
+void get_version2(char **mat, int size)
 {
     mat[0][size - 9] = 'v';
     mat[1][size - 9] = 'v';
@@ -317,22 +317,16 @@ static inline
 void color_spec_pat(char **mat, int version)
 {
     int size = 4 * version + 17;
-    warn("d");
+    //warn("d");
     mat[4 * version + 9][8] = 'd';
-    warn("f");
+    //warn("f");
     color_finders(mat, size);
-    warn("s");
+    //warn("s");
     color_separators(mat, size);
-    warn("t");
+    //warn("t");
     color_timing_pat(mat, size);
-    warn("a");
+    //warn("a");
     color_alignment(mat, version);
-    warn("v");
-    if(version >= 7)
-    {
-        color_version1(mat, size);
-        color_version2(mat, size);
-    }
     warn("end");
 }   
 
@@ -341,19 +335,25 @@ void color_spec_pat(char **mat, int version)
 struct PCode *get_code(struct QrCode *qr)
 {
     struct PCode *code = malloc(sizeof(struct PCode));
-    warn("coloring matrix"); 
+    warn("coloring matrix");
+    
+    int sizei = qr->version * 4 + 17;
+    
+    get_version1(qr->mat, sizei);
+    get_version2(qr->mat, sizei); 
     color_spec_pat(qr->mat, qr->version);
     
     char *fmt1 = get_format1(qr->mat);
     char *fmt2 = get_format2(qr->mat, qr->version);
-    warn("fmt1 %s, fmt2 %s", fmt1, fmt2);
+    //warn("fmt1 %s, fmt2 %s", fmt1, fmt2);
     
     if (strcmp(fmt1, fmt2) != 0) // for now we will just use fmt1
         warn("fmt1 != fmt2");
     
+    // verify the version
     char *key = "101010000010010";
     char *xored = strbinXOR(fmt1, key); 
-    warn("xored %s", xored);
+    //warn("xored %s", xored);
     
     char *err_cor_lvl = calloc(2, sizeof(char));
     char *mask = calloc(3, sizeof(char));
@@ -362,18 +362,40 @@ struct PCode *get_code(struct QrCode *qr)
     mask[0] = xored[2];
     mask[1] = xored[3];
     mask[2] = xored[4];
-    
+    char *err_f = calloc(10, sizeof(char));
+    err_f[0] = xored[5];
+    err_f[1] = xored[6];
+    err_f[2] = xored[7];
+    err_f[3] = xored[8];
+    err_f[4] = xored[9];
+    err_f[5] = xored[10];
+    err_f[6] = xored[11];
+    err_f[7] = xored[12];
+    err_f[8] = xored[13];
+    err_f[9] = xored[14];
     int maskv = bin_int(mask);
     char cor_lvl = get_correction_lvl(err_cor_lvl);
     
-    warn("error level correction %s %c, mask %s %d", err_cor_lvl, cor_lvl,  mask, maskv);
+    //warn("error level correction %s %c, mask %s %d", err_cor_lvl, cor_lvl,  mask, maskv);
    
     size_t size = qr->version * 4 + 17;
     
     demask(qr->mat, size, maskv);  
     
     char* msg = ext_cyphmsg(qr->mat, size, qr->version);
-     
+    
+    code->version = qr->version;
+    code->mask = maskv;
+    code->err_cor_lvl = cor_lvl;
+    code->err_cor = err_f;
+    code->msg = msg;
+    
+    free(mask);
+    free(err_cor_lvl);
+    free(fmt1);
+    free(fmt2);
+    free(xored);
+    //free version 
     return code;
 }
 

@@ -97,11 +97,11 @@ static const char V_bits[34][18] =
 
 struct PCode
 {
-    char *version;
-    char *err_cor_lvl;
-    char *mask;
+    int version;
+    char err_cor_lvl;
+    int mask;
     char *err_cor;
-    char *code;
+    char *msg;
 };  
 
 struct PCode *get_code(struct QrCode *qr);

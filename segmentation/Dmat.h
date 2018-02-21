@@ -57,8 +57,18 @@ void copy_Dmat (struct Dmat *src , struct Dmat *dst)
 }
 
 static inline
+void free_Dmat (struct Dmat *mat)
+{
+    for(size_t i = 0; i < mat->lines; i++)
+        free(mat->mat[i]);
+    free(mat->mat);
+    free(mat);
+
+}
+static inline
 void add_Dmat (struct Dmat *mat, double *elm)
 {   
+    //warn("1");
     if (mat->size >= mat->lines)
     {  
         struct Dmat *tmp = init_Dmat(mat->lines*2, mat->cols);
@@ -66,18 +76,13 @@ void add_Dmat (struct Dmat *mat, double *elm)
         *mat = *tmp;
         free(tmp);
     }
+    //warn("2");
     
     for(size_t i = 0; i < mat->cols; i++)
         mat->mat[mat->size][i] = elm[i];
     mat->size++;
-}
-
-static inline
-void free_Dmat (struct Dmat *mat)
-{
-    for(size_t i = 0; i < mat->lines; i++)
-        free(mat->mat[i]);
-    free(mat->mat);
+    //free(elm);
+    //warn("3");
 }
 
 # endif
