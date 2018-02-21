@@ -26,7 +26,7 @@ void insertArray(struct Array *a)
     {
       a->size *= 2;
       void *p = realloc(a->array, a->size * sizeof(uint8_t));
-      if(p != NULL)
+      if(p)
         a->array = p;
       else
 	exit(EXIT_FAILURE);

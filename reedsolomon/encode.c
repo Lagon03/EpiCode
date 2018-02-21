@@ -43,6 +43,8 @@ struct Array* rs_encode_msg(struct Array* msg_in, uint8_t nsym, struct gf_tables
   list = merge(msg_in, empty_l);
   struct Tuple *res = malloc(sizeof(struct Tuple));
   res =  gf_poly_div(list, gen, gf_table);
+  for(int i = 0; i < gen->used; i++)
+    printf("gen: %u, ", gen->array[i]);
   struct Array *msg_out = malloc(sizeof(struct Array));
   initArray(msg_out, msg_in->used+res->y->size);
   msg_out = merge(msg_in, res->y);
