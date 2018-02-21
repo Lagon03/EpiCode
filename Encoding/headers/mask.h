@@ -18,7 +18,7 @@ struct QrCode_Enc
     char** mat; // matrix
     struct EncData* data; // whole data
     size_t size; // size of the edge of the qrcode
-    char* data;  // what's encoded
+    char* enc;  // what's encoded
 };
 
 void applyMask(char **mat, size_t size, int mask);

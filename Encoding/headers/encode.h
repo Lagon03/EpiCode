@@ -44,6 +44,7 @@ struct EncData
   size_t version;
   int correction_level;
   struct Codewords* codewords;
+  struct Codewords* cor_codewords;
 };
 
 struct Codewords

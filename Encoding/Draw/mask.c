@@ -574,7 +574,7 @@ struct QrCode_Enc* initQrCode(struct EncData* data) {
     // translate content into matrix
 
     // unprotect the matrix to have correct value
-    //unprotectMatrix(QrCode);
+    unprotectMatrix(QrCode);
 
     // return QrCode struct
     return QrCode;

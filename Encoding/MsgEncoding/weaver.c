@@ -55,3 +55,6 @@ struct Weave* interweave(struct QrCode_Enc* data) {
 
     return weave;
 }
+
+void iw_correction(struct QrCode_Enc* data) {
+}
