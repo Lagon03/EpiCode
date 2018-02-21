@@ -569,12 +569,12 @@ struct QrCode_Enc* initQrCode(struct EncData* data) {
     initMatrix(QrCode);
 
     // we protect the matrix to avoid corruption of vital area
-    protectMatrix(QrCode);
+    //protectMatrix(QrCode);
 
     // translate content into matrix
 
     // unprotect the matrix to have correct value
-    unprotectMatrix(QrCode);
+    //unprotectMatrix(QrCode);
 
     // return QrCode struct
     return QrCode;

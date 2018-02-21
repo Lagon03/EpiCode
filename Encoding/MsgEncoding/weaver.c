@@ -27,7 +27,7 @@ struct Weave* interweave(struct QrCode_Enc* data) {
     size_t cur = 0; // Position in the forest (interweaved codewords)
     if(GROUP_CODEWORDS[msg_d->correction_level][1][msg_d->version] != 0) {
         size_t nb_block02 = GROUP_BLOCK_CODEWORDS[1][msg_d->correction_level][msg_d->version];
-        for(size_t c1 = 0, c2 = 0; c1 < nb_cw_01 | c2 < nb_cw_02;) { // c1 : number of the codewords in group / block 1 | c2 : number of the codewords in group / block 2
+        for(size_t c1 = 0, c2 = 0; (c1 < nb_cw_01) | (c2 < nb_cw_02);) { // c1 : number of the codewords in group / block 1 | c2 : number of the codewords in group / block 2
             for(size_t b1 = 0; b1 < nb_block01 && c1 < nb_cw_01; ++b1, ++cur) {
                 forest[cur] = convertToDec(msg_d->codewords->group[0]->blocks[b1]->words[c1]);
             }
@@ -49,6 +49,8 @@ struct Weave* interweave(struct QrCode_Enc* data) {
                 ++c1;
         }
     }
+    
+    // Add correction codewords weave
 
     weave->forest = forest;
     weave->size = w_count;
@@ -56,5 +58,3 @@ struct Weave* interweave(struct QrCode_Enc* data) {
     return weave;
 }
 
-void iw_correction(struct QrCode_Enc* data) {
-}

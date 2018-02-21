@@ -4,7 +4,7 @@
 **  discription : Writing down the data into the matrix 
 */
 
-# include "fill_mat.h"
+# include "../headers/fill_mat.h"
 
 // SUB_FUNCTION
 

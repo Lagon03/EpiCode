@@ -16,6 +16,12 @@ void protectMatrix(struct QrCode_Enc* data) {
         for(size_t y = 0; y < size; ++y) {
             if(matrix[x][y] == 0)
                 continue;
+            if((x == 0 && y == 0) | (x == size - 8 && y == 0) | 
+                    (x == 0 && y == size - 8)) {
+                for(int i = x; i < 7; ++i)
+                    for(int j = x; j < 7; ++j)
+                        mat[i][j] = 'c'
+            }
             if(matrix[x][y] == '1')
                 matrix[x][y] = '3';
             if(matrix[x][y] == '0')
@@ -43,18 +49,3 @@ void unprotectMatrix(struct QrCode_Enc* data) {
     }
 }
 
-void fillMatrix(struct QrCode_Enc* data, char** input) {
-    size_t size = data->size;
-    char** matrix = data->mat;
-
-    size_t pos_x = size - 1; // bottom right corner x
-    size_t pos_y = size - 1; // bottom right corner y
-    
-    size_t cur = 0; // cursor to iterate the input
-
-    while(mat[pos_x][pos_y] == 0) {
-        mat[pos_x][pos_y] = input[cur];
-        if(cur)
-            ++cur;
-    }
-}
