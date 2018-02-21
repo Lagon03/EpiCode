@@ -1,11 +1,11 @@
 # ifndef _DRAW_H_
 # define _DRAW_H_
 
-# include <>
-# include <>
+# include <stdlib.h>
+# include <stdio.h>
 
-# include ""
-# include ""
+# include "mask.h"
+# include "encode.h"
 
 // For the drawing use the following :
 //  f : finder pattern
@@ -22,6 +22,9 @@ struct QrCode_enc
     struct EncData* data;
 };
 
-struct QrCode_enc initMat(struct EncData* data);
+void protectMatrix(struct QrCode_Enc* data);
+void unprotectMatrix(struct QrCode_Enc* data);
+
+void fillMatrix(struct QrCode_Enc* data, char** input);
 
 # endif

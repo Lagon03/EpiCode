@@ -6,6 +6,7 @@
 # include "headers/analysis.h"
 # include "headers/encode.h"
 # include "headers/mask.h"
+# include "headers/weaver.h"
 
 struct options* checkArg(int argc, char* argv[])
 {
@@ -102,11 +103,11 @@ int main (int argc, char* argv[])
         + getSize(data->encoded_data);
     printf("\tRaw encoded bits length    : %li\n", size);
     // Generating the QrCode Matrix
-    
-    data->version = 8;
-    printf("!--------------Modified version to %li--------------!\n", data->version);
-    
+
+    //data->version = 8;
+    //printf("!--------------Modified version to %li--------------!\n", data->version);
     struct QrCode_Enc* QrCode = initQrCode(data);
+    struct Weave* weave = interweave(QrCode);
 
     for(size_t x = 0; x < QrCode->size; ++x) {
         printf("[");
@@ -121,6 +122,20 @@ int main (int argc, char* argv[])
     }
     free(QrCode->mat);
     free(QrCode);
+    
+    printf("Interweaved data : \n");
+    for(size_t i = 0; i < weave->size; ++i)
+        printf("%ld ", weave->forest[i]);
+    printf("\n Length : %li\n", weave->size);
+    printf("Interweaved data to binary : \n");
+    for(size_t i = 0; i < weave->size; ++i) {
+        char* conv = convertToByte(weave->forest[i]);
+        printf("%s", conv);
+        free(conv);
+    }
+    printf("\n");
+    free(weave->forest);
+    free(weave);
 
     freeCodeWords(data->codewords);
     // need a custom made free function

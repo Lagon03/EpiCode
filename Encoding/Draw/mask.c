@@ -8,6 +8,7 @@
 # include <stdlib.h>
 
 # include "../headers/mask.h"
+# include "../headers/draw.h"
 
 #define max(a,b) (a>=b?a:b)
 #define min(a,b) (a<=b?a:b)
@@ -567,7 +568,13 @@ struct QrCode_Enc* initQrCode(struct EncData* data) {
     // generate matrix
     initMatrix(QrCode);
 
+    // we protect the matrix to avoid corruption of vital area
+    protectMatrix(QrCode);
+
     // translate content into matrix
+
+    // unprotect the matrix to have correct value
+    //unprotectMatrix(QrCode);
 
     // return QrCode struct
     return QrCode;
