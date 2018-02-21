@@ -5,7 +5,7 @@
 **  inside.
 */
 
-# include "gen_img.h"
+# include "../header/gen_img.h"
 
 static inline
 void white_map(SDL_Surface *img)
@@ -33,6 +33,8 @@ void fill_black(SDL_Surface *img, int begin_x, int begin_y, int mod_size)
 
 void Generate_QrCode(char **mat, int version, const char* name, int mod_size)
 {
+    sdl_init();
+    
     int size = mod_size * (version * 4 + 17 + 8); 
     int mat_size = version * 4 + 17;
     
@@ -49,4 +51,8 @@ void Generate_QrCode(char **mat, int version, const char* name, int mod_size)
             }
         }
     }
+    
+    display_image(img);
+    save_image(img, name);
+    SDL_Quit();
 }
