@@ -9,23 +9,40 @@ unsigned int count(unsigned int i)
     return ret;
 }
 
+/*Divide a list*/
+struct Array* split_arr(struct Array *l, size_t separator1, size_t separator2)
+{
+  size_t i , j;
+  struct Array *res = malloc(sizeof(struct Array));
+  initArray(res, l->size);
+  for(i = separator1, j = 0; i < separator2; i++, j++){
+    res->array[j] = l->array[i];
+    insertArray(res);
+  }
+  return res;
+}
+
 /*Merges two lists*/
 struct Array* merge(struct Array *l1, struct Array *l2)
 {
   uint8_t size = l1->size + l2->size;
-  struct Array *l = malloc(sizeof(struct Array*));
+  struct Array *l = malloc(sizeof(struct Array));
   initArray(l, size);
-  for(size_t i = 0; i < l1->size; i++)
+  for(size_t i = 0; i < l1->used; i++){
     l[i] = l1[i];
-  for(size_t i = 0; i < l2->size; i++)
-    l[l1->size+i] = l2[i];
+    insertArray(l);
+  }
+  for(size_t i = 0; i < l2->used; i++){
+    l[l1->used+i] = l2[i];
+    insertArray(l);
+  }
   return l;
 }
 
 struct Array* reverse_arr(struct Array *l)
 {
   int c, d;
-  struct Array *res = malloc(sizeof(struct Array*));
+  struct Array *res = malloc(sizeof(struct Array));
   initArray(res, l->size);
   for (c = l->size - 1, d = 0; c >= 0; c--, d++)
     res[d] = l[c];
@@ -35,8 +52,10 @@ struct Array* reverse_arr(struct Array *l)
 struct Array* copy_arr(struct Array *l1, struct Array *l2)
 {
   initArray(l2, l1->size);
-  for(size_t i = 0; i < l1->size; i++)
+  for(size_t i = 0; i < l1->size; i++){
     l2[i] = l1[i];
+    insertArray(l2);
+  }
   return l2;
 }
 
@@ -90,9 +109,9 @@ uint8_t gf_inverse(uint8_t x, struct gf_tables *gf_table)
 /*Precompute the logarithm and anti-log tables for faster computation later, using the provided primitive polynomial.*/
 struct gf_tables* init_tables()
 {
-  struct gf_tables *gf_table = malloc(sizeof(struct gf_table*));
-  struct Array *gf_expp = malloc(sizeof(struct Array*));
-  struct Array *gf_logg = malloc(sizeof(struct Array*));
+  struct gf_tables *gf_table = malloc(sizeof(struct gf_tables));
+  struct Array *gf_expp = malloc(sizeof(struct Array));
+  struct Array *gf_logg = malloc(sizeof(struct Array));
   initArray(gf_expp, 512);
   initArray(gf_logg, 256);
   uint32_t x = 1;
@@ -119,7 +138,7 @@ struct gf_tables* init_tables()
 struct Array* gf_poly_scale(struct Array *p, uint8_t x, struct gf_tables *gf_table)
 {
   size_t len = p->used;
-  struct Array *res = malloc(sizeof(struct Array*));
+  struct Array *res = malloc(sizeof(struct Array));
 	initZArray(res, len);
   for(size_t i = 0; i < len; i++){
     res->array[i] = gf_mul(p->array[i], x, gf_table);
@@ -132,7 +151,7 @@ struct Array* gf_poly_scale(struct Array *p, uint8_t x, struct gf_tables *gf_tab
 struct Array* gf_poly_add(struct Array *p, struct Array *q)
 {
   size_t len = p->used ? p->used > q->used : q->used; 
-  struct Array *res = malloc(sizeof(struct Array*));
+  struct Array *res = malloc(sizeof(struct Array));
 	initZArray(res, len);
   for(size_t i = 0; i < p->used; i++){
 	  res->array[i + res->used - p->used] = p->array[i];
@@ -148,7 +167,7 @@ struct Array* gf_poly_add(struct Array *p, struct Array *q)
 /* Multiplies two polynomials in a GF(2^8) finite field */
 struct Array* gf_poly_mul(struct Array *p, struct Array *q, struct gf_tables *gf_table)
 {
-  struct Array *res = malloc(sizeof(struct Array*));
+  struct Array *res = malloc(sizeof(struct Array));
   initZArray(res, p->size + q->size + 1);
   for(size_t j = 0; j < q->used; j++){
       for(size_t i = 0; i < p->used; i++){
@@ -174,10 +193,12 @@ struct Tuple* gf_poly_div(struct Array *dividend, struct Array *divisor, struct 
   struct Tuple *result = malloc(sizeof(struct Tuple));
   size_t length = dividend->used;
   size_t separator = divisor->used -1;
-  struct Array *msg_out = malloc(sizeof(struct Array*));
+  struct Array *msg_out = malloc(sizeof(struct Array));
   initArray(msg_out, length << 1);
-  struct Array *msg_out2 = malloc(sizeof(struct Array*));
+  struct Array *msg_out2 = malloc(sizeof(struct Array));
   initArray(msg_out2, length);
+  struct Array *msg_out3 = malloc(sizeof(struct Array));
+  initArray(msg_out3, length);
   
   for(size_t i = 0; i < length; i++){ 
     msg_out->array[i] = dividend->array[i];
@@ -195,8 +216,9 @@ struct Tuple* gf_poly_div(struct Array *dividend, struct Array *divisor, struct 
       }
     }
   }
-  
-  for(size_t i = separator; i < length << 1; i++){
+  msg_out2 = split_arr(msg_out, 0, msg_out->used - separator);//FIXME
+  msg_out3 = split_arr(msg_out, separator, msg_out->used);
+  for(size_t i = separator; i < ; i++){
     msg_out2->array[i - separator] = msg_out->array[separator];
     insertArray(msg_out2);
   }
