@@ -22,6 +22,8 @@ struct QrCode_Enc
     size_t size_enc;
 };
 
+extern const char finder_pattern[7][7];
+extern const char align_pattern[5][5];
 extern const size_t Ap_coord[40][8];
 
 void applyMask(char **mat, size_t size, int mask);

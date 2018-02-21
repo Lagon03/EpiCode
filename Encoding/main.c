@@ -9,6 +9,7 @@
 # include "headers/weaver.h"
 # include "headers/fill_mat.h"
 # include "headers/gen_img.h"
+# include "headers/draw.h"
 
 struct options* checkArg(int argc, char* argv[])
 {
@@ -132,6 +133,7 @@ int main (int argc, char* argv[])
 
     fill_mat(QrCode->mat, QrCode->size, data->version, weave_trans, (weave->size
             * 8) + Remainder_bits[data->version]);
+    unprotectMatrix(QrCode);
     Generate_QrCode(QrCode->mat, data->version, "test.bmp", 8);
 
     for(size_t x = 0; x < QrCode->size; ++x) {
