@@ -115,11 +115,7 @@ int check_stop_up(char **mat, int *ip, int *jp, int *kp)
             i -= 5;
             ret = 5;
         }
-    }
-    
-    if(i > 0 && j > 0)
-        printf("mat[%i][%i] = %c\n", i, j, mat[i][j]);
-    printf("return : %i\n", ret);
+    } 
     
     *kp = k;
     *ip = i;
