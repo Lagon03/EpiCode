@@ -1,3 +1,6 @@
+# ifndef OP_H
+# define OP_H
+
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -49,3 +52,5 @@ struct Array* gf_poly_mul(struct Array *p, struct Array *q, struct gf_tables *gf
 uint8_t gf_poly_eval(struct Array *p, uint8_t x, struct gf_tables *gf_table);
 
 struct Tuple* gf_poly_div(struct Array *dividend, struct Array *divisor, struct gf_tables *gf_table);
+
+#endif

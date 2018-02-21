@@ -1,3 +1,7 @@
+# ifndef ARRAY_H
+# define ARRAY_H
+
+
 struct Array{
   uint8_t *array;
   size_t used;
@@ -41,3 +45,5 @@ void freeArray(struct Array *a)
 	a->used = 0;
 	a->size = 0;
 }
+
+#endif

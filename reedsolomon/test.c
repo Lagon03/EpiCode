@@ -1,4 +1,5 @@
 #include "op.h"
+#include "array.h"
 #include "encode.h"
 
 int main()
@@ -16,12 +17,17 @@ int main()
   printf("res2: %u", res2);
   //for(int i =0; i < LENGTH(gf_table->gf_log); i++)
   //  printf("elem %d: %u", i, gf_table->gf_log[i]);
-  uint8_t msg_in[16] = {0x40, 0xd2, 0x75, 0x47, 0x76, 0x17, 0x32, 0x06,
+  struct Array *msg_in = malloc(sizeof(struct Array));
+  initArray(msg_in, 17);
+  msg_in->array = {0x40, 0xd2, 0x75, 0x47, 0x76, 0x17, 0x32, 0x06,
 			0x27, 0x26, 0x96, 0xc6, 0xc6, 0x96,0x70, 0xec};
-  uint8_t *msg = malloc(sizeof(uint8_t) * 16);
+  msg_in->used = 16;
+  struct Array *msg = malloc(sizeof(struct Array));
+  initArray(msg, 17);
+  
   msg = rs_encode_msg(msg_in, 10, gf_table);
-  for(int i =0; i < 26;i++)
-    printf("\n%u ,", msg[i]);
+  for(int i =0; i < msg->used; i++)
+    printf("\n%u ,", msg->array[i]);
   
   return 0;
 }
