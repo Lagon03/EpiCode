@@ -20,6 +20,8 @@ extern const size_t H_LEVEL[3][41];
 
 extern const char SpecAdd[2][8];
 
+extern const size_t Remainder_bits[41];
+
 /* Maximum number of characters a 40-L code can contain
  * Numeric : 7096 characters
  * Alpha   : 4296 characters

@@ -4,7 +4,10 @@
 **  discription : Writing down the data into the matrix 
 */
 
-# include "fill_mat.h"
+# include "err.h"
+
+# include "../headers/fill_mat.h"
+# include "../headers/mask.h"
 
 // SUB_FUNCTION
 
@@ -14,7 +17,7 @@ void upwards(char **mat, char *msg, size_t size, int *ip, int *jp, int *kp)
     int k = *kp;
     int i = *ip;
     int j = *jp;
-    while(j < size && i < size && i >= 0 && j  >= 0 && (mat[i][j] == '1' || mat[i][j] == '0'))
+    while(j < size && i < size && i >= 0 && j  >= 0 && (mat[i][j] == 0))
     {
         //warn("1 going up %d %d", i, j);
         mat[i][j] = msg[k];
@@ -42,7 +45,7 @@ void downwards(char **mat, char *msg, size_t size, int *ip, int *jp, int *kp)
     int i = *ip;
     int j = *jp;
     
-    while(j < size && i < size && j >= 0 && i >= 0 && (mat[i][j] == '1' || mat[i][j] == '0'))
+    while(j < size && i < size && j >= 0 && i >= 0 && (mat[i][j] == 0))
     {
         //warn("1 going down %d %d", i, j);
         mat[i][j] = msg[k];
@@ -193,7 +196,7 @@ void fill_mat(char **mat, size_t size, int version, char *msg, size_t msg_length
                     version_m + nv * 5;
     //verify the msg length and the totnb_bit possible
     if(totnb_bit != msg_length)    
-        warn("size error in fill mat");
+        warn("size error in fill mat | Size to match : %li; Current : %li\n", totnb_bit, msg_length);
 
     int i = size - 1;
     int j = size - 1;
@@ -267,6 +270,7 @@ void fill_mat(char **mat, size_t size, int version, char *msg, size_t msg_length
         }
         else
         {
+            printf("%li | %li | stop : %li\n", i, j, stop);
             err(EXIT_FAILURE, "error in fill_mat");
         }   
          

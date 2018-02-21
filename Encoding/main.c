@@ -7,6 +7,7 @@
 # include "headers/encode.h"
 # include "headers/mask.h"
 # include "headers/weaver.h"
+# include "headers/fill_mat.h"
 
 struct options* checkArg(int argc, char* argv[])
 {
@@ -89,7 +90,7 @@ int main (int argc, char* argv[])
     if(arg->correction == -1)
         data->correction_level = 0;
 
-    printf("\nEncoded data informations :\n");
+    printf("\nEncoded data informations  :\n");
     printf("\tMode indicator             : %s\n", data->mode_ind);
     printf("\tCharacters count indicator : %s\n", data->character_count_ind);
     printf("\tEncoded message            : %s\n", data->encoded_data);
@@ -109,6 +110,30 @@ int main (int argc, char* argv[])
     struct QrCode_Enc* QrCode = initQrCode(data);
     struct Weave* weave = interweave(QrCode);
 
+    char* weave_trans = malloc((((weave->size * 8) + Remainder_bits[data->version])
+                * sizeof(char)));
+    weave_trans[0] = '\0';
+    for(size_t w = 0; w < weave->size; ++w) {
+        char* word = convertToByte(weave->forest[w]);
+        strcat(weave_trans, word);
+        free(word);
+    }
+    if(Remainder_bits[data->version] > 0) {
+        char* r_bits = malloc((Remainder_bits[data->version] + 1) * sizeof(char));
+        r_bits[Remainder_bits[data->version]] = '\0';
+        for(size_t r = 0; r < Remainder_bits[data->version]; ++r)
+            r_bits[r] = '0';
+        strcat(weave_trans, r_bits);
+        free(r_bits);
+    }
+    //weave->size = weave->size + Remainder_bits[data->version];
+   
+    for(size_t i = 0; i < (weave->size * 8) + Remainder_bits[data->version]; ++i)
+        printf("%d\n", weave_trans[i]);
+
+    fill_mat(QrCode->mat, QrCode->size, data->version, weave_trans, (weave->size
+            * 8) + Remainder_bits[data->version]);
+
     for(size_t x = 0; x < QrCode->size; ++x) {
         printf("[");
         for(size_t y = 0; y < QrCode->size; ++y) {
@@ -126,14 +151,10 @@ int main (int argc, char* argv[])
     printf("Interweaved data : \n");
     for(size_t i = 0; i < weave->size; ++i)
         printf("%ld ", weave->forest[i]);
-    printf("\n Length : %li\n", weave->size);
-    printf("Interweaved data to binary : \n");
-    for(size_t i = 0; i < weave->size; ++i) {
-        char* conv = convertToByte(weave->forest[i]);
-        printf("%s", conv);
-        free(conv);
-    }
-    printf("\n");
+    printf("\nLength : %li\n", weave->size);
+    printf("Interweaved data to binary : \n%s\n", weave_trans);
+    printf("Total length : %li | with %li remainder bits\n", (weave->size * 8)
+            + Remainder_bits[data->version], Remainder_bits[data->version]);
     free(weave->forest);
     free(weave);
 
@@ -145,6 +166,7 @@ int main (int argc, char* argv[])
     // ---
     free(mod);
     free(arg);
+    free(weave_trans);
 
     return 1;
 }

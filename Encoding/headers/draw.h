@@ -25,6 +25,4 @@ struct QrCode_enc
 void protectMatrix(struct QrCode_Enc* data);
 void unprotectMatrix(struct QrCode_Enc* data);
 
-void fillMatrix(struct QrCode_Enc* data, char** input);
-
 # endif
