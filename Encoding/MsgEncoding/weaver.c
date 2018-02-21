@@ -33,7 +33,6 @@ struct Weave* interweave(struct QrCode_Enc* data) {
             }
             for(size_t b2 = 0; b2 < nb_block02 && c2 < nb_cw_02; ++b2, ++cur) {
                 forest[cur] = convertToDec(msg_d->codewords->group[1]->blocks[b2]->words[c2]);
-                printf("\t%ld\n", forest[cur]);
             }
             if(c1 < nb_cw_01)
                 ++c1;

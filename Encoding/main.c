@@ -7,6 +7,7 @@
 # include "headers/encode.h"
 # include "headers/mask.h"
 # include "headers/weaver.h"
+# include "headers/fill_mat.h"
 
 struct options* checkArg(int argc, char* argv[])
 {
@@ -126,7 +127,7 @@ int main (int argc, char* argv[])
     printf("Interweaved data : \n");
     for(size_t i = 0; i < weave->size; ++i)
         printf("%ld ", weave->forest[i]);
-    printf("\n Length : %li\n", weave->size);
+    printf("\nLength : %li\n", weave->size);
     printf("Interweaved data to binary : \n");
     for(size_t i = 0; i < weave->size; ++i) {
         char* conv = convertToByte(weave->forest[i]);
@@ -134,6 +135,7 @@ int main (int argc, char* argv[])
         free(conv);
     }
     printf("\n");
+    printf("Total length : %li | with %i remainder bits\n", weave->size * 8, 0);
     free(weave->forest);
     free(weave);
 

@@ -20,7 +20,7 @@ void protectMatrix(struct QrCode_Enc* data) {
                     (x == 0 && y == size - 8)) {
                 for(int i = x; i < 7; ++i)
                     for(int j = x; j < 7; ++j)
-                        mat[i][j] = 'c'
+                        matrix[i][j] = 'c';
             }
             if(matrix[x][y] == '1')
                 matrix[x][y] = '3';

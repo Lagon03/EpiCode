@@ -4,7 +4,10 @@
 **  discription : Writing down the data into the matrix 
 */
 
+# include "err.h"
+
 # include "../headers/fill_mat.h"
+# include "../headers/mask.h"
 
 // SUB_FUNCTION
 
@@ -193,7 +196,7 @@ void fill_mat(char **mat, size_t size, int version, char *msg, size_t msg_length
                     version_m + nv * 5;
     //verify the msg length and the totnb_bit possible
     if(totnb_bit != msg_length)    
-        warn("size error in fill mat");
+        warn("size error in fill mat | Size to match : %li; Current : %li\n", totnb_bit, msg_length);
 
     int i = size - 1;
     int j = size - 1;

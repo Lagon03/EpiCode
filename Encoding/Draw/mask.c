@@ -31,7 +31,26 @@ const char align_pattern[5][5] = {
     {'1', '1', '1', '1', '1'},
 };
 
-static const size_t Ap_coord[40][8] =
+
+const char prot_finder_pattern[7][7] = {
+    {'f', 'f', 'f', 'f', 'f', 'f', 'f'},
+    {'f', 'f', 'f', 'f', 'f', 'f', 'f'},
+    {'f', 'f', 'f', 'f', 'f', 'f', 'f'},
+    {'f', 'f', 'f', 'f', 'f', 'f', 'f'},
+    {'f', 'f', 'f', 'f', 'f', 'f', 'f'},
+    {'f', 'f', 'f', 'f', 'f', 'f', 'f'},
+    {'f', 'f', 'f', 'f', 'f', 'f', 'f'}
+};
+
+const char prot_align_pattern[5][5] = {
+    {'a', 'a', 'a', 'a', 'a'},
+    {'a', 'a', 'a', 'a', 'a'},
+    {'a', 'a', 'a', 'a', 'a'},
+    {'a', 'a', 'a', 'a', 'a'},
+    {'a', 'a', 'a', 'a', 'a'},
+};
+
+const size_t Ap_coord[40][8] =
 {
     {0, 0, 0, 0, 0, 0, 0, 0},      //1
     {1, 6, 18, 0, 0, 0, 0, 0},     //2
@@ -444,8 +463,8 @@ int** evaluate(struct QrCode_Enc* data) {
 void setTiming(struct QrCode_Enc* data) {
     int k = 1;
     for(size_t x = 6; x < data->size - 7; ++x, ++k) {
-        data->mat[x][6] = '0' + (k % 2);
-        data->mat[6][x] = '0' + (k % 2);
+        data->mat[x][6] = 't';//'0' + (k % 2);
+        data->mat[6][x] = 't';//'0' + (k % 2);
     }
 }
     static inline
@@ -453,7 +472,7 @@ void sub_color_alignment(char **mat, size_t i, size_t j)
 {
     for(int x = 0,  k = -2; x < 5; ++x, ++k)
         for(int y = 0, l = -2; y < 5; ++y, ++l) {
-            mat[i + k][j + l] = align_pattern[x][y];
+            mat[i + k][j + l] = 'a';//align_pattern[x][y];
         }
 }
 
@@ -486,7 +505,7 @@ void initMatrix(struct QrCode_Enc* data) {
             if(x == 0 && y == 0) {
                 for(int i = 0; i < 7; ++i, ++x) {
                     for(int j = 0; j < 7; ++j, ++y) {
-                        mat[x][y] = finder_pattern[i][j];
+                        mat[x][y] = prot_finder_pattern[i][j];
                     }
                     y = save_y;
                 }
@@ -495,7 +514,7 @@ void initMatrix(struct QrCode_Enc* data) {
             if(x == 0 && y == size - 7)  {
                 for(int i = 0; i < 7; ++i, ++x) {
                     for(int j = 0; j < 7; ++j, ++y) {
-                        mat[x][y] = finder_pattern[i][j];
+                        mat[x][y] = prot_finder_pattern[i][j];
                     }
                     y = save_y;
                 }
@@ -504,7 +523,7 @@ void initMatrix(struct QrCode_Enc* data) {
             if(x == size - 7 && y == 0) {
                 for(int i = 0; i < 7; ++i, ++x) {
                     for(int j = 0; j < 7; ++j, ++y) {
-                        mat[x][y] = finder_pattern[i][j];
+                        mat[x][y] = prot_finder_pattern[i][j];
                     }
                     y = save_y;
                 }
@@ -514,14 +533,14 @@ void initMatrix(struct QrCode_Enc* data) {
     }
     // Set the separator
     for(size_t x = 0; x < 8; ++x) {
-        mat[x][7] = '0';
-        mat[x][size - 8] = '0';
+        mat[x][7] = 's';//'0';
+        mat[x][size - 8] = 's';//'0';
 
-        mat[7][x] = '0';
-        mat[7][size - 8 + x] = '0';
+        mat[7][x] = 's';//'0';
+        mat[7][size - 8 + x] = 's';//'0';
 
-        mat[size - 8 + x][7] = '0';
-        mat[size - 8][x] = '0';
+        mat[size - 8 + x][7] = 's';//'0';
+        mat[size - 8][x] = 's';//'0';
     }
     // Set timing pattern
     setTiming(data);
@@ -532,22 +551,22 @@ void initMatrix(struct QrCode_Enc* data) {
 
     // Reserve the format information area
     for(size_t x = 0; x < 8; ++x) { 
-        mat[size - 8 + x][8] = mat[size - 8 + x][8] == 0 ? '7' : mat[size - 8 + x][8];
-        mat[x][8] = mat[x][8] == 0 ? '7' : mat[x][8];
-        mat[8][x] = mat[8][x] == 0 ? '7' : mat[8][x];
-        mat[8][size - 8 + x] = mat[8][size - 8 + x] == 0 ? '7' : mat[8][size - 8 + x];
-        mat[8][8] = '7';
+        mat[size - 8 + x][8] = mat[size - 8 + x][8] == 0 ? 'c' : mat[size - 8 + x][8];
+        mat[x][8] = mat[x][8] == 0 ? 'c' : mat[x][8];
+        mat[8][x] = mat[8][x] == 0 ? 'c' : mat[8][x];
+        mat[8][size - 8 + x] = mat[8][size - 8 + x] == 0 ? 'c' : mat[8][size - 8 + x];
+        mat[8][8] = 'c';
     }
     if(data->data->version >= 7)
     {
         for(size_t x = 0; x < 6; ++x) {
-            mat[x][size - 11] = '7';
-            mat[x][size - 10] = '7';
-            mat[x][size - 9] = '7';
+            mat[x][size - 11] = 'c';//'7';
+            mat[x][size - 10] = 'c';//'7';
+            mat[x][size - 9] = 'c';//'7';
 
-            mat[size - 11][x] = '7';
-            mat[size - 10][x] = '7';
-            mat[size - 9][x] = '7';
+            mat[size - 11][x] = 'c';//'7';
+            mat[size - 10][x] = 'c';//'7';
+            mat[size - 9][x] = 'c';//'7';
         }
     }
 }
@@ -572,6 +591,7 @@ struct QrCode_Enc* initQrCode(struct EncData* data) {
     //protectMatrix(QrCode);
 
     // translate content into matrix
+    //fill_mat(QrCode->mat, size, data->version, data->enc, QrCode->size_enc);
 
     // unprotect the matrix to have correct value
     //unprotectMatrix(QrCode);
