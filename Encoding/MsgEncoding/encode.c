@@ -228,7 +228,6 @@ char* convertToByte(size_t input)
         input >>= 1;
         --index;
     }
-
     return array;
 }
 
@@ -397,19 +396,21 @@ struct Codewords* breakCodeword(struct EncData* data)
     if(group != 0 && group_ == 0)
     {
         codewords->group = malloc(sizeof(struct Group*));
-        codewords->size = 1; 
+        codewords->size = 1; // number of group 
     }
     else
     {
         codewords->group = malloc(2 * sizeof(struct Group*));
-        codewords->size = 2;
+        codewords->size = 2; // number of group
     }
     codewords->words = nb_cw;
+    codewords->nb_block = 0;
 
     printf("Version %li\n", version);
     for(size_t g = 0; g < codewords->size; ++g) {
         printf("Group %2li:\n", g + 1);
         size_t block_nb = GROUP_BLOCK_CODEWORDS[g][correction][version];
+        codewords->nb_block += block_nb;
         printf("Number of block : %li | Number of words : %i\n", block_nb, nb_cw);
         if(block_nb != 0) {
             codewords->group[g] = malloc(sizeof(struct Group));
@@ -436,12 +437,14 @@ struct Codewords* breakCodeword(struct EncData* data)
                     for(int i = 0; i < 8; ++i, ++cur) {
                         codewords->group[g]->blocks[b]->words[w][i] = full_data[cur];
                     }
-                    printf("\t\tCodeword %2li: %s\n", w + 1, 
-                            codewords->group[g]->blocks[b]->words[w]);
+                    printf("\t\tCodeword %2li: %s | value : %ld\n", w + 1, 
+                            codewords->group[g]->blocks[b]->words[w], 
+                            convertToDec(codewords->group[g]->blocks[b]->words[w]));
                 }
             }
         }
     }
+    printf("Total blocks : %li\n", codewords->nb_block);
     free(full_data);
     return codewords;
 }

@@ -6,6 +6,20 @@
 
 # include "analysis.h"
 
+
+
+extern const size_t TOTAL_DECC[4][41];
+extern const size_t GROUP_CODEWORDS[4][2][41];
+extern const size_t GROUP_BLOCK_CODEWORDS[2][4][41];
+extern const int8_t ECC_CODEWORDS_PER_BLOCK[4][41];
+extern const int8_t NUM_ERROR_CORRECTIOn_BLOCKS[4][41];
+extern const size_t L_LEVEL[3][41];
+extern const size_t M_LEVEL[3][41];
+extern const size_t Q_LEVEL[3][41];
+extern const size_t H_LEVEL[3][41];
+
+extern const char SpecAdd[2][8];
+
 /* Maximum number of characters a 40-L code can contain
  * Numeric : 7096 characters
  * Alpha   : 4296 characters
@@ -30,6 +44,7 @@ struct EncData
   size_t version;
   int correction_level;
   struct Codewords* codewords;
+  struct Codewords* cor_codewords;
 };
 
 struct Codewords
@@ -39,6 +54,7 @@ struct Codewords
     //char**** words;
     struct Group** group;
     size_t size;
+    size_t nb_block;
     size_t words;
 };
 
@@ -65,6 +81,7 @@ char* adjustSize(char* bits, int limit);
 // --------------
 void freeCodeWords(struct Codewords* codewords);
 char* convertToByte(size_t input);
+size_t convertToDec(char* input);
 struct EncData* getEncodedSize(struct options *arg);
 
 
