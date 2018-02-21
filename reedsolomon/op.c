@@ -176,7 +176,7 @@ struct Array* gf_poly_mul(struct Array *p, struct Array *q, struct gf_tables *gf
       }
   }
   return res;
-  }
+}
 
 /*Evaluates a polynomial in GF(2^p) given the value for x. This is based on Horner's scheme for maximum efficiency.*/
 uint8_t gf_poly_eval(struct Array *p, uint8_t x, struct gf_tables *gf_table)

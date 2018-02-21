@@ -16,10 +16,15 @@ struct Array* array2(uint8_t a, uint8_t b)
 struct Array* rs_generator_poly(uint8_t nsym, struct gf_tables *gf_table)
 {
   struct Array *g = malloc(sizeof(struct Array));
-  initArray(g, gf_pow(2, nsym, gf_table));
+  initArray(g, nsym);
   g->array[0] = 1;
-  for(uint8_t i = 0; i < nsym; i++)
-    g = gf_poly_mul(g, array2(1, gf_pow(2, i, gf_table)), gf_table);
+  printf("HERE");
+  for(uint8_t i = 0; i < nsym; i++){
+    
+    for(int j = 0; j < g->used; j++)
+      printf("g value : %u,", g->array[j]);
+    g = gf_poly_mul(realloc(g, gf_pow(2, i, gf_table)), array2(1, gf_pow(2, i, gf_table)), gf_table);
+  }
   return g;
 }
 
