@@ -84,6 +84,17 @@ void fill_qr(SDL_Surface *img, struct QrCode *qr)
     }
 }
 
+static inline
+void Get_QrCode_loc(struct QrCode *qr)
+{
+    double *coords = calloc(4, sizeof(double));
+    coords[0] = qr->A->ul[0];
+    coords[1] = qr->A->ul[1];
+    coords[2] = qr->B->dr[0];
+    coords[3] = qr->C->dr[1];
+    qr->coords = coords;
+}
+
 // MAIN FUNCTION
 
 //Extracts QrCode struct for further computations
@@ -96,6 +107,8 @@ struct QrCode *extract_QrCode_NoG(SDL_Surface *img, struct FPat *finders)
     qr->A = init_Finder(finders->centers->mat[0][0], finders->centers->mat[0][1], m_size);
     qr->B = init_Finder(finders->centers->mat[1][0], finders->centers->mat[1][1], m_size);
     qr->C = init_Finder(finders->centers->mat[2][0], finders->centers->mat[2][1], m_size);
+    
+    Get_QrCode_loc(qr);
     
     qr->version = estimate_version_NoG(qr->A, qr->B, m_size);
     
