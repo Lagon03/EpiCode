@@ -150,6 +150,8 @@ int main (int argc, char* argv[])
     printf("Mask winner is %li\n", cur);    
 
     setFormatString(QrCode, S_bits[data->correction_level][cur]);
+    if(data->version >= 7)
+        setVersionString(QrCode, V_bits[data->version]);
     //setFormatString(QrCode, "110011000101111");
     protectMatrix(QrCode);
 
@@ -159,7 +161,9 @@ int main (int argc, char* argv[])
         unprotectMatrix_B(QrCode);
 
         Generate_QrCode(QrCode->mat, data->version, "test.bmp", 8);
+        protectMatrix(QrCode);
         applyMask(QrCode->mat, QrCode->size, i);
+        
     }
 
     for(size_t x = 0; x < QrCode->size; ++x) {

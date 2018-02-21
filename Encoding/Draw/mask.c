@@ -560,13 +560,13 @@ void initMatrix(struct QrCode_Enc* data) {
     if(data->data->version >= 7)
     {
         for(size_t x = 0; x < 6; ++x) {
-            mat[x][size - 11] = 'c';//'7';
-            mat[x][size - 10] = 'c';//'7';
-            mat[x][size - 9] = 'c';//'7';
+            mat[x][size - 11] = 'v';//'7';
+            mat[x][size - 10] = 'v';//'7';
+            mat[x][size - 9] = 'v';//'7';
 
-            mat[size - 11][x] = 'c';//'7';
-            mat[size - 10][x] = 'c';//'7';
-            mat[size - 9][x] = 'c';//'7';
+            mat[size - 11][x] = 'v';//'7';
+            mat[size - 10][x] = 'v';//'7';
+            mat[size - 9][x] = 'v';//'7';
         }
     }
 }

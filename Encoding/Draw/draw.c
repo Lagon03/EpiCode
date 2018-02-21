@@ -239,7 +239,7 @@ void unprotectMatrix_B(struct QrCode_Enc* data) {
         matrix[size - 8 + x][7] = '0';
         matrix[size - 8][x] = '0';
     }
-    
+
     // Set the dark module
     matrix[4 * data->data->version][8] = '1';
 
@@ -266,5 +266,19 @@ void setFormatString(struct QrCode_Enc* data, const char format[15]) {
             mat[size - 8 + x][8] = format[7 - x];
         mat[8][size - 8 + x] = format[7 + x];
     }
+}
 
+void setVersionString(struct QrCode_Enc* data, const char version[18]) {
+    size_t size = data->size;
+    char** mat = data->mat;
+
+    for(size_t x = 0; x < 6; ++x) {
+        mat[x][size - 11] = version[3 * x];
+        mat[x][size - 10] = version[3 * x + 1];
+        mat[x][size - 9] = version[3 * x + 2];
+
+        mat[size - 11][x] = version[3 * x];
+        mat[size - 10][x] = version[3 * x + 1];
+        mat[size - 9][x] = version[3 * x + 2];
+    }
 }

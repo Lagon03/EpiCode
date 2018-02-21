@@ -27,5 +27,6 @@ void unprotectMatrix_B(struct QrCode_Enc* data);
 void unprotectMatrix(struct QrCode_Enc* data);
 
 void setFormatString(struct QrCode_Enc* data, const char format[16]);
+void setVersionString(struct QrCode_Enc* data, const char version[18]);
 
 # endif
