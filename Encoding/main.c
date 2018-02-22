@@ -130,6 +130,13 @@ int main (int argc, char* argv[])
         free(r_bits);
     }
     //weave->size = weave->size + Remainder_bits[data->version];
+    printf("Interweaved data : \n");
+    for(size_t i = 0; i < weave->size; ++i)
+        printf("%ld ", weave->forest[i]);
+    printf("\nLength : %li\n", weave->size);
+    printf("Interweaved data to binary : \n%s\n", weave_trans);
+    printf("Total length : %li | with %li remainder bits\n", (weave->size * 8)
+            + Remainder_bits[data->version], Remainder_bits[data->version]);
 
     fill_mat(QrCode->mat, QrCode->size, data->version, weave_trans, (weave->size
                 * 8) + Remainder_bits[data->version]);
@@ -152,19 +159,23 @@ int main (int argc, char* argv[])
     setFormatString(QrCode, S_bits[data->correction_level][cur]);
     if(data->version >= 7)
         setVersionString(QrCode, V_bits[data->version]);
-    //setFormatString(QrCode, "110011000101111");
     protectMatrix(QrCode);
 
-    for(int i = 0; i < 8; ++i) {
-        applyMask(QrCode->mat, QrCode->size, i);
+    //for(int i = 0; i < 8; ++i) {
+        applyMask(QrCode->mat, QrCode->size, cur);
 
         unprotectMatrix_B(QrCode);
 
-        Generate_QrCode(QrCode->mat, data->version, "test.bmp", 8);
-        protectMatrix(QrCode);
-        applyMask(QrCode->mat, QrCode->size, i);
+        Generate_QrCode(QrCode->mat, data->version, "test.bmp", 10);
+        //protectMatrix(QrCode);
+        //applyMask(QrCode->mat, QrCode->size, i);
         
-    }
+    //}
+    /*applyMask(QrCode->mat, QrCode->size, cur);
+    unprotectMatrix_B(QrCode);
+
+    Generate_QrCode(QrCode->mat, data->version, "test.bmp", 8);*/
+
 
     for(size_t x = 0; x < QrCode->size; ++x) {
         /*printf("[");
@@ -180,13 +191,6 @@ int main (int argc, char* argv[])
     free(QrCode->mat);
     free(QrCode);
 
-    printf("Interweaved data : \n");
-    for(size_t i = 0; i < weave->size; ++i)
-        printf("%ld ", weave->forest[i]);
-    printf("\nLength : %li\n", weave->size);
-    printf("Interweaved data to binary : \n%s\n", weave_trans);
-    printf("Total length : %li | with %li remainder bits\n", (weave->size * 8)
-            + Remainder_bits[data->version], Remainder_bits[data->version]);
     free(weave->forest);
     free(weave);
 

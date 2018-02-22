@@ -6,6 +6,7 @@
 # include "../headers/encode.h"
 # include "../headers/encode_message.h"
 # include "../headers/analysis.h"
+# include "../headers/polynomials.h"
 
 //-----------------------------------------------------------------------------
 //                              HARD CODED CONST
@@ -528,10 +529,13 @@ struct Codewords* breakCodeword(struct EncData* data)
                     for(int i = 0; i < 8; ++i, ++cur) {
                         codewords->group[g]->blocks[b]->words[w][i] = full_data[cur];
                     }
-                    //printf("\t\tCodeword %2li: %s | value : %ld\n", w + 1, 
-                    //        codewords->group[g]->blocks[b]->words[w], 
-                    //        convertToDec(codewords->group[g]->blocks[b]->words[w]));
+                    printf("\t\tCodeword %2li: %s | value : %ld\n", w + 1, 
+                            codewords->group[g]->blocks[b]->words[w], 
+                            convertToDec(codewords->group[g]->blocks[b]->words[w]));
                 }
+
+                // Here we compute the correction codewords
+                //GenPolyFromCW(codewords->group[g]->blocks[b], 7);
             }
         }
     }

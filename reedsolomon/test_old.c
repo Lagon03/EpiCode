@@ -45,7 +45,7 @@ int main()
   
   msg = rs_encode_msg(msg_in, 10, gf_table);
   for(int i =0; i < msg->used; i++)
-    printf("\n%u - ", msg->array[i]);
+    printf("\n%u", msg->array[i]);
   printf("\n");
   
   return 0;

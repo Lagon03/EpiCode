@@ -116,7 +116,7 @@ void unprotectMatrix(struct QrCode_Enc* data) {
         mat[size - 8][x] = '0';
     }
     // Set the dark module
-    mat[4 * data->data->version][8] = '1';
+    mat[size - 8][8] = '1';
 
     // Set timing pattern
     setTiming(data, 0);
@@ -178,8 +178,23 @@ void protectMatrix(struct QrCode_Enc* data) {
         matrix[size - 8][x] = 's';
     }
 
+    // protect the string information
+    for(size_t x = 0; x < 8; ++x) {
+        if(x >= 6) {
+            matrix[x + 1][8] += 2;
+            matrix[8][x + 1] += 2;
+        }
+        else {
+            matrix[x][8] += 2;
+            matrix[8][x] += 2;
+        }
+        if (x != 0)
+            matrix[size - 8 + x][8] += 2;
+        matrix[8][size - 8 + x] += 2;
+    }
+
     // protect the dark module
-    matrix[4 * data->data->version][8] = '9';
+    matrix[size - 8][8] = '9';
 
     // protect the timing
     setTiming(data, 1);
@@ -240,8 +255,23 @@ void unprotectMatrix_B(struct QrCode_Enc* data) {
         matrix[size - 8][x] = '0';
     }
 
+    // set the string information
+    for(size_t x = 0; x < 8; ++x) {
+        if(x >= 6) {
+            matrix[x + 1][8] -= 2;
+            matrix[8][x + 1] -= 2;
+        }
+        else {
+            matrix[x][8] -= 2;
+            matrix[8][x] -= 2;
+        }
+        if (x != 0)
+            matrix[size - 8 + x][8] -= 2;
+        matrix[8][size - 8 + x] -= 2;
+    }
+
     // Set the dark module
-    matrix[4 * data->data->version][8] = '1';
+    matrix[size - 8][8] = '1';
 
     // Set timing pattern
     setTiming(data, 0);

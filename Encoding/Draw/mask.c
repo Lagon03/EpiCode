@@ -283,7 +283,7 @@ void applyMask(char **mat, size_t size, int mask)
                   }
     }
 }
-
+// condition #1 similar color consecutive
 int sequential_Eval(char** mat, size_t size) {
     int v_penality = 0;
 
@@ -291,23 +291,22 @@ int sequential_Eval(char** mat, size_t size) {
     char last_color = 'n';
     for(size_t y = 0; y < size; ++y) {
         for(size_t x = 0; x < size; ++x) {
-            if(last_color == 'n') {
-                last_color = mat[x][y];
-                counter += 1;
-                continue;
-            }
-            if(last_color == mat[x][y]) {
-                counter += 1;
-            }
-            else {
-                counter = 1;
-                last_color = mat[x][y];
-            }
             if(counter >= 5) {
                 if (counter == 5)
                     v_penality += 3;
                 else
                     v_penality += 1;
+            }
+            if(last_color == 'n') {
+                last_color = mat[x][y];
+                counter += 1;
+            }
+            else if(last_color == mat[x][y]) {
+                counter += 1;
+            }
+            else {
+                counter = 1;
+                last_color = mat[x][y];
             }
         }
     }
@@ -317,27 +316,25 @@ int sequential_Eval(char** mat, size_t size) {
     last_color = 'n';
     for(size_t x = 0; x < size; ++x) {
         for(size_t y = 0; y < size; ++y) {
-            if(last_color == 'n') {
-                last_color = mat[x][y];
-                counter += 1;
-                continue;
-            }
-            if(last_color == mat[x][y]) {
-                counter += 1;
-            }
-            else {
-                counter = 1;
-                last_color = mat[x][y];
-            }
             if(counter >= 5) {
                 if (counter == 5)
                     h_penality += 3;
                 else
                     h_penality += 1;
             }
+            if(last_color == 'n') {
+                last_color = mat[x][y];
+                counter += 1;
+            }
+            else if(last_color == mat[x][y]) {
+                counter += 1;
+            }
+            else {
+                counter = 1;
+                last_color = mat[x][y];
+            }
         }
     }
-
     return h_penality + v_penality;
 }
 
@@ -377,7 +374,7 @@ int pattern_Eval(char** mat, size_t size) {
                             test = 0;
                             break;
                         }
-                    if(test == 0)
+                    if(test == 1)
                         penality += 40;
                 }
                 y = save_y;
@@ -388,7 +385,7 @@ int pattern_Eval(char** mat, size_t size) {
                             test = 0;
                             break;
                         }
-                    if(test == 0)
+                    if(test == 1)
                         penality += 40;
 
                 }
@@ -396,7 +393,6 @@ int pattern_Eval(char** mat, size_t size) {
             }
         }
     }
-
     return penality;
 }
 
@@ -409,9 +405,9 @@ int ratio_Eval(char** mat, size_t size) {
                 dark_cells += 1;
         }
     }
-    double ratio = (dark_cells / (size * size)) * 100;
-    double prev_mult = ratio + 5;
-    double next_mult = 1;
+    double ratio = ((double)dark_cells / (double)(size * size)) * 100;
+    size_t prev_mult = ratio + 5;
+    size_t next_mult = 1;
     while(prev_mult > ratio)
         prev_mult -= 5;
     while(next_mult < ratio)
@@ -437,16 +433,16 @@ int** evaluate(struct QrCode_Enc* data) {
             // evaluation bloc
             switch(condition) {
                 case 1 : // block contition
-                    penalty[mask][condition] = block_Eval(mat, data->size);
+                    penalty[mask][1] = block_Eval(mat, data->size);
                     break;
                 case 2 : // similar pattern condition
-                    penalty[mask][condition] = pattern_Eval(mat, data->size);
+                    penalty[mask][2] = pattern_Eval(mat, data->size);
                     break;
                 case 3 : // ratio of light/dark
-                    penalty[mask][condition] = ratio_Eval(mat, data->size);
+                    penalty[mask][3] = ratio_Eval(mat, data->size);
                     break;
                 default : // consecutive color condition
-                    penalty[mask][condition] = sequential_Eval(mat, data->size);
+                    penalty[mask][0] = sequential_Eval(mat, data->size);
                     break;
             }
 
