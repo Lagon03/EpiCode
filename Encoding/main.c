@@ -161,20 +161,20 @@ int main (int argc, char* argv[])
         setVersionString(QrCode, V_bits[data->version]);
     protectMatrix(QrCode);
 
-    //for(int i = 0; i < 8; ++i) {
-        applyMask(QrCode->mat, QrCode->size, cur);
+    for(int i = 0; i < 8; ++i) {
+        applyMask(QrCode->mat, QrCode->size, i);
 
         unprotectMatrix_B(QrCode);
 
-        Generate_QrCode(QrCode->mat, data->version, "test.bmp", 10);
-        //protectMatrix(QrCode);
-        //applyMask(QrCode->mat, QrCode->size, i);
+        Generate_QrCode(QrCode->mat, data->version, "test.bmp", 8);
+        protectMatrix(QrCode);
+        applyMask(QrCode->mat, QrCode->size, i);
         
-    //}
-    /*applyMask(QrCode->mat, QrCode->size, cur);
+    }
+    applyMask(QrCode->mat, QrCode->size, cur);
     unprotectMatrix_B(QrCode);
 
-    Generate_QrCode(QrCode->mat, data->version, "test.bmp", 8);*/
+    Generate_QrCode(QrCode->mat, data->version, "test.bmp", 8);
 
 
     for(size_t x = 0; x < QrCode->size; ++x) {
