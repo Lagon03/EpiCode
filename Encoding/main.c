@@ -172,6 +172,7 @@ int main (int argc, char* argv[])
         applyMask(QrCode->mat, QrCode->size, i);
         
     }
+    printf("Applying the best mask >> mask %li\n", cur);
     applyMask(QrCode->mat, QrCode->size, cur);
     unprotectMatrix_B(QrCode);
 
