@@ -87,17 +87,35 @@ void fPiter(char *file)
 void full_segmentation(char *file)
 {
     SDL_Surface *img = load_image(file);
+    SDL_Surface *show = load_image(file);
     img = grayscale(img);
     img = blackAndWhite(img, 0);
     
     struct FPat *f = findFP(img);
     
+    drawFP(show, f->centers, f->ems_vector);
+     
     struct QrCode *qr = extract_QrCode_NoG(img, f);
-    printf("QrCode Found : \n");
+    printf("\n\nQrCode Found : \n");
     printf("Version : V%0d \n", qr->version);
     printf("Estimated module size : %lf \n", qr->m_size);
     printf("QrCode Data Matrix : \n");
     print_mat(qr->mat, qr->version * 4 + 17);
+    printf("\n");
+    
+    display_image(show);
+    
+    getchar();
+    
+    struct PCode *c = get_code(qr);
+    printf("Format :\n");
+    printf("    Mask : %d\n", c->mask);
+    printf("    Error Correction Level : %c\n", c->err_cor_lvl);
+    printf("    Error Correction Bits : %s\n\n", c->err_cor);
+    printf("Cyphered Message Ready to be decoded : \n");
+    printf("%s", c->msg);
+    
+    free_segmentation(f, qr, c);
 }
 
 int main(void){
@@ -119,13 +137,17 @@ int main(void){
     fPiter("../resources/qrrltest.jpg");
 
     //Retrieve code
-    
+    getchar();
     full_segmentation("../resources/HelloWorldv1.png");
+    getchar();
     full_segmentation("../resources/QrV2.png");
+    getchar();
     full_segmentation("../resources/QrV7.png");
+    getchar();
     full_segmentation("../resources/QrV8.png");
+    getchar();
     full_segmentation("../resources/QrV40.png");
-    
+    getchar(); 
     //free_segmentation(FPs, qr, code);
     SDL_Quit();
     return 1;

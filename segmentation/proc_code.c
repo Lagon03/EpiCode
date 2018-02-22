@@ -327,7 +327,7 @@ void color_spec_pat(char **mat, int version)
     color_timing_pat(mat, size);
     //warn("a");
     color_alignment(mat, version);
-    warn("end");
+    //warn("end");
 }   
 
 // MAIN FUNCTION
@@ -335,7 +335,7 @@ void color_spec_pat(char **mat, int version)
 struct PCode *get_code(struct QrCode *qr)
 {
     struct PCode *code = malloc(sizeof(struct PCode));
-    warn("coloring matrix");
+    //warn("coloring matrix");
     
     int sizei = qr->version * 4 + 17;
     

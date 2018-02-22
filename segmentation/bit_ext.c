@@ -321,7 +321,7 @@ char *ext_cyphmsg(char **mat, size_t size, int version)
             }
             else if (stop == 10)
             {
-                warn("end");
+                //warn("end");
                 break;
             }
             else
@@ -336,6 +336,6 @@ char *ext_cyphmsg(char **mat, size_t size, int version)
             break;
     }
     //warn("end"); 
-    warn("output length %d / %d : %s", totnb_bit, k, msg);
+    //warn("output length %d / %d : %s", totnb_bit, k, msg);
     return msg;
 }
