@@ -120,8 +120,6 @@ int main(void){
     //Retrieve code
     
     full_segmentation("../resources/HelloWorldv1.png");
-    full_segmentation("../resources/HelloWorldv1skew.png");
-    full_segmentation("../resources/HelloWorldv1skew2.png");
     full_segmentation("../resources/QrV2.png");
     full_segmentation("../resources/QrV7.png");
     full_segmentation("../resources/QrV8.png");
