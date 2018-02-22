@@ -535,7 +535,7 @@ struct Codewords* breakCodeword(struct EncData* data)
                 }
 
                 // Here we compute the correction codewords
-                //GenPolyFromCW(codewords->group[g]->blocks[b], 7);
+                //GenPolyFromCW(codewords->group[g]->blocks[b], ECC_CODEWORDS_PER_BLOCK[data->correction_level][data->version]);
             }
         }
     }

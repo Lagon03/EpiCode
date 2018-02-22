@@ -5,8 +5,12 @@
 
 struct poly {
     size_t order;
+    struct term* term;
+};
+
+struct term {
     size_t* coeff;
-    size_t* var;
+    size_t var;
 };
 
 extern const int _log[256];

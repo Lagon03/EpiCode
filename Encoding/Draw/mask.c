@@ -483,7 +483,7 @@ void setAlignment(struct QrCode_Enc* data) {
         {
             //if(ap[i] != 0 && ap[j] != 0)
             //    printf("%c\n", mat[ap[i]][ap[j]]);
-            if((mat[ap[i]][ap[j]] != 0 && mat[ap[i]][ap[j]] != '1') || 
+            if((mat[ap[i]][ap[j]] != 0 && (mat[ap[i]][ap[j]] != '1' && mat[ap[i]][ap[j]] != 't')) || 
                     ap[i] == 0 || ap[j] == 0 || (ap[i] == 6 && ap[j] == 6) ||
                     (ap[i] == 6 && ap[j] == size - 7) || (ap[i] == size - 7 
                         && ap[j] == 6))

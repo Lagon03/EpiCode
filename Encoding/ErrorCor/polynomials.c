@@ -25,47 +25,21 @@ size_t poly_minus(size_t elm1, size_t elm2) {
 
 void poly_mul_var(size_t elm, struct poly* polynome) {
     for(size_t ord = 0; ord < polynome->order; ++ord)
-        polynome->var[ord] += elm;
+        polynome->term[ord].var += elm;
 }
 
 struct poly* poly_mul(struct poly* poly1, struct poly* poly2) {
-    struct poly* poly_ret = malloc(sizeof(struct poly));
-    size_t max_ord = poly1->order + 1;
-    if(poly1->order == poly2->order)
-        poly_ret->order = poly1->order + 1;
-    else {
-        if (poly1->order > poly2->order)
-            poly_ret->order = poly1 -> order;
-        else {
-            poly_ret->order = poly2 -> order;
-            max_ord = poly2->order;
-        }
-    }
+    struct poly* p_mul = malloc(sizeof(struct poly));
+    p_mul->order = poly1->order + poly2->order;
+    p_mul->term = malloc(p_mul->order * sizeof(struct term));
 
-    poly_ret->coeff = calloc((poly_ret->order), sizeof(size_t));
-    poly_ret->var = calloc((poly_ret->order), sizeof(size_t));
-
-
-    size_t* coeff = calloc(max_ord, sizeof(size_t));
-    for(size_t ord1 = 0; ord1 < poly1->order + 1; ++ord1)
-        for(size_t ord2 = 0; ord2 < poly2->order + 1; ++ord2) {
-            size_t _coeff = 0;   // tmp var
-            size_t _var = 0;     // tmp var
-
-            _coeff = _log[poly1->coeff[ord1] + poly2->coeff[ord2]];
-            _var = poly1->var[ord1] + poly2->var[ord2];
-
-            coeff[_var] += _coeff;
+    for(size_t ord1 = 0; ord1 < poly1->order; ++ord1)
+        for(size_t ord2 = 0; ord2 < poly2->order; ++ord2) {
+            p_mul->term[ord1 + ord2].coeff = calloc(poly1->order, sizeof(size_t));
+            p_mul->term[ord1 + ord2].var = poly1->order - ord1 + poly1->order - ord2;
         }
 
-    for(size_t i = 0; i < max_ord + 1; ++i)
-    {
-        printf("Coeff %li : %li\n", i, coeff[i]);
-    }
-    free(poly1);
-    free(poly2);
-
-    return poly_ret;
+    return poly2;
 }
 
 void poly_div(void) {
@@ -77,57 +51,44 @@ void poly_div(void) {
 //                              Main functions
 //=============================================================================
 
-/*struct tables* initTables(size_t prim) {
-    size_t gf_exp[512];
-    size_t gf_log[256];
-
-    size_t x = 1;
-    for(size_t i = 0; i < 256; ++i) {
-        gf_exp[i] = x; // compute antilog
-        gf_log[x] = i; // compute log
-        x =  5;
-    }
-}*/
-
 struct poly* GenPolyFromCW(struct Block* codewords, size_t err_words) {
     struct poly* polynome = malloc(sizeof(struct poly));
 
     polynome->order = codewords->size;
-    polynome->coeff = malloc((codewords->size - 1) * sizeof(size_t));
-    polynome->var = malloc((codewords->size - 1) * sizeof(size_t));
+    polynome->term = malloc(codewords->size * sizeof(struct term));
 
     printf("Order is %li\n", polynome->order);
 
     printf("Polynomial of the block : \n");
     for(size_t i = 0; i < codewords->size; ++i) {
-        polynome->coeff[i] = convertToDec(codewords->words[i]);
-        polynome->var[i] = polynome->order - 1 - i;
+        polynome->term[i].coeff = malloc(sizeof(size_t));
+        polynome->term[i].coeff[0] = convertToDec(codewords->words[i]);
+        polynome->term[i].var = polynome->order - 1 - i;
         if (i < codewords->size - 1)
-            printf("%lix^(%li) + ", polynome->coeff[i], polynome->var[i]);
+            printf("%lix^(%li) + ", polynome->term[i].coeff[0], polynome->term[i].var);
         else
-            printf("%li\n", polynome->coeff[i]);
+            printf("%li\n", polynome->term[i].coeff[0]);
     }
 
     poly_mul_var(err_words ,polynome);
 
     printf("Polynomial of the block after multiplication : \n");
     for(size_t i = 0; i < codewords->size; ++i) {
-        if (i < codewords->size - 1)
-            printf("%lix^(%li) + ", polynome->coeff[i], polynome->var[i]);
+        if(i < codewords->size - 1)
+            printf("%lix^(%li) + ", polynome->term[i].coeff[0], polynome->term[i].var);
         else
-            printf("%lix^(%li)\n\n", polynome->coeff[i], polynome->var[i]);
+            printf("%lix^(%li)\n", polynome->term[i].coeff[0], polynome->term[i].var);
     }
 
     struct poly* p_gen = GenPolyG(1);
 
     printf("Polynomial Generator : \n");
     for(size_t i = 0; i < p_gen->order; ++i) {
-        if (i < 2 - 1)
-            printf("%lix^(%li) + ", p_gen->coeff[i], p_gen->var[i]);
+        if (i < p_gen->order - 1)
+            printf("%lix^(%li) + ", p_gen->term[i].coeff[0], p_gen->term[i].var);
         else
-            printf("%lix^(%li)\n", p_gen->coeff[i], p_gen->var[i]);
+            printf("%lix^(%li)\n", p_gen->term[i].coeff[i], p_gen->term[i].var);
     }
-
     return polynome;
 }
 
@@ -135,31 +96,33 @@ static struct poly* initVarMul(size_t r)
 {
     struct poly* p = malloc(sizeof(struct poly));
     p->order = 1;
-    p->coeff = malloc(2 * sizeof(size_t));
-    p->var = malloc(2 * sizeof(size_t));
+    p->term = malloc(2 * sizeof(struct term));
 
-    p->coeff[0] = 0;
-    p->var[0] = 1;
+    p->term[0].coeff = malloc(sizeof(size_t));
+    p->term[0].coeff[0] = 0;
+    p->term[0].var = 1;
 
-    p->coeff[1] = r;
-    p->var[1] = 0;
+    p->term[1].coeff = malloc(sizeof(size_t));
+    p->term[1].coeff[0] = r;
+    p->term[1].var = 0;
 
     return p;
 }
 
 struct poly* GenPolyG(size_t err_words) {
     struct poly* p = malloc(sizeof(struct poly));
-    p->order = 1;
-    p->coeff = malloc(2 * sizeof(size_t));
-    p->var = malloc(2 * sizeof(size_t));
+    p->order = 2;
+    p->term = malloc(2 * sizeof(struct term));
+    p->term[0].coeff = malloc(sizeof(size_t));
+    p->term[0].coeff[0] = 0;
+    p->term[0].var = 1;
 
-    p->coeff[0] = 0;
-    p->var[0] = 1;
-
-    p->coeff[1] = 0;
-    p->var[1] = 0;
+    p->term[1].coeff = malloc(sizeof(size_t));
+    p->term[1].coeff[0] = 0;
+    p->term[1].var = 0;
 
     for(size_t r = 0; r < err_words; ++r) {
+        printf("test\n");
         struct poly* mul = initVarMul(r + 1);
         p = poly_mul(p, mul);
     }
