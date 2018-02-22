@@ -77,6 +77,18 @@ void poly_div(void) {
 //                              Main functions
 //=============================================================================
 
+/*struct tables* initTables(size_t prim) {
+    size_t gf_exp[512];
+    size_t gf_log[256];
+
+    size_t x = 1;
+    for(size_t i = 0; i < 256; ++i) {
+        gf_exp[i] = x; // compute antilog
+        gf_log[x] = i; // compute log
+        x =  5;
+    }
+}*/
+
 struct poly* GenPolyFromCW(struct Block* codewords, size_t err_words) {
     struct poly* polynome = malloc(sizeof(struct poly));
 
