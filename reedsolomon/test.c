@@ -4,24 +4,10 @@
 
 int main()
 {
-  struct gf_tables *gf_table = malloc(sizeof(struct gf_tables));
-  gf_table->gf_exp = malloc(sizeof(struct Array));
-  gf_table->gf_log = malloc(sizeof(struct Array));
-  initArray(gf_table->gf_exp, 513);
-  initArray(gf_table->gf_log, 257);
-  gf_table = init_tables();
-  //for(int i = 0; i < 50;i++){
-    // printf("exp %d: %u\n",i,gf_table->gf_log[i]);
-    //}
-  uint8_t x = 12;
-  uint8_t y = 10;
-  uint8_t res1 = gf_mul(x, y, gf_table);
-  uint8_t res2 = gf_div(x, y, gf_table);
-  printf("res1: %u\n", res1);
-  printf("res2: %u\n", res2);
-  //for(int i =0; i < LENGTH(gf_table->gf_log); i++)
-  //  printf("elem %d: %u", i, gf_table->gf_log[i]);
+  struct gf_tables *gf_table = init_tables();
+  
   struct Array *msg_in = malloc(sizeof(struct Array));
+
   initArray(msg_in, 100);
   msg_in->array[0] = 0x40;
   msg_in->array[1] = 0xd2;
@@ -40,6 +26,7 @@ int main()
   msg_in->array[14] = 0x70;
   msg_in->array[15] = 0xec;
   msg_in->used = 16;
+
   struct Array *msg = malloc(sizeof(struct Array));
   initArray(msg, 170);
   
