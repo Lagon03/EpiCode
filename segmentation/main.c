@@ -15,11 +15,12 @@ void print_mat(char **mat, int size)
 {
     for(int i = 0; i < size; i++)
     {
+        printf("[ ");
         for(int j = 0; j < size; j++)
         {
             printf("%c", mat[i][j]);
         }
-      printf("\n");
+        printf(" ]\n");
     }
 }
 

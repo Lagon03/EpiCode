@@ -57,9 +57,12 @@ struct Weave* interweave(struct QrCode_Enc* data) {
     // FOR DEBUG TO REPLACE BY TRUE CORRECTION CODEWORDS
     //
     const size_t corr_cw_HW[13] = {168, 72,  22,  82,  217,  54,  156,  0,  46,  15,  180,  122,  16};
+    const size_t corr_cw_HW2[26*2] = {70,150,57,52,64,67,83,203,182,206,170,85,82,50,143,61,34,180,161,82,127,219,16,157,192,14,165,238,6,101,188,153,74,43,234,46,152,1,75,214,108,208,237,222,68,145,232,139,205,37,131,132};
     for(size_t i = 0; i < ecc_count * (nb_block01 + nb_block02) && cur < w_count + (ecc_count * (nb_block01 + nb_block02)); ++i, ++cur) {
         if(ecc_count * (nb_block01) == 13)
             forest[cur] = corr_cw_HW[i];
+        if(ecc_count == 26)
+            forest[cur] = corr_cw_HW2[i];
         else
             forest[cur] = rand() % 255; //random value
     }
