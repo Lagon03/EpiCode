@@ -425,11 +425,11 @@ void adjustBits(struct EncData *input, size_t length)
     char* data = input->encoded_data;
     size_t data_s = getSize(data);
 
-    printf("\tSize to match : %li | Current message size : %li\n", mulE, data_s);
-    printf("\tTotal size : %li\n", size);
+    //printf("\tSize to match : %li | Current message size : %li\n", mulE, data_s);
+    //printf("\tTotal size : %li\n", size);
 
     data = realloc(data, (data_s + (mulE - size) + 1) * sizeof(char));
-    printf("\tNew size : %li\n", data_s + (mulE - size) + 1);
+    //printf("\tNew size : %li\n", data_s + (mulE - size) + 1);
     data[data_s + mulE - size] = '\0';
     for(; size < mulE; ++data_s, ++size)
         data[data_s] = '0';
@@ -440,8 +440,8 @@ void adjustBits(struct EncData *input, size_t length)
     data[data_s + length - size] = '\0';
     size_t repeat = (length - size) / 8;
 
-    printf("\tNumber of repeat : %li\n", repeat);
-    printf("\tLength : %li | size = %li | data_s = %li\n", length, size, data_s);
+    //printf("\tNumber of repeat : %li\n", repeat);
+    //printf("\tLength : %li | size = %li | data_s = %li\n", length, size, data_s);
 
     for(size_t i = 0; i < repeat; ++i) { 
         for(size_t j = 0; j < 8; ++j, ++data_s, ++size) {
@@ -529,9 +529,9 @@ struct Codewords* breakCodeword(struct EncData* data)
                     for(int i = 0; i < 8; ++i, ++cur) {
                         codewords->group[g]->blocks[b]->words[w][i] = full_data[cur];
                     }
-                    printf("\t\tCodeword %2li: %s | value : %ld\n", w + 1, 
-                            codewords->group[g]->blocks[b]->words[w], 
-                            convertToDec(codewords->group[g]->blocks[b]->words[w]));
+                    //printf("\t\tCodeword %2li: %s | value : %ld\n", w + 1, 
+                    //        codewords->group[g]->blocks[b]->words[w], 
+                    //        convertToDec(codewords->group[g]->blocks[b]->words[w]));
                 }
 
                 // Here we compute the correction codewords
@@ -539,7 +539,7 @@ struct Codewords* breakCodeword(struct EncData* data)
             }
         }
     }
-    printf("Total blocks : %li\n", codewords->nb_block);
+    //printf("Total blocks : %li\n", codewords->nb_block);
     free(full_data);
     return codewords;
 }
@@ -601,8 +601,8 @@ struct EncData* getEncodedSize(struct options *arg)
     data->version = version;
     data->correction_level = arg->correction;
 
-    printf("Setting attribute done.\n");
-    printf("Version is : %li\n", version);
+    //printf("Setting attribute done.\n");
+    //printf("Version is : %li\n", version);
 
     if(arg->mode == 0)
         data->encoded_data = num_encoding(arg->message, char_count);
@@ -618,8 +618,8 @@ struct EncData* getEncodedSize(struct options *arg)
     // full size according to the correction level and version * 8 (bits)
     size_t full_size = TOTAL_DECC[data->correction_level][data->version] * 8;
 
-    printf("Version size is %li\n", full_size);
-    printf("Current encoded size is %li\n", enc_size);
+    //printf("Version size is %li\n", full_size);
+    //printf("Current encoded size is %li\n", enc_size);
 
     // We add terminating 0 if neccessary, maximum of 4
     if(enc_size < full_size) {

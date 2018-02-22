@@ -130,13 +130,13 @@ int main (int argc, char* argv[])
         free(r_bits);
     }
     //weave->size = weave->size + Remainder_bits[data->version];
-    printf("Interweaved data : \n");
+    /*printf("Interweaved data : \n");
     for(size_t i = 0; i < weave->size; ++i)
         printf("%ld ", weave->forest[i]);
     printf("\nLength : %li\n", weave->size);
     printf("Interweaved data to binary : \n%s\n", weave_trans);
     printf("Total length : %li | with %li remainder bits\n", (weave->size * 8)
-            + Remainder_bits[data->version], Remainder_bits[data->version]);
+            + Remainder_bits[data->version], Remainder_bits[data->version]);*/
 
     fill_mat(QrCode->mat, QrCode->size, data->version, weave_trans, (weave->size
                 * 8) + Remainder_bits[data->version]);
@@ -148,13 +148,13 @@ int main (int argc, char* argv[])
     size_t cur = -1;
     int min = 99999999;
     for(size_t i = 0; i < 8; ++i) {
-        printf("Mask %li result : %i\n", i, mask_point[i][4]);
+        //printf("Mask %li result : %i\n", i, mask_point[i][4]);
         if(mask_point[i][4] < min) {
             cur = i;
             min = mask_point[i][4];
         }
     }
-    printf("Mask winner is %li\n", cur);    
+    printf("Mask selected is %li\n", cur);    
 
     setFormatString(QrCode, S_bits[data->correction_level][cur]);
     if(data->version >= 7)
@@ -167,6 +167,7 @@ int main (int argc, char* argv[])
         unprotectMatrix_B(QrCode);
 
         Generate_QrCode(QrCode->mat, data->version, "test.bmp", 8);
+        printf("Applying mask %i\n", i);
         protectMatrix(QrCode);
         applyMask(QrCode->mat, QrCode->size, i);
         
