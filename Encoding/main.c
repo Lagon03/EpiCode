@@ -10,6 +10,7 @@
 # include "headers/fill_mat.h"
 # include "headers/gen_img.h"
 # include "headers/draw.h"
+# include "headers/polynomials.h"
 
 struct options* checkArg(int argc, char* argv[])
 {
@@ -161,7 +162,7 @@ int main (int argc, char* argv[])
         setVersionString(QrCode, V_bits[data->version]);
     protectMatrix(QrCode);
 
-    for(int i = 0; i < 8; ++i) {
+    /*for(int i = 0; i < 8; ++i) {
         applyMask(QrCode->mat, QrCode->size, i);
 
         unprotectMatrix_B(QrCode);
@@ -171,7 +172,7 @@ int main (int argc, char* argv[])
         protectMatrix(QrCode);
         applyMask(QrCode->mat, QrCode->size, i);
         
-    }
+    }*/
     printf("Applying the best mask >> mask %li\n", cur);
     applyMask(QrCode->mat, QrCode->size, cur);
     unprotectMatrix_B(QrCode);
@@ -205,6 +206,7 @@ int main (int argc, char* argv[])
     free(mod);
     free(arg);
     free(weave_trans);
+
 
     return 1;
 }
