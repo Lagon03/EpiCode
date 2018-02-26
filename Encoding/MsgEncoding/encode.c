@@ -502,6 +502,8 @@ struct Codewords* breakCodeword(struct EncData* data)
     for(size_t g = 0; g < codewords->size; ++g) {
         //printf("Group %2li:\n", g + 1);
         size_t block_nb = GROUP_BLOCK_CODEWORDS[g][correction][version];
+        size_t nb_cw_err = ECC_CODEWORDS_PER_BLOCK[data->correction_level][data->version];
+
         codewords->nb_block += block_nb;
         //printf("Number of block : %li | Number of words : %i\n", block_nb, nb_cw);
         if(block_nb != 0) {
@@ -536,7 +538,15 @@ struct Codewords* breakCodeword(struct EncData* data)
 
                 // Here we compute the correction codewords
                 //printf("Number of code words erro : %li\n", ECC_CODEWORDS_PER_BLOCK[data->correction_level][data->version]);
-                GenPolyFromCW(codewords->group[g]->blocks[b], ECC_CODEWORDS_PER_BLOCK[data->correction_level][data->version]);
+                codewords->group[g]->blocks[b]->correction = malloc(nb_cw_err * sizeof(char*));
+                size_t* err_cw = GenPolyFromCW(codewords->group[g]->blocks[b],
+                        nb_cw_err);
+                for(size_t i = 0; i < nb_cw_err; ++i)
+                {
+                    codewords->group[g]->blocks[b]->correction[i] = malloc(8 * sizeof(char));
+                    codewords->group[g]->blocks[b]->correction[i] = adjustSize(convertToByte(err_cw[i]), 8);
+                }
+                free(err_cw);
             }
         }
     }
