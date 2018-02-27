@@ -36,7 +36,7 @@ void poly_div(void);
 
 // GenPolyCW:   generate a polynomial corresponding to the given set
 //              of codeword
-size_t* GenPolyFromCW(struct Block* codewords, size_t err_words, size_t version);
+size_t* GenPolyFromCW(struct Block* codewords, size_t err_words);
 // GenPolyG :   generate a generator polynomial used to divide the polynomial
 //              of the codeword set
 struct poly* GenPolyG(size_t order /* and probably some other var */);

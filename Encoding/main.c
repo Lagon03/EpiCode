@@ -149,7 +149,7 @@ int main (int argc, char* argv[])
     size_t cur = -1;
     int min = 99999999;
     for(size_t i = 0; i < 8; ++i) {
-        //printf("Mask %li result : %i\n", i, mask_point[i][4]);
+        printf("Mask %li result : %i\n", i, mask_point[i][4]);
         if(mask_point[i][4] < min) {
             cur = i;
             min = mask_point[i][4];
@@ -162,7 +162,7 @@ int main (int argc, char* argv[])
         setVersionString(QrCode, V_bits[data->version]);
     protectMatrix(QrCode);
 
-    /*for(int i = 0; i < 8; ++i) {
+    for(int i = 0; i < 8; ++i) {
         applyMask(QrCode->mat, QrCode->size, i);
 
         unprotectMatrix_B(QrCode);
@@ -172,7 +172,7 @@ int main (int argc, char* argv[])
         protectMatrix(QrCode);
         applyMask(QrCode->mat, QrCode->size, i);
         
-    }*/
+    }
     printf("Applying the best mask >> mask %li\n", cur);
     applyMask(QrCode->mat, QrCode->size, cur);
     unprotectMatrix_B(QrCode);

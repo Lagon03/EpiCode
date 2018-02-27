@@ -57,8 +57,8 @@ struct Weave* interweave(struct QrCode_Enc* data) {
             for(size_t b1 = 0; b1 < nb_block01; ++b1, ++cur) 
             {
                 char* word = msg_d->codewords->group[0]->blocks[b1]->words[c1];
-                /*printf("Word : %s\n", word);
-                printf("%li\n", c1);*/
+                /*printf("%li\n", c1);
+                printf("Word : %s = %li\n", word, convertToDec(word));*/
                 forest[cur] = convertToDec(word);
             }
             if(c1 < nb_cw_01)
@@ -72,15 +72,15 @@ struct Weave* interweave(struct QrCode_Enc* data) {
             for(size_t b1 = 0; b1 < nb_block01 && c1 < ecc_count; ++b1, ++cur) 
             {
                 char* word = msg_d->codewords->group[0]->blocks[b1]->correction[c1];
-                printf("%li\n", c1);
-                printf("Word : %s = %li\n", word, convertToDec(word));
+                /*printf("%li\n", c1);
+                printf("Word : %s = %li\n", word, convertToDec(word));*/
                 forest[cur] = convertToDec(word);
             }
             for(size_t b2 = 0; b2 < nb_block02 && c2 < ecc_count; ++b2, ++cur) 
             {
                 char* word = msg_d->codewords->group[1]->blocks[b2]->correction[c2];
-                printf("%li\n", c2);
-                printf("Word : %s = %li\n", word, convertToDec(word));
+                /*printf("%li\n", c2);
+                printf("Word : %s = %li\n", word, convertToDec(word));*/
                 forest[cur] = convertToDec(word);
             }
             if(c1 < nb_err_cw)
@@ -94,8 +94,8 @@ struct Weave* interweave(struct QrCode_Enc* data) {
             for(size_t b1 = 0; b1 < nb_block01 && c1 < ecc_count; ++b1, ++cur) 
             {
                 char* word = msg_d->codewords->group[0]->blocks[b1]->correction[c1];
-                printf("%li\n", c1);
-                printf("Word : %s = %li\n", word, convertToDec(word));
+                /*printf("%li\n", c1);
+                printf("Word : %s = %li\n", word, convertToDec(word));*/
                 forest[cur] = convertToDec(word);
             }
             if(c1 < nb_err_cw)
@@ -106,9 +106,9 @@ struct Weave* interweave(struct QrCode_Enc* data) {
     weave->forest = forest;
     weave->size = w_count + (ecc_count * (nb_block01 + nb_block02));
 
-    for(size_t i = 0; i < weave->size; ++i)
+    /*for(size_t i = 0; i < weave->size; ++i)
         printf("%li ", forest[i]);
-    printf("\n");
+    printf("\n");*/
 
     return weave;
 }
