@@ -66,28 +66,9 @@ struct Weave* interweave(struct QrCode_Enc* data) {
         }
     }
 
+    size_t nb_err_cw = nb_cw_01 > ecc_count ? nb_cw_01 : ecc_count;
     if(GROUP_CODEWORDS[msg_d->correction_level][1][msg_d->version] != 0) {
-        for(size_t c1 = 0, c2 = 0; (c1 < nb_cw_01) | (c2 < nb_cw_02);) { // c1 : number of the codewords in group / block 1 | c2 : number of the codewords in group / block 2
-            for(size_t b1 = 0; b1 < nb_block01 && c1 < ecc_count; ++b1, ++cur) 
-            {
-                char* word = msg_d->codewords->group[0]->blocks[b1]->correction[c1];
-                //printf("Word : %s\n", word);
-                forest[cur] = convertToDec(word);
-            }
-            for(size_t b2 = 0; b2 < nb_block02 && c2 < ecc_count; ++b2, ++cur) 
-            {
-                char* word = msg_d->codewords->group[1]->blocks[b2]->correction[c2];
-                //printf("Word : %s\n", word);
-                forest[cur] = convertToDec(word);
-            }
-            if(c1 < nb_cw_01)
-                ++c1;
-            if(c2 < nb_cw_02)
-                ++c2;
-        }
-    }
-    else {
-        for(size_t c1 = 0; c1 < nb_cw_01;) { // c1 : number of the codewords in group / block 1 | c2 : number of the codewords in group / block 2
+        for(size_t c1 = 0, c2 = 0; (c1 < nb_err_cw) | (c2 < nb_err_cw);) { // c1 : number of the codewords in group / block 1 | c2 : number of the codewords in group / block 2
             for(size_t b1 = 0; b1 < nb_block01 && c1 < ecc_count; ++b1, ++cur) 
             {
                 char* word = msg_d->codewords->group[0]->blocks[b1]->correction[c1];
@@ -95,7 +76,29 @@ struct Weave* interweave(struct QrCode_Enc* data) {
                 printf("Word : %s = %li\n", word, convertToDec(word));
                 forest[cur] = convertToDec(word);
             }
-            if(c1 < nb_cw_01)
+            for(size_t b2 = 0; b2 < nb_block02 && c2 < ecc_count; ++b2, ++cur) 
+            {
+                char* word = msg_d->codewords->group[1]->blocks[b2]->correction[c2];
+                printf("%li\n", c2);
+                printf("Word : %s = %li\n", word, convertToDec(word));
+                forest[cur] = convertToDec(word);
+            }
+            if(c1 < nb_err_cw)
+                ++c1;
+            if(c2 < nb_err_cw)
+                ++c2;
+        }
+    }
+    else {
+        for(size_t c1 = 0; c1 < nb_err_cw;) { // c1 : number of the codewords in group / block 1 | c2 : number of the codewords in group / block 2
+            for(size_t b1 = 0; b1 < nb_block01 && c1 < ecc_count; ++b1, ++cur) 
+            {
+                char* word = msg_d->codewords->group[0]->blocks[b1]->correction[c1];
+                printf("%li\n", c1);
+                printf("Word : %s = %li\n", word, convertToDec(word));
+                forest[cur] = convertToDec(word);
+            }
+            if(c1 < nb_err_cw)
                 ++c1;
         }
     }
