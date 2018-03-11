@@ -51,8 +51,8 @@ struct Array* reverse_arr(struct Array *l)
 
 struct Array* copy_arr(struct Array *l1, struct Array *l2)
 {
-  initArray(l2, l1->size);
-  for(size_t i = 0; i < l1->size; i++){
+  initArray(l2, l1->used);
+  for(size_t i = 0; i < l1->used; i++){
     l2[i] = l1[i];
     insertArray(l2);
   }
@@ -79,7 +79,7 @@ uint8_t gf_mul(uint8_t x, uint8_t y, struct gf_tables *gf_table)
 {
     if(x == 0 || y == 0)
         return 0;
-    return gf_table->gf_exp->array[gf_table->gf_log->array[x] - gf_table->gf_log->array[y]];
+    return gf_table->gf_exp->array[gf_table->gf_log->array[x] + gf_table->gf_log->array[y]];
 }
 
 /* Divide two numbers in a GF(2^8) finite field */
@@ -191,37 +191,58 @@ uint8_t gf_poly_eval(struct Array *p, uint8_t x, struct gf_tables *gf_table)
 struct Tuple* gf_poly_div(struct Array *dividend, struct Array *divisor, struct gf_tables *gf_table)
 {
   struct Tuple *result = malloc(sizeof(struct Tuple));
-  size_t length = dividend->used;
+  size_t length = dividend->used+2;
   size_t separator = divisor->used -1;
   struct Array *msg_out = malloc(sizeof(struct Array));
-  initArray(msg_out, length << 1);
+  initArray(msg_out, length );
   struct Array *msg_out2 = malloc(sizeof(struct Array));
   initArray(msg_out2, length);
   struct Array *msg_out3 = malloc(sizeof(struct Array));
   initArray(msg_out3, length);
-  
-  for(size_t i = 0; i < length; i++){ 
-    msg_out->array[i] = dividend->array[i];
-    insertArray(msg_out);
-  }
-  
+  copy_arr(dividend, msg_out);
+
   for(size_t i = 0; i < dividend->used - (divisor->used - 1); i++){
     uint8_t coef = msg_out->array[i];
     if(coef != 0){
       for(size_t j = 1; j < divisor->used; j++){
       	if(divisor->array[j] != 0){
+          printf("coef: %u, divisor : \n", gf_table->gf_exp->array[coef] );
+          printf("OADB%u\n", gf_table->gf_exp->array[divisor->array[j]]);
+          printf("divisor: %u\n", gf_table->gf_exp->array[gf_table->gf_log->array[divisor->array[j]] + gf_table->gf_log->array[coef]]);
       	  msg_out->array[i + j] ^= gf_mul(divisor->array[j], coef, gf_table);
-          insertArray(msg_out);
+          printf("[");
+          for (int k = 0; k < msg_out->used; ++k)
+          {
+            printf(" %u,",msg_out->array[k] );
+          }
+          printf("]\n");
         }
       }
     }
   }
+  msg_out->used = dividend->used;
+  // printf("msg_out:[");
+  // for (int k = 0; k < msg_out->used; ++k)
+  // {
+  //   printf(" %u,",msg_out->array[k] );
+  // }
+  printf("]\n");
   msg_out2 = split_arr(msg_out, 0, msg_out->used - separator);
   msg_out3 = split_arr(msg_out, msg_out->used - separator + 1, msg_out->used);
-  for(int i = 0; i < msg_out->used; i++)
-    printf("msg_out : %u", msg_out->array[i]);
-  for(int i = 0; i < msg_out3->used; i++)
-    printf("msg_out3 : %u", msg_out3->array[i]);
+  printf("size msg_out %u, size msg_out2 %u, size msg_out3 %u%\n",msg_out->used, msg_out2->used, msg_out3->used );
+
+  // printf("msg_out2:[");
+  // for (int k = 0; k < msg_out2->used; ++k)
+  // {
+  //   printf(" %u,",msg_out2->array[k] );
+  // }
+  // printf("]\n");
+  // printf("msg_out3:[");
+  // for (int k = 0; k < msg_out3->used; ++k)
+  // {
+  //   printf(" %u,",msg_out3->array[k] );
+  // }
+  printf("]\n");
   result->x = msg_out2;
   result->y = msg_out3;
   return result;

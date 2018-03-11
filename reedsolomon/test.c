@@ -7,20 +7,11 @@ int main()
   struct gf_tables *gf_table = malloc(sizeof(struct gf_tables));
   gf_table->gf_exp = malloc(sizeof(struct Array));
   gf_table->gf_log = malloc(sizeof(struct Array));
-  initArray(gf_table->gf_exp, 513);
-  initArray(gf_table->gf_log, 257);
+  initArray(gf_table->gf_exp, 512);
+  initArray(gf_table->gf_log, 256);
   gf_table = init_tables();
-  //for(int i = 0; i < 50;i++){
-    // printf("exp %d: %u\n",i,gf_table->gf_log[i]);
-    //}
-  uint8_t x = 12;
-  uint8_t y = 10;
-  uint8_t res1 = gf_mul(x,y,gf_table);
-  uint8_t res2 = gf_div(x, y, gf_table);
-  printf("res1: %u", res1);
-  printf("res2: %u", res2);
-  //for(int i =0; i < LENGTH(gf_table->gf_log); i++)
-  //  printf("elem %d: %u", i, gf_table->gf_log[i]);
+
+  printf("gf_mul : %u\n", gf_table->gf_log->array[14]);
   struct Array *msg_in = malloc(sizeof(struct Array));
   initArray(msg_in, 100);
   msg_in->array[0] = 0x40;
@@ -44,8 +35,6 @@ int main()
   initArray(msg, 170);
   
   msg = rs_encode_msg(msg_in, 10, gf_table);
-  for(int i =0; i < msg->used; i++)
-    printf("\n%u ,", msg->array[i]);
-  
+
   return 0;
 }
