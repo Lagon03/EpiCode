@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <err.h>
 
+#include "array.h"
 
 /*Struct containing the exponential and logarithmic tables for faster computations*/
 struct gf_tables {

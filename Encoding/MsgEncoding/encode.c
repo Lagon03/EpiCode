@@ -6,6 +6,7 @@
 # include "../headers/encode.h"
 # include "../headers/encode_message.h"
 # include "../headers/analysis.h"
+# include "../headers/polynomials.h"
 
 //-----------------------------------------------------------------------------
 //                              HARD CODED CONST
@@ -169,15 +170,97 @@ const size_t Q_LEVEL[3][41] = {
     // Byte 
 };
 
-// TODO ADD H_LEVEL FOR H CORRECTION
+const size_t H_LEVEL[3][41] = {
+    {-1, 17, 34, 58, 82, 106, 139, 154, 202, 235, 288, 331, 374, 427, 468, 530,
+        602, 674, 746, 813, 919, 969, 1056, 1108, 1228, 1286, 1425, 1501, 1581,
+        1677, 1782, 1897, 2022, 2157, 2301, 2361, 2524, 2625, 2735, 2927, 3057},
+    {-1, 10, 20, 35, 50, 64, 84, 93, 122, 143, 174, 200, 227, 259, 283, 321,
+        365, 408, 452, 493, 557, 587, 640, 672, 744, 779, 864, 910, 958, 1016,
+        1080, 1150, 1226, 1307, 1394, 1431, 1530, 1591, 1658, 1774, 1852}, 
+    {-1, 7, 14, 24, 34, 44, 58, 64, 84, 98, 119, 137, 155, 177, 194, 220, 250,
+        280, 310, 338, 382, 403, 439, 461, 511, 535, 593, 625, 658, 698, 742,
+        790, 842, 898, 958, 983, 1051, 1093, 1139, 1219, 1273}
+};
 
 const char SpecAdd[2][8] = { {'1','1','1','0','1', '1', '0', '0'},
     {'0','0','0','1','0','0','0','1'}};
 
-const size_t Remainder_bits[41] = { -1, 0, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3,
-    3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0 };
+const size_t Remainder_bits[41] = { -1, 0, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 0, 0,
+    3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 0, 0, 0, 0,
+    0, 0 };
 
+const char S_bits[4][8][15] =
+{ { "111011111000100", // Low
+    "111001011110011",
+    "111001011110011",
+    "111100010011101",
+    "110011000101111",
+    "110001100011000",
+    "110110001000001",
+    "110100101110110", }, { 
+        "110100101110110", // Medium
+        "101000100100101",
+        "101111001111100",
+        "101101101001011",
+        "100010111111001",
+        "100000011001110",
+        "100111110010111",
+        "100101010100000", }, {
+            "011010101011111", // Quartile
+            "011000001101000",
+            "011000001101000",
+            "011101000000110",
+            "011101000000110",
+            "010000110000011",
+            "010111011011010",
+            "010101111101101", }, {
+                "001011010001001", // High
+                "001011010001001",
+                "001011010001001",
+                "001100111010000",
+                "000011101100010",
+                "000001001010101",
+                "000110100001100",
+                "000100000111011" }
+};
 
+const char V_bits[34][18] =
+{
+    "000111110010010100",   //7
+    "001000010110111100",   //8
+    "001001101010011001",   //9
+    "001010010011010011",   //10
+    "001011101111110110",   //11
+    "001100011101100010",   //12
+    "001101100001000111",   //13
+    "001110011000001101",  //14
+    "001111100100101000",  //15
+    "010000101101111000",  //16
+    "010001010001011101",  //17
+    "010010101000010111",  //18
+    "010011010100110010",  //19
+    "010100100110100110",  //20
+    "010101011010000011",  //21
+    "010110100011001001",  //22
+    "010111011111101100",  //23
+    "011000111011000100",  //24
+    "011001000111100001",  //25
+    "011010111110101011",  //26
+    "011011000010001110",  //27
+    "011100110000011010",  //28
+    "011101001100111111",  //29
+    "011110110101110101",  //30
+    "011111001001010000",  //31
+    "100000100111010101",  //32
+    "100001011011110000",  //33
+    "100010100010111010",  //34
+    "100011011110011111",  //35
+    "100101010000101110",  //36
+    "100101010000101110",  //37
+    "100110101001100100",  //38
+    "100111010101000001",  //39
+    "101000110001101001"   //40  
+};
 //-----------------------------------------------------------------------------
 //                            END OF HARD CODE
 //-----------------------------------------------------------------------------
@@ -235,6 +318,7 @@ char* convertToByte(size_t input)
 }
 
 size_t convertToDec(char* input) {
+    //printf("Input to convert : %s\n", input);
     size_t dec = 0;
     for(size_t i = 0; i < 8; ++i) {
         if(input[i] == '1')
@@ -270,6 +354,12 @@ static size_t getSmallestVersion(int mod, size_t count, int correction_level)
             }
         case 3:   // H
             {
+                for(size_t vers = 1; vers < 41; ++vers) {
+                    if(H_LEVEL[mod][vers] >= count) {
+                        version = vers;
+                        break;
+                    }
+                }
                 break;
             }
         default:  // L
@@ -335,12 +425,12 @@ void adjustBits(struct EncData *input, size_t length)
         mulE += 8;
     char* data = input->encoded_data;
     size_t data_s = getSize(data);
-    
-    printf("\tSize to match : %li | Current message size : %li\n", mulE, data_s);
-    printf("\tTotal size : %li\n", size);
+
+    //printf("\tSize to match : %li | Current message size : %li\n", mulE, data_s);
+    //printf("\tTotal size : %li\n", size);
 
     data = realloc(data, (data_s + (mulE - size) + 1) * sizeof(char));
-    printf("\tNew size : %li\n", data_s + (mulE - size) + 1);
+    //printf("\tNew size : %li\n", data_s + (mulE - size) + 1);
     data[data_s + mulE - size] = '\0';
     for(; size < mulE; ++data_s, ++size)
         data[data_s] = '0';
@@ -350,10 +440,10 @@ void adjustBits(struct EncData *input, size_t length)
 
     data[data_s + length - size] = '\0';
     size_t repeat = (length - size) / 8;
-    
-    printf("\tNumber of repeat : %li\n", repeat);
-    printf("\tLength : %li | size = %li | data_s = %li\n", length, size, data_s);
-    
+
+    //printf("\tNumber of repeat : %li\n", repeat);
+    //printf("\tLength : %li | size = %li | data_s = %li\n", length, size, data_s);
+
     for(size_t i = 0; i < repeat; ++i) { 
         for(size_t j = 0; j < 8; ++j, ++data_s, ++size) {
             if(i % 2 == 0)
@@ -409,12 +499,14 @@ struct Codewords* breakCodeword(struct EncData* data)
     codewords->words = nb_cw;
     codewords->nb_block = 0;
 
-    printf("Version %li\n", version);
+    //printf("Version %li\n", version);
     for(size_t g = 0; g < codewords->size; ++g) {
-        printf("Group %2li:\n", g + 1);
+        //printf("Group %2li:\n", g + 1);
         size_t block_nb = GROUP_BLOCK_CODEWORDS[g][correction][version];
+        size_t nb_cw_err = ECC_CODEWORDS_PER_BLOCK[data->correction_level][data->version];
+
         codewords->nb_block += block_nb;
-        printf("Number of block : %li | Number of words : %i\n", block_nb, nb_cw);
+        //printf("Number of block : %li | Number of words : %i\n", block_nb, nb_cw);
         if(block_nb != 0) {
             codewords->group[g] = malloc(sizeof(struct Group));
             codewords->group[g]->blocks = malloc(block_nb * sizeof(struct Block*));
@@ -423,9 +515,9 @@ struct Codewords* breakCodeword(struct EncData* data)
             codewords->group[g]->size = block_nb;
 
             for(size_t b = 0; b < block_nb; ++b) {
-                printf("\tBlock %2li:\n", b + 1);
+                //printf("\tBlock %2li:\n", b + 1);
                 size_t data_cd = GROUP_CODEWORDS[correction][g][version];
-                printf("\tNumber of word : %li\n", data_cd);
+                //printf("\tNumber of word : %li\n", data_cd);
 
                 codewords->group[g]->blocks[b] = malloc(sizeof(struct Block));
                 codewords->group[g]->blocks[b]->words = malloc(data_cd * sizeof(char*));
@@ -440,14 +532,27 @@ struct Codewords* breakCodeword(struct EncData* data)
                     for(int i = 0; i < 8; ++i, ++cur) {
                         codewords->group[g]->blocks[b]->words[w][i] = full_data[cur];
                     }
-                    printf("\t\tCodeword %2li: %s | value : %ld\n", w + 1, 
+                    /*printf("\t\tCodeword %2li: %s | value : %ld\n", w + 1, 
                             codewords->group[g]->blocks[b]->words[w], 
-                            convertToDec(codewords->group[g]->blocks[b]->words[w]));
+                            convertToDec(codewords->group[g]->blocks[b]->words[w]));*/
                 }
+
+                // Here we compute the correction codewords
+                //printf("Number of code words erro : %li\n", ECC_CODEWORDS_PER_BLOCK[data->correction_level][data->version]);
+                codewords->group[g]->blocks[b]->correction = malloc(nb_cw_err * sizeof(char*));
+                size_t* err_cw = GenPolyFromCW(codewords->group[g]->blocks[b],
+                        nb_cw_err);
+                for(size_t i = 0; i < nb_cw_err; ++i)
+                {
+                    //printf("%li ", err_cw[i]);
+                    codewords->group[g]->blocks[b]->correction[i] = malloc(8 * sizeof(char));
+                    codewords->group[g]->blocks[b]->correction[i] = adjustSize(convertToByte(err_cw[i]), 8);
+                }
+                free(err_cw);
             }
         }
     }
-    printf("Total blocks : %li\n", codewords->nb_block);
+    //printf("Total blocks : %li\n", codewords->nb_block);
     free(full_data);
     return codewords;
 }
@@ -509,8 +614,8 @@ struct EncData* getEncodedSize(struct options *arg)
     data->version = version;
     data->correction_level = arg->correction;
 
-    printf("Setting attribute done.\n");
-    printf("Version is : %li\n", version);
+    //printf("Setting attribute done.\n");
+    //printf("Version is : %li\n", version);
 
     if(arg->mode == 0)
         data->encoded_data = num_encoding(arg->message, char_count);
@@ -525,9 +630,9 @@ struct EncData* getEncodedSize(struct options *arg)
     size_t enc_size = data_size + 4 + getSize(data->character_count_ind);
     // full size according to the correction level and version * 8 (bits)
     size_t full_size = TOTAL_DECC[data->correction_level][data->version] * 8;
-    
-    printf("Version size is %li\n", full_size);
-    printf("Current encoded size is %li\n", enc_size);
+
+    //printf("Version size is %li\n", full_size);
+    //printf("Current encoded size is %li\n", enc_size);
 
     // We add terminating 0 if neccessary, maximum of 4
     if(enc_size < full_size) {
@@ -550,15 +655,10 @@ struct EncData* getEncodedSize(struct options *arg)
         enc_size += (x + 1);
     }
 
-    //printf("Terminating 0 added.\n");
-
-    // if the size of the whole encoded data is still different from a multiple
-    // of 8, we must add zero to the left of it
-
     // Now we need to break the whole (mode indicator + characters count +
     // encoded data) into 8-bits Codewords to prepare the error correction
     adjustBits(data, full_size);
-    
+
     //printf("Data bits adjusted.\n");
 
     struct Codewords *codewords = breakCodeword(data);

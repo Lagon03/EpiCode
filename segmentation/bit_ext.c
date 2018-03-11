@@ -15,7 +15,7 @@ void upwards(char **mat, char *msg, size_t size, int *ip, int *jp, int *kp)
     int k = *kp;
     int i = *ip;
     int j = *jp;
-    while(j < size && i < size && i >= 0 && j  >= 0 && (mat[i][j] == '1' || mat[i][j] == '0'))
+    while((size_t)j < size && (size_t)i < size && i >= 0 && j  >= 0 && (mat[i][j] == '1' || mat[i][j] == '0'))
     {
         //warn("1 going up %d %d", i, j);
         msg[k] = mat[i][j];
@@ -43,7 +43,7 @@ void downwards(char **mat, char *msg, size_t size, int *ip, int *jp, int *kp)
     int i = *ip;
     int j = *jp;
     
-    while(j < size && i < size && j >= 0 && i >= 0 && (mat[i][j] == '1' || mat[i][j] == '0'))
+    while((size_t)j < size && (size_t)i < size && j >= 0 && i >= 0 && (mat[i][j] == '1' || mat[i][j] == '0'))
     {
         //warn("1 going down %d %d", i, j);
         msg[k] = mat[i][j];
@@ -70,7 +70,7 @@ int check_stop_up(char **mat, size_t size, int *ip, int *jp, int *kp)
     int k = *kp;
     int i = *ip;
     int j = *jp;
-    int ret = 0;
+    int ret = size - size;
     
     //out of upper bounds, go down
     if(i < 0) //stop 1
@@ -131,7 +131,7 @@ int check_stop_down(char **mat, size_t size, int *ip, int *jp, int *kp)
     //warn("checking down");
     //warn("i/size : %d/%lu", i, size);
     //warn("%d %d", i , j);
-    if (i >= size)
+    if ((size_t)i >= size)
     {
         j -= 2;
         i = size - 1;
@@ -321,7 +321,7 @@ char *ext_cyphmsg(char **mat, size_t size, int version)
             }
             else if (stop == 10)
             {
-                warn("end");
+                //warn("end");
                 break;
             }
             else
@@ -336,6 +336,6 @@ char *ext_cyphmsg(char **mat, size_t size, int version)
             break;
     }
     //warn("end"); 
-    warn("output length %d / %d : %s", totnb_bit, k, msg);
+    //warn("output length %d / %d : %s", totnb_bit, k, msg);
     return msg;
 }

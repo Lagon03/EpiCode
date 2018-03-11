@@ -21,6 +21,9 @@ extern const size_t H_LEVEL[3][41];
 extern const char SpecAdd[2][8];
 
 extern const size_t Remainder_bits[41];
+extern const char S_bits[4][8][15];
+extern const char V_bits[34][18];
+
 
 /* Maximum number of characters a 40-L code can contain
  * Numeric : 7096 characters
@@ -46,7 +49,6 @@ struct EncData
   size_t version;
   int correction_level;
   struct Codewords* codewords;
-  struct Codewords* cor_codewords;
 };
 
 struct Codewords
@@ -70,6 +72,7 @@ struct Group
 struct Block
 {
     char** words;
+    char** correction;
     size_t size;
     int id;
 };

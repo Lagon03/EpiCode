@@ -29,7 +29,7 @@ void insertArray(struct Array *a)
       if(p != NULL)
         a->array = p;
       else
-	exit(EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     }
   a->used++;
 }

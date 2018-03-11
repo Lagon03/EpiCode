@@ -6,6 +6,7 @@
 # include "extcode.h"
 # include "fpfind.h"
 # include "../preproc/preproc.h"
+# include "surfdraw.h"
 # include <stdio.h>
 
 //----------------------------AUX Functions----------------------------------
@@ -72,24 +73,29 @@ int main(int argc, char* argv[]){
     if( argc <= 1)
         err(EXIT_FAILURE, "no argument");
 
+    char *file = argv[1];
     //Preprocessing - 2nd phase
-    SDL_Surface *img = load_image(argv[1]);
-    img = grayscale(img);
-    img = blackAndWhite(img, 0);
+    SDL_Surface *proc = load_image(file);
+    proc = grayscale(proc);
+    proc = blackAndWhite(proc, 0);
        
-    struct FPat *FPs = findFP (img);
+    struct FPat *FPs = findFP (proc);
     //warn("check fpfind");
-
-    struct QrCode *qr = extract_QrCode_NoG(img, FPs); 
+    SDL_Surface *show = load_image(file);
+    drawFP(show, FPs->centers, FPs->ems_vector);
+    display_image(show);
     
+    struct QrCode *qr = extract_QrCode_NoG(proc, FPs); 
+    //drawBox(show,qr->coords); 
+    //display_image(show);
     //warn("extracted code");
     print_mat(qr->mat, qr->version * 4 + 17);
     struct PCode *code = get_code(qr);
     //warn("processed code");
     print_mat(qr->mat, qr->version * 4 + 17);
      
-    //free_segmentation(FPs, qr, code);
-    display_image(img);
+    free_segmentation(FPs, qr, code);
+    //display_image(img);
     SDL_Quit();
     return 1;
 }

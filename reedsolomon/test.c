@@ -12,7 +12,11 @@ int main()
   gf_table = init_tables();
 
   printf("gf_mul : %u\n", gf_table->gf_log->array[14]);
+
+  struct gf_tables *gf_table = init_tables();
+
   struct Array *msg_in = malloc(sizeof(struct Array));
+
   initArray(msg_in, 100);
   msg_in->array[0] = 0x40;
   msg_in->array[1] = 0xd2;
@@ -31,10 +35,18 @@ int main()
   msg_in->array[14] = 0x70;
   msg_in->array[15] = 0xec;
   msg_in->used = 16;
+
   struct Array *msg = malloc(sizeof(struct Array));
   initArray(msg, 170);
   
   msg = rs_encode_msg(msg_in, 10, gf_table);
+<<<<<<< HEAD
 
+=======
+  for(int i =0; i < msg->used; i++)
+    printf("\n%u - ", msg->array[i]);
+  printf("\n");
+  
+>>>>>>> 35b43cbd0d65fab4939810ed41d6dacf5f797d13
   return 0;
 }
