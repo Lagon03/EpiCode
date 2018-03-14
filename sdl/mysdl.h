@@ -16,7 +16,7 @@ void wait_for_keypressed(void);
 void init_sdl(void);
 SDL_Surface* load_image(char *path);
 SDL_Surface* display_image(SDL_Surface *img);
-SDL_Surface* create_image(int size);
+SDL_Surface* create_image(int height, int width);
 void save_image(SDL_Surface *img, const char* file);
 Uint32 getpixel(SDL_Surface *surface, unsigned x, unsigned y);
 void putpixel(SDL_Surface *surface, unsigned x, unsigned y, Uint32 pixel);
