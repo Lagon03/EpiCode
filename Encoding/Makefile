@@ -6,7 +6,7 @@ CFLAGS= -Wall -Wextra -std=c99 -O2
 LDFLAGS=
 LDLIBS=`pkg-config --libs sdl` -lSDL_image -lm
 
-SRC= main.c Analysis/analysis.c MsgEncoding/encode.c MsgEncoding/encode_message.c Draw/mask.c MsgEncoding/weaver.c Draw/draw.c Draw/fill_mat.c gen_img/gen_img.c ../sdl/mysdl.c ErrorCor/polynomials.c
+SRC= main.c analysis/analysis.c msg_encoding/encode.c msg_encoding/encode_message.c draw/mask.c msg_encoding/weaver.c draw/draw.c draw/fill_mat.c gen_img/gen_img.c ../sdl/mysdl.c error_cor/polynomials.c
 OBJ=${SRC:.c=.o}
 DEP=${SRC:.c=.d}
 

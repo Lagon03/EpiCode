@@ -90,8 +90,8 @@ int main (int argc, char* argv[])
             }
     } 
     struct EncData *data = getEncodedSize(arg);
-    if(arg->correction == -1)
-        data->correction_level = 0;
+    //if(arg->correction == -1)
+    //  data->correction_level = 0;
 
     printf("\nEncoded data informations  :\n");
     printf("\tMode indicator             : %s\n", data->mode_ind);
@@ -132,24 +132,34 @@ int main (int argc, char* argv[])
     }
     //weave->size = weave->size + Remainder_bits[data->version];
     /*printf("Interweaved data : \n");
-    for(size_t i = 0; i < weave->size; ++i)
-        printf("%ld ", weave->forest[i]);
-    printf("\nLength : %li\n", weave->size);
-    printf("Interweaved data to binary : \n%s\n", weave_trans);
-    printf("Total length : %li | with %li remainder bits\n", (weave->size * 8)
-            + Remainder_bits[data->version], Remainder_bits[data->version]);*/
+      for(size_t i = 0; i < weave->size; ++i)
+      printf("%ld ", weave->forest[i]);
+      printf("\nLength : %li\n", weave->size);
+      printf("Interweaved data to binary : \n%s\n", weave_trans);
+      printf("Total length : %li | with %li remainder bits\n", (weave->size * 8)
+      + Remainder_bits[data->version], Remainder_bits[data->version]);*/
 
     fill_mat(QrCode->mat, QrCode->size, data->version, weave_trans, (weave->size
                 * 8) + Remainder_bits[data->version]);
 
-    unprotectMatrix(QrCode);
 
-    //We now evaluate 
-    int** mask_point = evaluate(QrCode);
+    setFormatString(QrCode, S_bits[data->correction_level][6]);
+    if(data->version >= 7)
+        setVersionString(QrCode, V_bits[data->version]);
+    //protectMatrix(QrCode);
+
+    Generate_QrCode(QrCode->mat, data->version, "test.bmp", 8);
+
+    //We now evaluate
+    int** mask_point = evaluate(QrCode, data->version, data->correction_level);
     size_t cur = -1;
     int min = 99999999;
     for(size_t i = 0; i < 8; ++i) {
         printf("Mask %li result : %i\n", i, mask_point[i][4]);
+        printf("\t Penalty 1 : %i\n", mask_point[i][0]);
+        printf("\t Penalty 2 : %i\n", mask_point[i][1]);
+        printf("\t Penalty 3 : %i\n", mask_point[i][2]);
+        printf("\t Penalty 4 : %i\n", mask_point[i][3]);
         if(mask_point[i][4] < min) {
             cur = i;
             min = mask_point[i][4];
@@ -157,37 +167,37 @@ int main (int argc, char* argv[])
     }
     printf("Mask selected is %li\n", cur);    
 
-    setFormatString(QrCode, S_bits[data->correction_level][cur]);
-    if(data->version >= 7)
-        setVersionString(QrCode, V_bits[data->version]);
-    protectMatrix(QrCode);
-
     for(int i = 0; i < 8; ++i) {
         applyMask(QrCode->mat, QrCode->size, i);
 
         unprotectMatrix_B(QrCode);
-
+        setFormatString(QrCode, S_bits[data->correction_level][i]);
+        if(data->version >= 7)
+            setVersionString(QrCode, V_bits[data->version]);
         Generate_QrCode(QrCode->mat, data->version, "test.bmp", 8);
         printf("Applying mask %i\n", i);
         protectMatrix(QrCode);
         applyMask(QrCode->mat, QrCode->size, i);
-        
+
     }
     printf("Applying the best mask >> mask %li\n", cur);
     applyMask(QrCode->mat, QrCode->size, cur);
     unprotectMatrix_B(QrCode);
 
+    setFormatString(QrCode, S_bits[data->correction_level][cur]);
+    if(data->version >= 7)
+        setVersionString(QrCode, V_bits[data->version]);
     Generate_QrCode(QrCode->mat, data->version, "test.bmp", 8);
 
 
     for(size_t x = 0; x < QrCode->size; ++x) {
         /*printf("[");
-        for(size_t y = 0; y < QrCode->size; ++y) {
-            if(QrCode->mat[x][y] == 0)
-                printf("  ");
-            else
-                printf("%c ", QrCode->mat[x][y]);
-        }*/
+          for(size_t y = 0; y < QrCode->size; ++y) {
+          if(QrCode->mat[x][y] == 0)
+          printf("  ");
+          else
+          printf("%c ", QrCode->mat[x][y]);
+          }*/
         free(QrCode->mat[x]);
         //printf("]\n");
     }
