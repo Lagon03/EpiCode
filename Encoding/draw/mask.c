@@ -10,6 +10,8 @@
 # include "../headers/mask.h"
 # include "../headers/draw.h"
 
+# include "../headers/gen_img.h"
+
 #define max(a,b) (a>=b?a:b)
 #define min(a,b) (a<=b?a:b)
 
@@ -288,53 +290,47 @@ int sequential_Eval(char** mat, size_t size) {
     int v_penality = 0;
 
     int counter = 0;
-    char last_color = 'n';
+    char last_color = '0';
     for(size_t y = 0; y < size; ++y) {
         for(size_t x = 0; x < size; ++x) {
+            if(last_color == mat[x][y])
+                counter += 1;
+            else {
+                counter = 1;
+                last_color = mat[x][y];
+            }
             if(counter >= 5) {
                 if (counter == 5)
                     v_penality += 3;
                 else
                     v_penality += 1;
             }
-            if(last_color == 'n') {
-                last_color = mat[x][y];
-                counter += 1;
-            }
-            else if(last_color == mat[x][y]) {
-                counter += 1;
-            }
-            else {
-                counter = 1;
-                last_color = mat[x][y];
-            }
+
         }
     }
     int h_penality = 0;
 
     counter = 0;
-    last_color = 'n';
     for(size_t x = 0; x < size; ++x) {
         for(size_t y = 0; y < size; ++y) {
-            if(counter >= 5) {
-                if (counter == 5)
-                    h_penality += 3;
-                else
-                    h_penality += 1;
-            }
-            if(last_color == 'n') {
-                last_color = mat[x][y];
+            //printf("%c ", mat[x][y]);
+            if(last_color == mat[x][y])
                 counter += 1;
-            }
-            else if(last_color == mat[x][y]) {
-                counter += 1;
-            }
             else {
                 counter = 1;
                 last_color = mat[x][y];
             }
+            if(counter >= 5)
+            {
+                if(counter == 5)
+                    h_penality += 3;
+                else
+                    h_penality += 1;
+            }
         }
+        //printf("\n");
     }
+    //printf("\n");
     return h_penality + v_penality;
 }
 
@@ -362,34 +358,39 @@ int pattern_Eval(char** mat, size_t size) {
     char patterns[2][11] = { {'1', '0', '1', '1', '1', '0', '1', '0', '0', '0', '0'}, 
         {'0', '0', '0', '0', '1', '0', '1', '1', '1', '0', '1'} };
 
-    for(size_t x = 0; x < size; ++x) {
-        for(size_t y = 0; y < size; ++y) {
-            for(int p = 0; p < 2; ++p) {
-                size_t save_y = y;
-                size_t save_x = x;
-                if(y + 10 < size) {
-                    int test = 1;
-                    for(size_t cur = 0; cur < 11; ++cur, ++y)
-                        if(mat[x][y] != patterns[p][cur]) {
+    int test = 1;
+    for(size_t x = 0; x < size - 10; ++x) 
+    {
+        for(size_t y = 0; y < size - 10; ++y)
+        {
+            for(int p = 0; p < 2; ++p)
+            {
+                size_t o_x = x;
+                size_t o_y = y;
+                if(y + 10 < size)
+                {
+                    test = 1;
+                    for(size_t cur = 0; cur < 11 && test == 1; ++cur, ++y)
+                    {
+                        if(mat[x][y] != patterns[p][cur])
                             test = 0;
-                            break;
-                        }
+                    }
                     if(test == 1)
                         penality += 40;
                 }
-                y = save_y;
-                if(x + 10 < size) {
-                    int test = 1;
-                    for(size_t cur = 0; cur < 11; ++cur, ++x)
-                        if(mat[x][y] != patterns[p][cur]) {
+                y = o_y;
+                if(x + 10 < size)
+                {
+                    test = 1;
+                    for(size_t cur = 0; cur < 11 && test == 1; ++cur, ++x)
+                    {
+                        if(mat[x][y] != patterns[p][cur])
                             test = 0;
-                            break;
-                        }
+                    }
                     if(test == 1)
                         penality += 40;
-
                 }
-                x = save_x;
+                x = o_x;
             }
         }
     }
@@ -405,9 +406,9 @@ int ratio_Eval(char** mat, size_t size) {
                 dark_cells += 1;
         }
     }
-    double ratio = ((double)dark_cells / (double)(size * size)) * 100;
-    size_t prev_mult = ratio + 5;
-    size_t next_mult = 1;
+    float ratio = ((float)dark_cells / (float)(size * size)) * 100;
+    float prev_mult = ratio + 5;
+    float next_mult = 1;
     while(prev_mult > ratio)
         prev_mult -= 5;
     while(next_mult < ratio)
@@ -421,14 +422,23 @@ int ratio_Eval(char** mat, size_t size) {
     return penality;
 }
 
-int** evaluate(struct QrCode_Enc* data) {
+int** evaluate(struct QrCode_Enc* data, int version, int cor) {
     int** penalty = malloc(8 * sizeof(int*));
     char** mat = data->mat;
     for(int mask = 0; mask < 8; ++mask) {
+
         penalty[mask] = malloc(5 * sizeof(int));
         for(int condition = 0; condition < 4; ++condition) {
             // Preprocessing (applying the mask)
             applyMask(mat, data->size, mask);
+
+            setFormatString(data, S_bits[cor][mask]);
+            if(version > 6)
+                setVersionString(data, V_bits[version]);
+
+            unprotectMatrix(data);
+
+            Generate_QrCode(mat, version, "t.bmp", 8);
 
             // evaluation bloc
             switch(condition) {
@@ -446,8 +456,10 @@ int** evaluate(struct QrCode_Enc* data) {
                     break;
             }
 
+            protectMatrix(data);
             // PostProcessing (reverting the mask)
             applyMask(mat, data->size, mask);
+
         }
         penalty[mask][4] = penalty[mask][0] + penalty[mask][1]
             + penalty[mask][2] + penalty[mask][3];
