@@ -42,7 +42,7 @@ void Generate_QrCode(char **mat, int version, const char* name, int mod_size)
     
     //warn("1");
     
-    SDL_Surface *img = create_image(size);
+    SDL_Surface *img = create_image(size, size);
     white_map(img);
     
     for(int y = mod_size * 4; y / mod_size - 4 < mat_size; y += mod_size)

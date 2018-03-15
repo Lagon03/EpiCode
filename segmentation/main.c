@@ -2,8 +2,10 @@
 ** Test File for QrReader class
 */
 
+# include "geotrans.h"
 # include "proc_code.h"
 # include "extcode.h"
+# include "FPValid.h"
 # include "fpfind.h"
 # include "../preproc/preproc.h"
 # include "surfdraw.h"
@@ -18,9 +20,9 @@ void print_mat(char **mat, int size)
         printf("[ ");
         for(int j = 0; j < size; j++)
         {
-            printf("%c", mat[i][j]);
+            printf("%c ", mat[i][j]);
         }
-        printf(" ]\n");
+        printf("]\n");
     }
 }
 
@@ -78,8 +80,25 @@ void fPiter(char *file)
     img = blackAndWhite(img, 0);
     
     struct FPat *f = findFP(img);
+    int A = (int)QrCode_found(f);
+    if(A == -1)
+        err(EXIT_FAILURE, "Sorry, i didn't find any QrCodes"); 
     
-    drawFP(show, f->centers, f->ems_vector);
+    printf("Finder pattern A is : %d \n ", A);
+   
+    Draw_point(show, f->centers->mat[0][0], f->centers->mat[0][1]);
+    Draw_point(show, f->centers->mat[1][0], f->centers->mat[1][1]);
+    Draw_point(show, f->centers->mat[2][0], f->centers->mat[2][1]);
+    
+    Draw_line(show,f->centers->mat[0][0], f->centers->mat[0][1],
+                    f->centers->mat[1][0], f->centers->mat[1][1]);
+    Draw_line(show,f->centers->mat[0][0], f->centers->mat[0][1],
+                    f->centers->mat[2][0], f->centers->mat[2][1]);
+    Draw_line(show,f->centers->mat[1][0], f->centers->mat[1][1],
+                    f->centers->mat[2][0], f->centers->mat[2][1]);
+    printf("Affine Transformation \n");
+    double *sol = SolveAffineEquations(34, 14, 143, 325, 322, 532, 60); 
+    //drawFP(show, f->centers, f->ems_vector, A);
     display_image(show);
     free_Fpat(f);
 }
@@ -93,7 +112,7 @@ void full_segmentation(char *file)
     
     struct FPat *f = findFP(img);
     
-    drawFP(show, f->centers, f->ems_vector);
+    drawFP(show, f->centers, f->ems_vector, 0);
      
     struct QrCode *qr = extract_QrCode_NoG(img, f);
     printf("\n\nQrCode Found : \n");
@@ -105,49 +124,26 @@ void full_segmentation(char *file)
     
     display_image(show);
     
-    getchar();
-    
     struct PCode *c = get_code(qr);
     printf("Format :\n");
     printf("    Mask : %d\n", c->mask);
     printf("    Error Correction Level : %c\n", c->err_cor_lvl);
     printf("    Error Correction Bits : %s\n\n", c->err_cor);
     printf("Cyphered Message Ready to be decoded : \n");
-    printf("%s", c->msg);
+    printf("%s \n", c->msg);
     
     free_segmentation(f, qr, c);
 }
 
-int main(void){
+int main(int argc, char *argv[]){
     init_sdl();
-    
-    //Show FP location
-    
-    fPiter("../resources/HelloWorldv1.png");
-    fPiter("../resources/HelloWorldv1skew.png");
-    fPiter("../resources/HelloWorldv1skew2.png");
-    fPiter("../resources/QrV2.png");
-    fPiter("../resources/QrV7.png");
-    fPiter("../resources/QrV8.png");
-    fPiter("../resources/QrV40.png");
-    fPiter("../resources/ralphl.jpg");
-    fPiter("../resources/1t.jpg");
-    fPiter("../resources/funeral-qr-code.jpg");
-    fPiter("../resources/wall.jpg");
-    fPiter("../resources/qrrltest.jpg");
-
-    //Retrieve code
-    getchar();
-    full_segmentation("../resources/HelloWorldv1.png");
-    getchar();
-    full_segmentation("../resources/QrV2.png");
-    getchar();
-    full_segmentation("../resources/QrV7.png");
-    getchar();
-    full_segmentation("../resources/QrV8.png");
-    getchar();
-    full_segmentation("../resources/QrV40.png");
-    getchar(); 
+   
+    if (argc > 1)
+        fPiter(argv[1]);
+    else
+        fPiter("../resources/wall.jpg"); 
+    //full_segmentation("../resources/QrV8.png");
+ 
     //free_segmentation(FPs, qr, code);
     SDL_Quit();
     return 1;

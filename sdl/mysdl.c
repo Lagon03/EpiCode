@@ -66,9 +66,9 @@ SDL_Surface* display_image(SDL_Surface *img) {
 }
 
 // Create an image
-SDL_Surface* create_image(int size)
+SDL_Surface* create_image(int height, int width)
 {
-    SDL_Surface* img = SDL_CreateRGBSurface(0, size, size, 32, 0, 0, 0, 0);
+    SDL_Surface* img = SDL_CreateRGBSurface(0, height, width, 32, 0, 0, 0, 0);
     if(img == NULL)
         errx(1,"Could not create an RGB SDL_Surface: %s, \n", SDL_GetError());
     return img;
