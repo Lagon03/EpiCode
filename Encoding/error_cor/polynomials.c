@@ -68,7 +68,8 @@ size_t poly_minus(size_t elm1, size_t elm2) {
 }
 
 size_t p_xor(size_t x, size_t y) {
-    //printf("######## xor of %li by %li\n", y, x);
+    if (x != 0 && y != 0)
+        printf("######## xor of %li by %li\n", y, x);
     char* x_byte = convertToByte(x);
     x_byte = adjustSize(x_byte, 8);
     char* y_byte = convertToByte(y);
@@ -218,9 +219,9 @@ size_t* GenPolyFromCW(struct Block* codewords, size_t err_words) {
     poly_mul_var(err_words , polynome);
     change_order(polynome, polynome->term[0].var);
 
-    /*printf("Message polynomial after multiplication : \n");
+    printf("Message polynomial after multiplication : \n");
     print_poly(polynome);
-    printf("\n");*/
+    printf("\n");
 
     struct poly* p_gen = GenPolyG(err_words - 1);
 
@@ -233,8 +234,9 @@ size_t* GenPolyFromCW(struct Block* codewords, size_t err_words) {
     poly_mul_coeff(polynome->term[0].coeff, p_gen, 0);
     change_order(p_gen ,p_gen->term[0].var);
 
-    /*printf("\n");
-      print_poly_a(p_gen);*/
+    printf("\n");
+      print_poly_a(p_gen);
+      print_poly(p_gen);
 
 
     struct poly* fix_gen = GenPolyG(err_words - 1); // This poly MUST not be
@@ -311,18 +313,18 @@ size_t* GenPolyFromCW(struct Block* codewords, size_t err_words) {
             }
             //poly_mul_coeff(xor->term[i + 1].coeff, initial_gen, i);
         }
-        /*printf("\n Xor %li result:\n", i + 1);
+        printf("\n Xor %li result:\n", i + 1);
         print_poly(xor);
         printf("\n");
         printf("\n Generator polynomial :\n");
         print_poly_a(initial_gen);
-        printf("\n");*/
+        printf("\n");
     }
     //free(xor);
 
-    /*printf("\nFinal Xor Polynomial : \n");
+    printf("\nFinal Xor Polynomial : \n");
     print_poly(xor);
-    printf("\n");*/
+    printf("\n");
 
     size_t* err_cw = malloc(err_words * sizeof(size_t));
     for(size_t c = 0; c < err_words; ++c)

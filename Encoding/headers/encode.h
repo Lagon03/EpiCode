@@ -21,8 +21,8 @@ extern const size_t H_LEVEL[3][41];
 extern const char SpecAdd[2][8];
 
 extern const size_t Remainder_bits[41];
-extern const char S_bits[4][8][15];
-extern const char V_bits[34][18];
+extern const char* S_bits[4][8];
+extern const char* V_bits[34];
 
 
 /* Maximum number of characters a 40-L code can contain

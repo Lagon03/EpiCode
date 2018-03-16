@@ -1,6 +1,7 @@
 #include "op.h"
 #include "array.h"
 #include "encode.h"
+#include "decode.h"
 
 int main()
 {
@@ -37,10 +38,31 @@ int main()
 
   struct Array *msg = malloc(sizeof(struct Array));
   initArray(msg, 170);
+	
+	struct Array *synd = malloc(sizeof(struct Array));
+	
   
   msg = rs_encode_msg(msg_in, 10, gf_table);
+	for(size_t i = 0; i < msg->used; i++){
+		printf("msg_out[%u] = %x\n", i, msg->array[i]);
+	}
+	msg->array[0] = 0;
+	synd = rs_calc_syndromes(msg, 10, gf_table);
+	int a = rs_check(msg,10, gf_table);
+	printf("a = %d",a);
   for(size_t i = 0; i < msg->used; i++){
     printf("msg_out[%u] = %x\n", i, msg->array[i]);
   }
+	for(size_t i = 0; i < synd->used; i++){
+		printf("synd[%u] = %u\n", i, synd->array[i]);
+	}
+	struct Array *list = malloc(sizeof(struct Array));
+	initArray(list,2);
+	list->array[0] = 0;
+	list->used = 1;
+	msg = rs_correct_errdata(msg, synd, list, gf_table);
+	for(size_t i = 0; i < msg->used; i++){
+		printf("msg_out[%u] = %x\n", i, msg->array[i]);
+	}
   return 0;
 }

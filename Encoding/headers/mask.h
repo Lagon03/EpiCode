@@ -31,7 +31,7 @@ void applyMask(char **mat, size_t size, int mask);
 int sequential_Eval(char** mat, size_t size);
 int block_Eval(char** mat, size_t size);
 int pattern_Eval(char** mat, size_t size);
-int** evaluate(struct QrCode_Enc* data);
+int** evaluate(struct QrCode_Enc* data, int version, int cor);
 
 struct QrCode_Enc* initQrCode(struct EncData* data);
 void initMatrix(struct QrCode_Enc* data);
