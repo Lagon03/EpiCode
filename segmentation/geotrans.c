@@ -55,7 +55,7 @@ double *GaussianElimination(double **mat, size_t rows, size_t cols)
 }
 
 double *SolveAffineEquations(double x1, double y1, double x2, double y2, double
-x3, double y3, size_t size)
+x3, double y3, double size)
 {
     double **AugMat = malloc(sizeof(double*)*6);
     for(size_t i = 0; i < 6; i++)
@@ -102,9 +102,39 @@ x3, double y3, size_t size)
     return sol;
 }
 
-/*
-double GaussianEliminations(double **mat, size_t rows, size_t cols)
+SDL_Surface *AffineTransformation(SDL_Surface *oldimg, double *vals, double size)
 {
-
+    int newsize = 40 + size + 40; 
+    SDL_Surface *img = create_image(newsize, newsize);
+    
+    double a = vals[0];
+    double b = vals[1];
+    double c = vals[2];
+    double d = vals[3];
+    double e = vals[4];
+    double f = vals[5];
+    
+    int u = 0;
+    int v = 0;
+    Uint8 r, g, bl;
+    
+    for(int y = 0; y < oldimg->h ; y++)
+    {
+        for(int x = 0; x < oldimg->w; x++)
+        {
+            u = round(a*x + b*y + c);
+            v = round(d*x + e*y + f);
+            
+            if( u > newsize || u < 0 || v > newsize || v < 0)
+                continue;
+            
+            Uint32 p = getpixel(oldimg, x, y);
+            SDL_GetRGB(p, oldimg->format, &r, &g, &bl); 
+            putpixel(img, u, v, SDL_MapRGB(img->format, r, g, bl)); 
+        }
+    }
+    
+    display_image(img);
+    return img;
 }
-*/
+
