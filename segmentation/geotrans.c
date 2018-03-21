@@ -5,7 +5,18 @@
 **  Geometric  transformations.
 */
 
+# define SIZE 75
+
 # include "geotrans.h"
+
+static inline
+void free_mat(double **mat, int n)
+{
+    for(int i = 0; i < n; i++)
+        free(mat[i]);
+    free(mat);
+}
+
 static inline
 void white_map(SDL_Surface *img)
 {
@@ -34,7 +45,7 @@ void print_mat(double **mat, int rows, int cols)
 }
 
 static inline
-double *GaussianElimination(double **mat, size_t rows, size_t cols)
+double *GaussianElimination(double **mat, size_t rows, size_t cols)//Gauss-Jordan
 {
     for(size_t i = 0; i < rows - 1; i++)
     {
@@ -49,7 +60,8 @@ double *GaussianElimination(double **mat, size_t rows, size_t cols)
         }
     }
     
-    print_mat(mat, rows, cols - 1);
+    //printf("\n");
+    //print_mat(mat, rows, cols);
     double *sol = malloc(sizeof(double)*6);
     sol[rows - 1] = mat[rows - 1][cols - 1] / mat[rows -1][rows - 1];
     for(int i = rows - 2; i >= 0; i--)
@@ -62,7 +74,9 @@ double *GaussianElimination(double **mat, size_t rows, size_t cols)
         sol[i] = sol[i] / mat[i][i];
     }
  
-    printf("\n [ %lf, %lf, %lf, %lf, %lf, %lf ]\n", sol[0], sol[1], sol[2], sol[3], sol[4], sol[5]);
+    //printf("\n [ %lf, %lf, %lf, %lf, %lf, %lf ]\n", sol[0], sol[1], sol[2], sol[3], sol[4], sol[5]);
+    //printf("\n");
+    //print_mat(mat, rows, cols);
     return sol;
 }
 
@@ -75,12 +89,12 @@ x3, double y3, double size)
     
     //val to change
     
-    double u1 = 100;
-    double v1 = 100;
-    double u2 = 100;
-    double v2 = 100 + size;
-    double u3 = 100 + size;
-    double v3 = 100;
+    double u1 = SIZE;
+    double v1 = SIZE;
+    double u2 = SIZE;
+    double v2 = SIZE + size;
+    double u3 = SIZE + size;
+    double v3 = SIZE;
     
     AugMat[0][0] = x1;
     AugMat[1][0] = x2;
@@ -107,21 +121,166 @@ x3, double y3, double size)
     AugMat[4][5] = 1;
     AugMat[5][5] = 1;
     
-    print_mat(AugMat, 6, 7);
-    printf("\n"); 
+    //print_mat(AugMat, 6, 7);
+    //printf("\n"); 
     double *sol = GaussianElimination(AugMat, 6, 7);
     
+    free_mat(AugMat, 6);
     return sol;
 }
 
-SDL_Surface *AffineTransformation(SDL_Surface *oldimg, double *vals, double size)
+/* ---- MATRIX INVERSION BEGIN ---- */
+
+static inline
+void getCofactor(double **mat, double **tmp, int p, int q, int n)
 {
-    int newsize = 100 + size + 100; 
+    int i = 0;
+    int j = 0;
+    
+    for(int row = 0; row < n; row++)
+    {
+        for(int col = 0; col < n; col++)
+        {
+            if(row != p && col != q)
+            {
+                tmp[i][j++] = mat[row][col];
+                
+                if (j == n - 1)
+                {
+                    j = 0;
+                    i++;
+                }
+            }
+        }
+    }
+}
+
+static inline
+double determinant(double **mat, int n)
+{
+    double ret = 0;
+    
+    if(n == 1)
+        return mat[0][0];
+    
+    double **tmp = malloc(sizeof(double*)*n);
+    for(int i = 0; i < n; i++)
+        tmp[i] = calloc( n, sizeof(double));
+    
+    int sign = 1;
+    
+    for (int f = 0; f < n; f++)
+    {
+        getCofactor(mat, tmp, 0, f, n);
+        ret += sign * mat[0][f] * determinant(tmp, n - 1);
+        sign = -sign;
+    }
+    
+    free_mat(tmp, n);
+    return ret;
+}
+
+static inline
+void adjoint(double **mat, double **adj, int n)
+{
+    if(n == 1)
+    {
+        adj[0][0] = 1;
+        return;
+    }
+
+    int sign = 1;
+    double **tmp = malloc(sizeof(double*)*n);
+    for(int i = 0; i < n; i++)
+        tmp[i] = calloc( n, sizeof(double));
+    
+    for(int i = 0; i < n; i++)
+    {
+        for(int j = 0; j < n; j++)
+        {
+            getCofactor(mat, tmp, i, j, n);
+            if((i + j) % 2 == 0)
+                sign = 1;
+            else
+                sign = -1;
+            
+            adj[j][i] = sign * determinant(tmp, n - 1);
+        }
+    }
+    
+    free_mat(tmp, n); 
+}
+
+static inline
+int inverse(double **mat, double **inv, int n)
+{
+    double det = determinant(mat, n);
+    if (det == 0)
+    {
+        warn("Determinant == 0");
+        return 0;
+    }
+ 
+    double **adj = malloc(sizeof(double*)*n);
+    for(int i = 0; i < n; i++)
+        adj[i] = calloc( n, sizeof(double));
+    
+    adjoint(mat, adj, n);
+       
+    for(int i = 0; i < n; i++)
+    {
+        for(int j = 0; j < n; j++)
+        {
+            inv[i][j] = adj[i][j]/det;
+        }
+    }
+    
+    free_mat(adj, n);
+    return 1;
+}
+
+/* ---- MATRIX INVERSION END ---- */
+
+int InvertMat(double *vals) //3*3 matrix
+{
+    double **mat = malloc(sizeof(double*) * 3);
+    for(int i  = 0; i < 3; i++)
+        mat[i] = calloc(3, sizeof(double));
+    
+    mat[0][0] = vals[0];
+    mat[0][1] = vals[1];
+    mat[0][2] = vals[2];
+    mat[1][0] = vals[3];
+    mat[1][1] = vals[4];
+    mat[1][2] = vals[5];
+    mat[2][2] = 1;
+    //print_mat(mat, 3, 3);
+     
+    double **inv = malloc(sizeof(double*)*3);
+    for(int i = 0; i < 3; i++)
+        inv[i] = calloc( 3, sizeof(double));
+    
+    if(inverse(mat, inv, 3) == 0)
+        return 0;
+   
+    //printf("\n"); 
+    //print_mat(inv, 3, 3);
+    vals[0] = inv[0][0];
+    vals[1] = inv[0][1];
+    vals[2] = inv[0][2];
+    vals[3] = inv[1][0];
+    vals[4] = inv[1][1];
+    vals[5] = inv[1][2];
+    free_mat(inv, 3);
+    free_mat(mat, 3);
+    return 1;
+}
+
+
+SDL_Surface *FrontMapping(SDL_Surface *oldimg, double *vals, double size)
+{
+    int newsize = SIZE + size + SIZE; 
     SDL_Surface *img = create_image(newsize, newsize);
-    //save_image(img, "trans.bmp");
-    //img = load_image("trans.bmp");
-    white_map(img);
-    display_image(img); 
     double a = vals[0];
     double b = vals[1];
     double c = vals[2];
@@ -131,7 +290,6 @@ SDL_Surface *AffineTransformation(SDL_Surface *oldimg, double *vals, double size
     
     int u = 0;
     int v = 0;
-    Uint8 r, g, bl;
     
     for(int y = 0; y < oldimg->h ; y++)
     {
@@ -140,17 +298,66 @@ SDL_Surface *AffineTransformation(SDL_Surface *oldimg, double *vals, double size
             u = round(a*x + b*y + c);
             v = round(d*x + e*y + f);
             
-            if( u > newsize || u < 0 || v > newsize || v < 0)
-                continue;
-           
-            warn("new coord u,v : %d/%d", u, v); 
-            Uint32 p = getpixel(oldimg, x, y);
-            SDL_GetRGB(p, oldimg->format, &r, &g, &bl); 
-            putpixel(img, u, v, SDL_MapRGB(img->format, r, g, bl)); 
+            if( u < img->w && u > 0 && v < img->h && v > 0)
+            {
+                Uint32 p = getpixel(oldimg, x, y);
+                putpixel(img, u, v, p);
+            } 
         }
     }
-   
-    display_image(img); 
+    free(vals); 
     return img;
 }
 
+SDL_Surface *BackMapping(SDL_Surface *oldimg, double *vals, double size)
+//vals have to be inerted first
+{
+    int newsize = SIZE + size + SIZE;
+    SDL_Surface *img = create_image(newsize, newsize);
+    
+    double a = vals[0];
+    double b = vals[1];
+    double c = vals[2];
+    double d = vals[3];
+    double e = vals[4];
+    double f = vals[5];
+    
+    int x = 0;
+    int y = 0;
+    
+    for(int v = 0; v < img->h ; v++)
+    {
+        for(int u = 0; u < img->w; u++)
+        {
+            x = round(a*u + b*v + c);
+            y = round(d*u + e*v + f);
+            
+            if( x < oldimg->w && x > 0 && y < oldimg->h && y > 0)
+            {
+                Uint32 p = getpixel(oldimg, x, y);
+                putpixel(img, u, v, p);
+            }
+            else
+            {
+                putpixel(img, u, v, SDL_MapRGB(img->format, 255, 255, 255));
+            } 
+        }
+    }
+    free(vals);
+    return img;
+}
+
+SDL_Surface *GeoTransform(SDL_Surface *img, struct FPresults *f)
+{
+    double *solutions = SolveAffineEquations(f->x1, f->y1, f->x2, f->y2, f->x3,
+                                            f->y3, f->dist);
+   
+    double size = f->dist; 
+    if(InvertMat(solutions) == 0)
+    {
+        warn("Backmapping failed");
+        return FrontMapping(img, solutions, size);
+    }
+    
+    return BackMapping(img, solutions, size);
+}

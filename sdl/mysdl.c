@@ -25,7 +25,7 @@ void wait_for_keypressed(void) {
 // Init SDL function
 void init_sdl(void) {
   // Init only the video part
-  if( SDL_Init(SDL_INIT_VIDEO)==-1 )
+  if( SDL_Init(SDL_INIT_VIDEO) == -1 )
     errx(1,"Could not initialize SDL: %s.\n", SDL_GetError());
   // We don't really need a function for that ...
 }
@@ -41,7 +41,7 @@ SDL_Surface* load_image(char *path) {
 }
 
 // Create window from image
-SDL_Surface* display_image(SDL_Surface *img) {
+/*SDL_Surface* display_image(SDL_Surface *img) {
   SDL_Surface          *screen;
   // Set the window to the same size as the image
   screen = SDL_SetVideoMode(img->w, img->h, 0, SDL_SWSURFACE|SDL_ANYFORMAT);
@@ -63,6 +63,31 @@ SDL_Surface* display_image(SDL_Surface *img) {
 
   // return the screen for further uses
   return screen;
+}*/
+
+void display_image(SDL_Surface *img)
+{
+    int SCREEN_WIDTH = img->w;
+    int SCREEN_HEIGHT = img->h;
+
+    SDL_Window *window = SDL_CreateWindow("Display image", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
+                                                           SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    
+    if(window == NULL)
+        errx(1, "CreateWindow error: %s\n", SDL_GetError());
+   
+    SDL_Surface *screen = SDL_GetWindowSurface(window);
+    
+    if(SDL_BlitSurface(img, NULL, screen, NULL) < 0)
+        warnx("BlitSurface error %s\n", SDL_GetError());
+
+    SDL_UpdateWindowSurface(window);
+    
+    wait_for_keypressed();
+    
+    SDL_DestroyWindow(window);
+    
+    return;
 }
 
 // Create an image

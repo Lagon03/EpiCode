@@ -17,6 +17,6 @@ struct FPresults
 };
 
 struct FPresults *QrCode_found(struct FPat *fp);
-double *get_Dcoord (struct FPat *fp, int A);
+double *get_Dcoord (struct FPat *fp, int A); //Only if using projection transformation
 
 # endif
