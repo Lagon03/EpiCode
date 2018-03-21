@@ -8,15 +8,15 @@
 # include "FPValid.h"
 
 static inline
-int Find_QrCodes(void)
+struct FPresults *Find_QrCodes(void)
 {
-    return -1;
+    return NULL;
 }
 
-int QrCode_found(struct FPat *fp)
+struct FPresults *QrCode_found(struct FPat *fp)
 {
     if(fp->centers->size < 3)
-        return -1;
+        return NULL;
 
     //Multiple Case not handled
     if(fp->centers->size > 3)
@@ -32,17 +32,51 @@ int QrCode_found(struct FPat *fp)
     double dist2_3 = sqrt(pow(fp->centers->mat[1][0] - fp->centers->mat[2][0],2)
                         + pow(fp->centers->mat[1][1] - fp->centers->mat[2][1],2));
     
-    int indexA = 0;
-
-    if(dist1_2 > dist1_3 && dist1_2 > dist2_3)
-        indexA = 2;
-    else if(dist1_3 > dist1_2 && dist1_3 > dist2_3)
-        indexA = 1;
+    int indexA;
+    struct FPresults *ret = malloc(sizeof(struct FPresults));
     
-    return indexA;    
+    if(dist1_2 > dist1_3 && dist1_2 > dist2_3)
+    {
+        indexA = 2;
+        ret->indexA = indexA;
+        ret->dist = dist1_3;
+        ret->x1 = fp->centers->mat[2][0];
+        ret->x2 = fp->centers->mat[0][0];
+        ret->x3 = fp->centers->mat[1][0];
+        ret->y1 = fp->centers->mat[2][1];
+        ret->y2 = fp->centers->mat[0][1];
+        ret->y3 = fp->centers->mat[1][1];
+    }
+    else if(dist1_3 > dist1_2 && dist1_3 > dist2_3)
+    {
+        indexA = 1;
+        ret->indexA = indexA;
+        ret->dist = dist1_2;
+        ret->x1 = fp->centers->mat[1][0];
+        ret->x2 = fp->centers->mat[2][0];
+        ret->x3 = fp->centers->mat[0][0];
+        ret->y1 = fp->centers->mat[1][1];
+        ret->y2 = fp->centers->mat[2][1];
+        ret->y3 = fp->centers->mat[0][1];
+    }
+    else 
+    {
+        indexA = 0;
+        ret->indexA = indexA;
+        ret->dist = dist2_3;
+        ret->x1 = fp->centers->mat[0][0];
+        ret->x2 = fp->centers->mat[1][0];
+        ret->x3 = fp->centers->mat[2][0];
+        ret->y1 = fp->centers->mat[0][1];
+        ret->y2 = fp->centers->mat[1][1];
+        ret->y3 = fp->centers->mat[2][1];
+    }
+   
+     
+    return ret;    
 }
 
-double *get_Dcoord (struct FPat *fp, int A) // for projection transform later
+double *get_Dcoord (struct FPat *fp, int A) // for projection transform later, doesn't work btw
 {
     double *ret = malloc(sizeof(double));
     double *Aco = fp->centers->mat[A];

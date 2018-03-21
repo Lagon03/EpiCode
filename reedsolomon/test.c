@@ -1,6 +1,7 @@
 #include "op.h"
 #include "array.h"
 #include "encode.h"
+#include "decode.h"
 
 int main()
 {
@@ -11,9 +12,6 @@ int main()
   initArray(gf_table->gf_log, 256);
   gf_table = init_tables();
 
-  printf("gf_mul : %u\n", gf_table->gf_log->array[14]);
-
-  struct gf_tables *gf_table = init_tables();
 
   struct Array *msg_in = malloc(sizeof(struct Array));
 
@@ -28,6 +26,8 @@ int main()
   msg_in->array[7] = 0x06;
   msg_in->array[8] = 0x27;
   msg_in->array[9] = 0x26;
+
+
   msg_in->array[10] = 0x96;
   msg_in->array[11] = 0xc6;
   msg_in->array[12] = 0xc6;
@@ -38,15 +38,31 @@ int main()
 
   struct Array *msg = malloc(sizeof(struct Array));
   initArray(msg, 170);
+	
+	struct Array *synd = malloc(sizeof(struct Array));
+	
   
   msg = rs_encode_msg(msg_in, 10, gf_table);
-<<<<<<< HEAD
-
-=======
-  for(int i =0; i < msg->used; i++)
-    printf("\n%u - ", msg->array[i]);
-  printf("\n");
-  
->>>>>>> 35b43cbd0d65fab4939810ed41d6dacf5f797d13
+	for(size_t i = 0; i < msg->used; i++){
+		printf("msg_out[%u] = %x\n", i, msg->array[i]);
+	}
+	msg->array[0] = 0;
+	synd = rs_calc_syndromes(msg, 10, gf_table);
+	int a = rs_check(msg,10, gf_table);
+	printf("a = %d",a);
+  for(size_t i = 0; i < msg->used; i++){
+    printf("msg_out[%u] = %x\n", i, msg->array[i]);
+  }
+	for(size_t i = 0; i < synd->used; i++){
+		printf("synd[%u] = %u\n", i, synd->array[i]);
+	}
+	struct Array *list = malloc(sizeof(struct Array));
+	initArray(list,2);
+	list->array[0] = 0;
+	list->used = 1;
+	msg = rs_correct_errdata(msg, synd, list, gf_table);
+	for(size_t i = 0; i < msg->used; i++){
+		printf("msg_out[%u] = %x\n", i, msg->array[i]);
+	}
   return 0;
 }

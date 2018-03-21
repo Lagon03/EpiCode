@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "array.h"
 #include "op.h"
 
@@ -43,8 +45,8 @@ struct Array* reverse_arr(struct Array *l)
 {
     int c, d;
     struct Array *res = malloc(sizeof(struct Array));
-    initArray(res, l->size);
-    for (c = l->size - 1, d = 0; c >= 0; c--, d++)
+    initArray(res, l->used);
+    for (c = l->used - 1, d = 0; c >= 0; c--, d++)
         res[d] = l[c];
     return res;
 }
@@ -174,13 +176,13 @@ struct Array* gf_poly_add(struct Array *p, struct Array *q)
 struct Array* gf_poly_mul(struct Array *p, struct Array *q, struct gf_tables *gf_table)
 {
     struct Array *res = malloc(sizeof(struct Array));
-    initZArray(res, p->size + q->size + 1);
+    initZArray(res, p->used + q->used + 1);
     for(size_t j = 0; j < q->used; j++){
         for(size_t i = 0; i < p->used; i++){
             res->array[i+j] ^= gf_mul(p->array[i], q->array[j], gf_table);
-            insertArray(res);
         }
     }
+    res->used = q->used + p->used-1;
     return res;
 }
 
@@ -197,7 +199,7 @@ uint8_t gf_poly_eval(struct Array *p, uint8_t x, struct gf_tables *gf_table)
 struct Tuple* gf_poly_div(struct Array *dividend, struct Array *divisor, struct gf_tables *gf_table)
 {
   struct Tuple *result = malloc(sizeof(struct Tuple));
-  size_t length = dividend->used+2;
+  size_t length = dividend->used;
   size_t separator = divisor->used -1;
   struct Array *msg_out = malloc(sizeof(struct Array));
   initArray(msg_out, length );
@@ -205,84 +207,33 @@ struct Tuple* gf_poly_div(struct Array *dividend, struct Array *divisor, struct 
   initArray(msg_out2, length);
   struct Array *msg_out3 = malloc(sizeof(struct Array));
   initArray(msg_out3, length);
-  copy_arr(dividend, msg_out);
+  memmove(msg_out->array, dividend->array, dividend->used);
 
-  for(size_t i = 0; i < dividend->used - (divisor->used - 1); i++){
+  for(size_t i = 0; i < dividend->used - divisor->used + 1; i++){
     uint8_t coef = msg_out->array[i];
     if(coef != 0){
       for(size_t j = 1; j < divisor->used; j++){
-      	if(divisor->array[j] != 0){
-          printf("coef: %u, divisor : \n", gf_table->gf_exp->array[coef] );
-          printf("OADB%u\n", gf_table->gf_exp->array[divisor->array[j]]);
-          printf("divisor: %u\n", gf_table->gf_exp->array[gf_table->gf_log->array[divisor->array[j]] + gf_table->gf_log->array[coef]]);
       	  msg_out->array[i + j] ^= gf_mul(divisor->array[j], coef, gf_table);
-          printf("[");
-          for (int k = 0; k < msg_out->used; ++k)
-          {
-            printf(" %u,",msg_out->array[k] );
-          }
-          printf("]\n");
-// =======
-//     struct Tuple *result = malloc(sizeof(struct Tuple));
-//     size_t length = dividend->used;
-//     size_t separator = divisor->used -1;
-//     struct Array *msg_out = malloc(sizeof(struct Array));
-//     initArray(msg_out, length << 1);
-//     struct Array *msg_out2 = malloc(sizeof(struct Array));
-//     initArray(msg_out2, length);
-//     struct Array *msg_out3 = malloc(sizeof(struct Array));
-//     initArray(msg_out3, length);
-
-//     for(size_t i = 0; i < length; i++){ 
-//         msg_out->array[i] = dividend->array[i];
-//         insertArray(msg_out);
-//     }
-
-//     for(size_t i = 0; i < dividend->used - (divisor->used - 1); i++){
-//         uint8_t coef = msg_out->array[i];
-//         if(coef != 0){
-//             for(size_t j = 1; j < divisor->used; j++){
-//                 if(divisor->array[j] != 0){
-//                     msg_out->array[i + j] ^= gf_mul(divisor->array[j], coef, gf_table);
-//                     insertArray(msg_out);
-//                 }
-//             }
-        }
+      }
     }
   }
-  msg_out->used = dividend->used;
-  // printf("msg_out:[");
-  // for (int k = 0; k < msg_out->used; ++k)
-  // {
-  //   printf(" %u,",msg_out->array[k] );
-  // }
-  printf("]\n");
-  msg_out2 = split_arr(msg_out, 0, msg_out->used - separator);
-  msg_out3 = split_arr(msg_out, msg_out->used - separator + 1, msg_out->used);
-  printf("size msg_out %u, size msg_out2 %u, size msg_out3 %u%\n",msg_out->used, msg_out2->used, msg_out3->used );
+  msg_out->used = divisor->used + dividend->used-1;
 
-  // printf("msg_out2:[");
-  // for (int k = 0; k < msg_out2->used; ++k)
-  // {
-  //   printf(" %u,",msg_out2->array[k] );
-  // }
-  // printf("]\n");
-  // printf("msg_out3:[");
-  // for (int k = 0; k < msg_out3->used; ++k)
-  // {
-  //   printf(" %u,",msg_out3->array[k] );
-  // }
-  printf("]\n");
+  for(int a =0;a<msg_out->used;a++)
+    printf("msg_outAA[%u]: %x \n",a, msg_out->array[a]);
+  //msg_out2 = split_arr(msg_out, 0, msg_out->used - separator);
+  //msg_out3 = split_arr(msg_out, msg_out->used - separator + 1, msg_out->used);
+  printf("size msg_out %u, size msg_out2 %u, size msg_out3 %u%\n",msg_out->used, msg_out2->used, msg_out3->used );
+  memmove(msg_out2->array, msg_out->array, (msg_out->used - separator));
+  msg_out2->used = msg_out->used - separator;
+  msg_out3->array = msg_out->array + (msg_out->used - separator);
+  msg_out3->used = separator;
   result->x = msg_out2;
   result->y = msg_out3;
+  for(int a =0;a<msg_out2->used;a++)
+    printf("msg_out2[%u]: %x \n",a, msg_out2->array[a]);
+  for(int a =0;a<msg_out3->used;a++)
+    printf("msg_out3[%u]: %x \n",a, msg_out3->array[a]);
   return result;
-    // msg_out2 = split_arr(msg_out, 0, msg_out->used - separator);
-    // msg_out3 = split_arr(msg_out, msg_out->used - separator + 1, msg_out->used);
-    // for(int i = 0; i < msg_out->used; i++)
-    //     printf("msg_out : %u\n", msg_out->array[i]);
-    // for(int i = 0; i < msg_out3->used; i++)
-    //     printf("msg_out3 : %u\n", msg_out3->array[i]);
-    // result->x = msg_out2;
-    // result->y = msg_out3;
-    // return result;
+
 }

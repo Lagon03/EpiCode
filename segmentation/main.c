@@ -80,26 +80,28 @@ void fPiter(char *file)
     img = blackAndWhite(img, 0);
     
     struct FPat *f = findFP(img);
-    int A = (int)QrCode_found(f);
-    if(A == -1)
+    struct FPresults *tmp = QrCode_found(f);
+    if(tmp == NULL)
         err(EXIT_FAILURE, "Sorry, i didn't find any QrCodes"); 
     
-    printf("Finder pattern A is : %d \n ", A);
+    printf("Finder pattern A is : %d \n ", tmp->indexA);
    
-    Draw_point(show, f->centers->mat[0][0], f->centers->mat[0][1]);
-    Draw_point(show, f->centers->mat[1][0], f->centers->mat[1][1]);
-    Draw_point(show, f->centers->mat[2][0], f->centers->mat[2][1]);
+    //Draw_point(show, f->centers->mat[0][0], f->centers->mat[0][1]);
+    //Draw_point(show, f->centers->mat[1][0], f->centers->mat[1][1]);
+    //Draw_point(show, f->centers->mat[2][0], f->centers->mat[2][1]);
     
-    Draw_line(show,f->centers->mat[0][0], f->centers->mat[0][1],
-                    f->centers->mat[1][0], f->centers->mat[1][1]);
-    Draw_line(show,f->centers->mat[0][0], f->centers->mat[0][1],
-                    f->centers->mat[2][0], f->centers->mat[2][1]);
-    Draw_line(show,f->centers->mat[1][0], f->centers->mat[1][1],
-                    f->centers->mat[2][0], f->centers->mat[2][1]);
+    //Draw_line(show,f->centers->mat[0][0], f->centers->mat[0][1],
+    //                f->centers->mat[1][0], f->centers->mat[1][1]);
+    //Draw_line(show,f->centers->mat[0][0], f->centers->mat[0][1],
+    //                f->centers->mat[2][0], f->centers->mat[2][1]);
+    //Draw_line(show,f->centers->mat[1][0], f->centers->mat[1][1],
+    //                f->centers->mat[2][0], f->centers->mat[2][1]);
     printf("Affine Transformation \n");
-    double *sol = SolveAffineEquations(34, 14, 143, 325, 322, 532, 60); 
+    double *sol = SolveAffineEquations(tmp->x1, tmp->y1, tmp->x2, tmp->y2, tmp->x3, tmp->y3, tmp->dist);
+    SDL_Surface *trans = AffineTransformation(img, sol, tmp->dist);
     //drawFP(show, f->centers, f->ems_vector, A);
-    display_image(show);
+    //save_image(trans, "trans.bmp");
+    display_image(img);
     free_Fpat(f);
 }
 
