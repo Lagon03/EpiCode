@@ -125,6 +125,7 @@ char* alpha_encoding(char* data, size_t len)
 
 char* byte_encoding(char* data, size_t len)
 {
+    printf("Len : %li\n", len);
     char* enc_message = calloc(len * 8, sizeof(char));
     enc_message[0] = '\0';
     size_t size = 0;
@@ -138,6 +139,8 @@ char* byte_encoding(char* data, size_t len)
         size += 8;
 
         free(bits);
+        printf("i : %li\n", i + 1);
+        printf("Dec : %li\n", numC);
         ++i;
     }
     return enc_message;
