@@ -68,8 +68,8 @@ size_t poly_minus(size_t elm1, size_t elm2) {
 }
 
 size_t p_xor(size_t x, size_t y) {
-    if (x != 0 && y != 0)
-        printf("######## xor of %li by %li\n", y, x);
+    /*if (x != 0 && y != 0)
+      printf("######## xor of %li by %li\n", y, x);*/
     char* x_byte = convertToByte(x);
     x_byte = adjustSize(x_byte, 8);
     char* y_byte = convertToByte(y);
@@ -216,6 +216,7 @@ size_t* GenPolyFromCW(struct Block* codewords, size_t err_words) {
     }
     //printf("\n\n");
 
+    printf("We need %li codewords.\n", err_words);
     poly_mul_var(err_words , polynome);
     change_order(polynome, polynome->term[0].var);
 
@@ -231,12 +232,13 @@ size_t* GenPolyFromCW(struct Block* codewords, size_t err_words) {
     //printf("Polynomial Generator after multiplication: \n");
     poly_mul_var(polynome->term[0].var - p_gen->term[0].var, p_gen);
     //print_poly_a(p_gen);
+    //poly_mul_coeff(0, p_gen, 0);
     poly_mul_coeff(polynome->term[0].coeff, p_gen, 0);
     change_order(p_gen ,p_gen->term[0].var);
 
     printf("\n");
-      print_poly_a(p_gen);
-      print_poly(p_gen);
+    print_poly_a(p_gen);
+    print_poly(p_gen);
 
 
     struct poly* fix_gen = GenPolyG(err_words - 1); // This poly MUST not be
@@ -270,11 +272,12 @@ size_t* GenPolyFromCW(struct Block* codewords, size_t err_words) {
                     xor->term[o_g].coeff = p_xor(t_gen, 0);
             }
 
-            xor = merge(polynome, xor, i + 1);
+            //xor = merge(polynome, xor, i + 1);
 
             poly_mul_var_down(1, initial_gen);
             poly_mul_var_down(1, fix_gen);
             poly_mul_coeff(xor->term[1].coeff, initial_gen, i);
+            printf("Coeff at %li = %li\n", 1, xor->term[i].coeff);
         }
         else 
         {
@@ -294,7 +297,6 @@ size_t* GenPolyFromCW(struct Block* codewords, size_t err_words) {
                         xor->term[o_g + i].coeff = p_xor(t_gen, 0);
                 }
             }
-
             poly_mul_var_down(1, fix_gen);  
             // we need to lower the power of
             // the fixed generator
@@ -317,7 +319,7 @@ size_t* GenPolyFromCW(struct Block* codewords, size_t err_words) {
         print_poly(xor);
         printf("\n");
         printf("\n Generator polynomial :\n");
-        print_poly_a(initial_gen);
+        print_poly(initial_gen);
         printf("\n");
     }
     //free(xor);
@@ -335,8 +337,8 @@ size_t* GenPolyFromCW(struct Block* codewords, size_t err_words) {
     free(fix_gen);
 
     /*for(size_t i = 0; i < err_words; ++i)
-        printf("%li ", err_cw[i]);
-    printf("\n");*/
+      printf("%li ", err_cw[i]);
+      printf("\n");*/
 
     return err_cw;
 }
