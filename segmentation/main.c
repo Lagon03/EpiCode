@@ -86,21 +86,22 @@ void fPiter(char *file)
     
     printf("Finder pattern A is : %d \n ", tmp->indexA);
    
-    Draw_point(show, f->centers->mat[0][0], f->centers->mat[0][1]);
-    Draw_point(show, f->centers->mat[1][0], f->centers->mat[1][1]);
-    Draw_point(show, f->centers->mat[2][0], f->centers->mat[2][1]);
+    //Draw_point(show, f->centers->mat[0][0], f->centers->mat[0][1]);
+    //Draw_point(show, f->centers->mat[1][0], f->centers->mat[1][1]);
+    //Draw_point(show, f->centers->mat[2][0], f->centers->mat[2][1]);
     
-    Draw_line(show,f->centers->mat[0][0], f->centers->mat[0][1],
-                    f->centers->mat[1][0], f->centers->mat[1][1]);
-    Draw_line(show,f->centers->mat[0][0], f->centers->mat[0][1],
-                    f->centers->mat[2][0], f->centers->mat[2][1]);
-    Draw_line(show,f->centers->mat[1][0], f->centers->mat[1][1],
-                    f->centers->mat[2][0], f->centers->mat[2][1]);
+    //Draw_line(show,f->centers->mat[0][0], f->centers->mat[0][1],
+    //                f->centers->mat[1][0], f->centers->mat[1][1]);
+    //Draw_line(show,f->centers->mat[0][0], f->centers->mat[0][1],
+    //                f->centers->mat[2][0], f->centers->mat[2][1]);
+    //Draw_line(show,f->centers->mat[1][0], f->centers->mat[1][1],
+    //                f->centers->mat[2][0], f->centers->mat[2][1]);
     printf("Affine Transformation \n");
     double *sol = SolveAffineEquations(tmp->x1, tmp->y1, tmp->x2, tmp->y2, tmp->x3, tmp->y3, tmp->dist);
-    SDL_Surface *trans = AffineTransformation(show, sol, tmp->dist);
+    SDL_Surface *trans = AffineTransformation(img, sol, tmp->dist);
     //drawFP(show, f->centers, f->ems_vector, A);
-    display_image(show);
+    //save_image(trans, "trans.bmp");
+    display_image(img);
     free_Fpat(f);
 }
 

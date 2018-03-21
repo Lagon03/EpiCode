@@ -6,6 +6,18 @@
 */
 
 # include "geotrans.h"
+static inline
+void white_map(SDL_Surface *img)
+{
+    for(int y = 0; y < img->h; y++)
+    {
+        for(int x = 0; x < img->w; x++)
+        {
+            putpixel(img, x, y, SDL_MapRGB(img->format, 255, 255, 255));
+        }
+    }
+}
+
 
 static inline
 void print_mat(double **mat, int rows, int cols)
@@ -63,12 +75,12 @@ x3, double y3, double size)
     
     //val to change
     
-    double u1 = 40;
-    double v1 = 40;
-    double u2 = 40;
-    double v2 = 40 + size;
-    double u3 = 40 + size;
-    double v3 = 40;
+    double u1 = 100;
+    double v1 = 100;
+    double u2 = 100;
+    double v2 = 100 + size;
+    double u3 = 100 + size;
+    double v3 = 100;
     
     AugMat[0][0] = x1;
     AugMat[1][0] = x2;
@@ -104,9 +116,12 @@ x3, double y3, double size)
 
 SDL_Surface *AffineTransformation(SDL_Surface *oldimg, double *vals, double size)
 {
-    int newsize = 40 + size + 40; 
+    int newsize = 100 + size + 100; 
     SDL_Surface *img = create_image(newsize, newsize);
-    
+    //save_image(img, "trans.bmp");
+    //img = load_image("trans.bmp");
+    white_map(img);
+    display_image(img); 
     double a = vals[0];
     double b = vals[1];
     double c = vals[2];
@@ -127,14 +142,15 @@ SDL_Surface *AffineTransformation(SDL_Surface *oldimg, double *vals, double size
             
             if( u > newsize || u < 0 || v > newsize || v < 0)
                 continue;
-            
+           
+            warn("new coord u,v : %d/%d", u, v); 
             Uint32 p = getpixel(oldimg, x, y);
             SDL_GetRGB(p, oldimg->format, &r, &g, &bl); 
             putpixel(img, u, v, SDL_MapRGB(img->format, r, g, bl)); 
         }
     }
-    
-    display_image(img);
+   
+    display_image(img); 
     return img;
 }
 
