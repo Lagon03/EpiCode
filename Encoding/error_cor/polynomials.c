@@ -277,7 +277,6 @@ size_t* GenPolyFromCW(struct Block* codewords, size_t err_words) {
             poly_mul_var_down(1, initial_gen);
             poly_mul_var_down(1, fix_gen);
             poly_mul_coeff(xor->term[1].coeff, initial_gen, i);
-            printf("Coeff at %li = %li\n", 1, xor->term[i].coeff);
         }
         else 
         {
@@ -315,18 +314,18 @@ size_t* GenPolyFromCW(struct Block* codewords, size_t err_words) {
             }
             //poly_mul_coeff(xor->term[i + 1].coeff, initial_gen, i);
         }
-        printf("\n Xor %li result:\n", i + 1);
+        /*printf("\n Xor %li result:\n", i + 1);
         print_poly(xor);
         printf("\n");
         printf("\n Generator polynomial :\n");
         print_poly(initial_gen);
-        printf("\n");
+        printf("\n");*/
     }
     //free(xor);
 
-    printf("\nFinal Xor Polynomial : \n");
+    /*printf("\nFinal Xor Polynomial : \n");
     print_poly(xor);
-    printf("\n");
+    printf("\n");*/
 
     size_t* err_cw = malloc(err_words * sizeof(size_t));
     for(size_t c = 0; c < err_words; ++c)

@@ -42,22 +42,23 @@ void sub_color_alignment(char **mat, size_t i, size_t j, int protected)
 static void setAlignment(struct QrCode_Enc* data, int protected) {
     char** mat = data->mat;
     size_t size = data->size;
-    const size_t *ap = Ap_coord[data->data->version-1];
+    const size_t *ap = Ap_coord[data->data->version - 1];
 
     for(size_t i = 1; i < 8; i++)
     {
         for(size_t j = 1; j < 8; j++)
         {
+            if(ap[i] == 0 || ap[j] == 0)
+                continue;
             if(protected == 0) {
-                if((mat[ap[i]][ap[j]] != 0 && mat[ap[i]][ap[j]] != 'a') || 
-                        ap[i] == 0 || ap[j] == 0 || (ap[i] == 6 && ap[j] == 6) ||
+                if((ap[i] == 6 && ap[j] == 6) ||
                         (ap[i] == 6 && ap[j] == size - 7) || (ap[i] == size - 7 
                             && ap[j] == 6))
                     continue;            
-                sub_color_alignment(mat, ap[i], ap[j], protected);}
+                sub_color_alignment(mat, ap[i], ap[j], protected);
+            }
             else {
-                if((mat[ap[i]][ap[j]] != 0 && mat[ap[i]][ap[j]] != '1') || 
-                        ap[i] == 0 || ap[j] == 0 || (ap[i] == 6 && ap[j] == 6) ||
+                if((ap[i] == 6 && ap[j] == 6) ||
                         (ap[i] == 6 && ap[j] == size - 7) || (ap[i] == size - 7 
                             && ap[j] == 6))
                     continue;            

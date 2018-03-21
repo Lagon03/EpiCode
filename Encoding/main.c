@@ -90,8 +90,8 @@ int main (int argc, char* argv[])
             }
     } 
     struct EncData *data = getEncodedSize(arg);
-    //if(arg->correction == -1)
-    //  data->correction_level = 0;
+    if(arg->correction == -1)
+        data->correction_level = 0;
 
     printf("\nEncoded data informations  :\n");
     printf("\tMode indicator             : %s\n", data->mode_ind);
