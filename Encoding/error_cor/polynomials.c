@@ -216,13 +216,13 @@ size_t* GenPolyFromCW(struct Block* codewords, size_t err_words) {
     }
     //printf("\n\n");
 
-    printf("We need %li codewords.\n", err_words);
+    //printf("We need %li codewords.\n", err_words);
     poly_mul_var(err_words , polynome);
     change_order(polynome, polynome->term[0].var);
 
-    printf("Message polynomial after multiplication : \n");
+    /*printf("Message polynomial after multiplication : \n");
     print_poly(polynome);
-    printf("\n");
+    printf("\n");*/
 
     struct poly* p_gen = GenPolyG(err_words - 1);
 
@@ -236,9 +236,9 @@ size_t* GenPolyFromCW(struct Block* codewords, size_t err_words) {
     poly_mul_coeff(polynome->term[0].coeff, p_gen, 0);
     change_order(p_gen ,p_gen->term[0].var);
 
-    printf("\n");
+    /*printf("\n");
     print_poly_a(p_gen);
-    print_poly(p_gen);
+    print_poly(p_gen);*/
 
 
     struct poly* fix_gen = GenPolyG(err_words - 1); // This poly MUST not be

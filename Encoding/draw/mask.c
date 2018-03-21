@@ -470,8 +470,6 @@ int** evaluate(struct QrCode_Enc* data, int version, int cor) {
             setVersionString(data, V_bits[version]);
 
         unprotectMatrix(data);
-        printf("Mask %i\n", mask);
-        Generate_QrCode(mat, version, "k.tmp", 8);
 
         penalty[mask] = malloc(5 * sizeof(int));
         for(int condition = 0; condition < 4; ++condition) {
