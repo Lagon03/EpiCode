@@ -162,7 +162,7 @@ void demask3(char **mat, size_t size)
     {
         for(size_t j = 0; j < size; j++)
         {
-            if((i + j) % 3 == '0')
+            if((i + j) % 3 == 0)
             {
                 if(mat[i][j] == '1')
                     mat[i][j] = '0';
@@ -285,52 +285,89 @@ void applyMask(char **mat, size_t size, int mask)
                   }
     }
 }
+
+static inline int check_cpt(int cpt)
+{
+    if (cpt >= 5)
+    {
+        if (cpt == 5)
+            return 3;
+        return 1;
+    }
+    return 0;
+}
+
+static inline void check_status(int status)
+{
+    if(status == 1)
+        printf("\033[0;31m");
+    else
+        printf("\033[0;34m");
+}
+
 // condition #1 similar color consecutive
 int sequential_Eval(char** mat, size_t size) {
-    int v_penality = 0;
+    // declare the two penality var (horizontal and vertical)
+    int h_penality = 0, v_penality = 0;
+    // declare a counter to keep the number of consecutive bits (0/1)
+    int cpt = 0;
+    // declare the last visited bit var to check
+    char lbit = mat[0][0];
 
-    int counter = 0;
-    char last_color = '0';
-    for(size_t y = 0; y < size; ++y) {
-        for(size_t x = 0; x < size; ++x) {
-            if(last_color == mat[x][y])
-                counter += 1;
-            else {
-                counter = 1;
-                last_color = mat[x][y];
-            }
-            if(counter >= 5) {
-                if (counter == 5)
-                    v_penality += 3;
-                else
-                    v_penality += 1;
-            }
 
-        }
-    }
-    int h_penality = 0;
+    // tmp var to keep track of status (changed yes/no)
+    //int status = 0;
 
-    counter = 0;
-    for(size_t x = 0; x < size; ++x) {
-        for(size_t y = 0; y < size; ++y) {
-            //printf("%c ", mat[x][y]);
-            if(last_color == mat[x][y])
-                counter += 1;
-            else {
-                counter = 1;
-                last_color = mat[x][y];
-            }
-            if(counter >= 5)
+    // the horizontal block
+    for(size_t x = 0; x < size; ++x)
+    {
+        int line_val = 0;
+        cpt = 0;
+        for(size_t y = 0; y < size; ++y)
+        {
+            if(mat[x][y] == lbit)
+                cpt += 1;
+            else
             {
-                if(counter == 5)
-                    h_penality += 3;
-                else
-                    h_penality += 1;
+                //status = status == 1 ? 0 : 1;
+                cpt = 1;
+                lbit = mat[x][y];
             }
+            //check_status(status);
+            //printf(" %c ", mat[x][y]);
+            // we add the possible penality in function of cpt
+            line_val += check_cpt(cpt);
         }
-        //printf("\n");
+        //printf("\033[0m");
+        //printf(" = %3i\n", line_val);
+        h_penality += line_val;
     }
-    //printf("\n");
+    /*printf("\n\033[0m");
+      printf("Total line = %3i\n", h_penality);*/
+
+    // we reset the counter and last bit
+    cpt = 0, lbit = mat[0][0];
+
+    // the vertical block
+    for(size_t y = 0; y < size; ++y)
+    {
+        int col_val = 0;
+        cpt = 0;
+        for(size_t x = 0; x < size; ++x)
+        {
+            if(mat[x][y] == lbit)
+                cpt += 1;
+            else
+            {
+                cpt = 1;
+                lbit = mat[x][y];
+            }
+            col_val += check_cpt(cpt);
+        }
+        v_penality += col_val;
+    }
+    //printf("Total column = %3i\n", v_penality);
+    // return the total penality of this condition
     return h_penality + v_penality;
 }
 
@@ -338,59 +375,54 @@ int sequential_Eval(char** mat, size_t size) {
 int block_Eval(char** mat, size_t size) {
     int penality = 0;
 
-    for(size_t x = 0; x < size; ++x) {
-        for(size_t y = 0; y < size; ++y) {
-            if(x + 1 < size && y + 1 < size) {
+    for(size_t x = 0; x + 1 < size; ++x) 
+    {
+        for(size_t y = 0; y + 1 < size; ++y)
+        {
+            if(mat[x][y] == mat[x + 1][y + 1])
                 if(mat[x][y] == mat[x][y + 1])
-                    if(mat[x][y] == mat[x + 1][y])
-                        if(mat[x][y] == mat[x + 1][y + 1])
-                            penality += 3;
-            }
+                    if(mat[x][y + 1] == mat[x + 1][y])
+                        penality += 1;
         }
     }
-
-    return penality;
+    return penality * 3;
 }
 
+// Condition #3 we looking for 2 patterns
 int pattern_Eval(char** mat, size_t size) {
     int penality = 0;
     // 1 : black and 0 : white
-    char patterns[2][11] = { {'1', '0', '1', '1', '1', '0', '1', '0', '0', '0', '0'}, 
-        {'0', '0', '0', '0', '1', '0', '1', '1', '1', '0', '1'} };
+    char* patterns[2] = { "10111010000", "00001011101" };
 
     int test = 1;
-    for(size_t x = 0; x < size - 10; ++x) 
+    for(size_t x = 0; x < size; ++x) 
     {
-        for(size_t y = 0; y < size - 10; ++y)
+        for(size_t y = 0; y < size; ++y)
         {
             for(int p = 0; p < 2; ++p)
             {
-                size_t o_x = x;
-                size_t o_y = y;
-                if(y + 10 < size)
+                test = 1;
+                if( y + 10 < size )
                 {
-                    test = 1;
-                    for(size_t cur = 0; cur < 11 && test == 1; ++cur, ++y)
+                    for(size_t cur = 0, i = 0; cur < 11 && test == 1; ++cur, ++i)
                     {
-                        if(mat[x][y] != patterns[p][cur])
+                        if(mat[x][y + i] != patterns[p][cur])
                             test = 0;
                     }
                     if(test == 1)
                         penality += 40;
                 }
-                y = o_y;
-                if(x + 10 < size)
+                if( x + 10 < size )
                 {
                     test = 1;
-                    for(size_t cur = 0; cur < 11 && test == 1; ++cur, ++x)
+                    for(size_t cur = 0, i = 0; cur < 11 && test == 1; ++cur, ++i)
                     {
-                        if(mat[x][y] != patterns[p][cur])
+                        if(mat[x + i][y] != patterns[p][cur])
                             test = 0;
                     }
                     if(test == 1)
                         penality += 40;
                 }
-                x = o_x;
             }
         }
     }
@@ -426,19 +458,33 @@ int** evaluate(struct QrCode_Enc* data, int version, int cor) {
     int** penalty = malloc(8 * sizeof(int*));
     char** mat = data->mat;
     for(int mask = 0; mask < 8; ++mask) {
+        setFormatString(data, S_bits[cor][mask]);
+        if(version > 6)
+            setVersionString(data, V_bits[version]);
+
+        // Preprocessing (applying the mask)
+        applyMask(mat, data->size, mask);
+
+        setFormatString(data, S_bits[cor][mask]);
+        if(version > 6)
+            setVersionString(data, V_bits[version]);
+
+        unprotectMatrix(data);
+        printf("Mask %i\n", mask);
+        Generate_QrCode(mat, version, "k.tmp", 8);
 
         penalty[mask] = malloc(5 * sizeof(int));
         for(int condition = 0; condition < 4; ++condition) {
-            // Preprocessing (applying the mask)
-            applyMask(mat, data->size, mask);
+            /*// Preprocessing (applying the mask)
+              applyMask(mat, data->size, mask);
 
-            setFormatString(data, S_bits[cor][mask]);
-            if(version > 6)
-                setVersionString(data, V_bits[version]);
+              setFormatString(data, S_bits[cor][mask]);
+              if(version > 6)
+              setVersionString(data, V_bits[version]);
 
-            unprotectMatrix(data);
+              unprotectMatrix(data);
 
-            Generate_QrCode(mat, version, "t.bmp", 8);
+            //Generate_QrCode(mat, version, "t.bmp", 8);*/
 
             // evaluation bloc
             switch(condition) {
@@ -456,11 +502,14 @@ int** evaluate(struct QrCode_Enc* data, int version, int cor) {
                     break;
             }
 
-            protectMatrix(data);
+            /*protectMatrix(data);
             // PostProcessing (reverting the mask)
-            applyMask(mat, data->size, mask);
+            applyMask(mat, data->size, mask);*/
 
         }
+        protectMatrix(data);
+        // PostProcessing (reverting the mask)
+        applyMask(mat, data->size, mask);
         penalty[mask][4] = penalty[mask][0] + penalty[mask][1]
             + penalty[mask][2] + penalty[mask][3];
     }

@@ -146,9 +146,7 @@ int main (int argc, char* argv[])
     setFormatString(QrCode, S_bits[data->correction_level][6]);
     if(data->version >= 7)
         setVersionString(QrCode, V_bits[data->version]);
-    //protectMatrix(QrCode);
-
-    Generate_QrCode(QrCode->mat, data->version, "test.bmp", 8);
+    protectMatrix(QrCode);
 
     //We now evaluate
     int** mask_point = evaluate(QrCode, data->version, data->correction_level);
@@ -167,7 +165,7 @@ int main (int argc, char* argv[])
     }
     printf("Mask selected is %li\n", cur);    
 
-    for(int i = 0; i < 8; ++i) {
+    /*for(int i = 0; i < 8; ++i) {
         applyMask(QrCode->mat, QrCode->size, i);
 
         unprotectMatrix_B(QrCode);
@@ -179,7 +177,7 @@ int main (int argc, char* argv[])
         protectMatrix(QrCode);
         applyMask(QrCode->mat, QrCode->size, i);
 
-    }
+    }*/
     printf("Applying the best mask >> mask %li\n", cur);
     applyMask(QrCode->mat, QrCode->size, cur);
     unprotectMatrix_B(QrCode);
