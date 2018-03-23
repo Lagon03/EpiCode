@@ -41,7 +41,9 @@ char* num_encoding(char* data, size_t len)
     // We need to create (len / 3) pair (if len %3 == 0) else add 1 more
     // then convert it to binary
     size_t nbpair;
-    if(len % 3 == 0)
+    if(len < 3)
+        nbpair = 1;
+    else if(len % 3 == 0)
         nbpair = len / 3;
     else
         nbpair = (len / 3) + 1;
@@ -50,6 +52,7 @@ char* num_encoding(char* data, size_t len)
     enc_message[0] = '\0';
     size_t size = 0;
     size_t i = 0;
+    printf("Nb of pair : %li\n", nbpair);
     while(i < len)
     {
         char* pair = calloc(4, sizeof(char));
@@ -58,16 +61,19 @@ char* num_encoding(char* data, size_t len)
         for(int y = 0; y < 3 && i < len; ++y, ++i)
         {
             pair[y] = data[i];
-        }
+        } 
         size_t numC = strtol(pair, NULL, 10);
         char *bits = convertToByte(numC);
         bits = adjustSize(bits, 10);
+
         enc_message = adjustString(enc_message, bits, nbpair * 10, size, 10);
         size += 10;
-
+        
+        printf("%s ", bits);
         free(pair);
         free(bits);
     }
+    printf("\n %s\n", enc_message);
     return enc_message;
 }
 

@@ -5,6 +5,7 @@
 
 # include "../headers/encode.h"
 # include "../headers/encode_message.h"
+# include "../headers/encode_RS.h"
 # include "../headers/analysis.h"
 # include "../headers/polynomials.h"
 
@@ -431,8 +432,8 @@ void adjustBits(struct EncData *input, size_t length)
     char* data = input->encoded_data;
     size_t data_s = getSize(data);
 
-    //printf("\tSize to match : %li | Current message size : %li\n", mulE, data_s);
-    //printf("\tTotal size : %li\n", size);
+    /*printf("\tSize to match : %li | Current message size : %li\n", mulE, data_s);
+    printf("\tTotal size : %li\n", size);*/
 
     data = realloc(data, (data_s + (mulE - size) + 1) * sizeof(char));
     //printf("\tNew size : %li\n", data_s + (mulE - size) + 1);
@@ -446,15 +447,12 @@ void adjustBits(struct EncData *input, size_t length)
     data[data_s + length - size] = '\0';
     size_t repeat = (length - size) / 8;
 
-    //printf("\tNumber of repeat : %li\n", repeat);
-    //printf("\tLength : %li | size = %li | data_s = %li\n", length, size, data_s);
+    /*printf("\tNumber of repeat : %li\n", repeat);
+    printf("\tLength : %li | size = %li | data_s = %li\n", length, size, data_s);*/
 
     for(size_t i = 0; i < repeat; ++i) { 
         for(size_t j = 0; j < 8; ++j, ++data_s, ++size) {
-            if(i % 2 == 0)
-                data[data_s] = SpecAdd[0][j];
-            else
-                data[data_s] = SpecAdd[1][j];
+                data[data_s] = SpecAdd[i % 2][j];
         }
     }
 
@@ -537,19 +535,20 @@ struct Codewords* breakCodeword(struct EncData* data)
                     for(int i = 0; i < 8; ++i, ++cur) {
                         codewords->group[g]->blocks[b]->words[w][i] = full_data[cur];
                     }
-                    /*printf("\t\tCodeword %2li: %s | value : %ld\n", w + 1, 
+                    printf("\t\tCodeword %2li: %s | value : %ld\n", w + 1, 
                       codewords->group[g]->blocks[b]->words[w], 
-                      convertToDec(codewords->group[g]->blocks[b]->words[w]));*/
+                      convertToDec(codewords->group[g]->blocks[b]->words[w]));
                 }
 
                 // Here we compute the correction codewords
                 //printf("Number of code words erro : %li\n", ECC_CODEWORDS_PER_BLOCK[data->correction_level][data->version]);
                 codewords->group[g]->blocks[b]->correction = malloc(nb_cw_err * sizeof(char*));
-                size_t* err_cw = GenPolyFromCW(codewords->group[g]->blocks[b],
-                        nb_cw_err);
+                /*size_t* err_cw = GenPolyFromCW(codewords->group[g]->blocks[b],
+                        nb_cw_err);*/
+                size_t* err_cw = JtoL(codewords->group[g]->blocks[b]->words, data_cd, nb_cw_err); 
                 for(size_t i = 0; i < nb_cw_err; ++i)
                 {
-                    //printf("%li ", err_cw[i]);
+                    printf("%li ", err_cw[i]);
                     codewords->group[g]->blocks[b]->correction[i] = malloc(8 * sizeof(char));
                     codewords->group[g]->blocks[b]->correction[i] = adjustSize(convertToByte(err_cw[i]), 8);
                 }
@@ -581,12 +580,29 @@ void freeCodeWords(struct Codewords* codewords) {
 struct EncData* getEncodedSize(struct options *arg)
 {  
     struct EncData *data = malloc(sizeof(struct EncData));
-
-    size_t char_count = getSize(arg->message);
-    char *count_bits = convertToByte(char_count);
+    
+    size_t char_count = 0;
+    char* count_bits;
+    
+    char_count = getSize(arg->message);
+    count_bits = convertToByte(char_count);
+    
+    printf("%s\n", count_bits);
 
     size_t version = getSmallestVersion(arg->mode, char_count, arg->correction); 
-    // need to specify the limit in function of the version and of the mode
+    // need to specify the limit in function of the version and of the mod
+
+    /*if(arg->mode == 0)
+    {
+        char_count = getSize(arg->message);
+        if (char_count < 3)
+            char_count = 1;
+        else if(char_count % 3 == 0)
+            char_count = char_count % 3;
+        else
+            char_count = (char_count % 3) + 1;
+        count_bits = convertToByte(char_count);
+    }*/
     if(version <= 9) {
         if(arg->mode == 0)
             count_bits = adjustSize(count_bits, 10);    // Num
@@ -612,7 +628,7 @@ struct EncData* getEncodedSize(struct options *arg)
             count_bits = adjustSize(count_bits, 16);
     }
 
-    // ---  
+    // --- 
 
     data->mode_ind = getModeIndicator(arg->mode);
     data->character_count_ind = count_bits;
@@ -621,7 +637,8 @@ struct EncData* getEncodedSize(struct options *arg)
 
     //printf("Setting attribute done.\n");
     //printf("Version is : %li\n", version);
-
+    
+    char_count = getSize(arg->message);
     if(arg->mode == 0)
         data->encoded_data = num_encoding(arg->message, char_count);
     else if(arg->mode == 1)
@@ -663,7 +680,19 @@ struct EncData* getEncodedSize(struct options *arg)
     // Now we need to break the whole (mode indicator + characters count +
     // encoded data) into 8-bits Codewords to prepare the error correction
     adjustBits(data, full_size);
-
+    /*for(size_t i = 0; i < full_size; ++i)
+    {
+        if(i % 8 == 0)
+            printf(" ");
+        printf("%c", data->encoded_data[i]);
+    }
+    printf("\n");
+    for(size_t i = 0; i < full_size; ++i)
+    {
+        if(i % 8 == 0)
+            printf(" ");
+        printf("%d", data->encoded_data[i]);
+    }*/
     //printf("Data bits adjusted.\n");
 
     struct Codewords *codewords = breakCodeword(data);
