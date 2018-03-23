@@ -90,8 +90,8 @@ int main (int argc, char* argv[])
             }
     } 
     struct EncData *data = getEncodedSize(arg);
-    //if(arg->correction == -1)
-    //  data->correction_level = 0;
+    if(arg->correction == -1)
+        data->correction_level = 0;
 
     printf("\nEncoded data informations  :\n");
     printf("\tMode indicator             : %s\n", data->mode_ind);
@@ -131,14 +131,15 @@ int main (int argc, char* argv[])
         free(r_bits);
     }
     //weave->size = weave->size + Remainder_bits[data->version];
-    /*printf("Interweaved data : \n");
+    printf("Interweaved data : \n");
       for(size_t i = 0; i < weave->size; ++i)
       printf("%ld ", weave->forest[i]);
       printf("\nLength : %li\n", weave->size);
       printf("Interweaved data to binary : \n%s\n", weave_trans);
       printf("Total length : %li | with %li remainder bits\n", (weave->size * 8)
-      + Remainder_bits[data->version], Remainder_bits[data->version]);*/
+      + Remainder_bits[data->version], Remainder_bits[data->version]);
 
+    printf("test %li\n", (weave->size * 8) + Remainder_bits[data->version]);
     fill_mat(QrCode->mat, QrCode->size, data->version, weave_trans, (weave->size
                 * 8) + Remainder_bits[data->version]);
 
@@ -153,11 +154,11 @@ int main (int argc, char* argv[])
     size_t cur = -1;
     int min = 99999999;
     for(size_t i = 0; i < 8; ++i) {
-        printf("Mask %li result : %i\n", i, mask_point[i][4]);
+        /*printf("Mask %li result : %i\n", i, mask_point[i][4]);
         printf("\t Penalty 1 : %i\n", mask_point[i][0]);
         printf("\t Penalty 2 : %i\n", mask_point[i][1]);
         printf("\t Penalty 3 : %i\n", mask_point[i][2]);
-        printf("\t Penalty 4 : %i\n", mask_point[i][3]);
+        printf("\t Penalty 4 : %i\n", mask_point[i][3]);*/
         if(mask_point[i][4] < min) {
             cur = i;
             min = mask_point[i][4];

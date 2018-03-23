@@ -194,6 +194,10 @@ void fill_mat(char **mat, size_t size, int version, char *msg, size_t msg_length
             nv = 10; 
     }
     int nb_ap = Ap_coord[version - 1][0];
+    printf("Size = %li\n", size);
+    printf("Version = %i\n", version);
+    printf("Version_m = %li\n", version_m);
+    printf("Number of AP = %i\n", nb_ap);
     int totnb_bit = size * size - ( 3*8*8 + nb_ap*5*5 + 2*(size - 8*2)) - 31 -
                     version_m + nv * 5;
     //verify the msg length and the totnb_bit possible

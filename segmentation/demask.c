@@ -71,7 +71,7 @@ void demask3(char **mat, size_t size)
     {
         for(size_t j = 0; j < size; j++)
         {
-            if((i + j) % 3 == '0')
+            if((i + j) % 3 == 0)
             {
                 if(mat[i][j] == '1')
                     mat[i][j] = '0';
