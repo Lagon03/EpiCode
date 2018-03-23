@@ -11,7 +11,7 @@
 # include "surfdraw.h"
 # include <stdio.h>
 
-//----------------------------AUX Functions----------------------------------
+//---------------------------Debug Functions----------------------------------
 
 void print_mat(char **mat, int size)
 {
@@ -26,15 +26,44 @@ void print_mat(char **mat, int size)
     }
 }
 
-void free_Fpat(struct FPat *f)
+void show_seg(SDL_Surface *show, struct FPat *f, int A)
 {
+    Draw_point(show, f->centers->mat[0][0], f->centers->mat[0][1]);
+    Draw_point(show, f->centers->mat[1][0], f->centers->mat[1][1]);
+    Draw_point(show, f->centers->mat[2][0], f->centers->mat[2][1]);
+    
+    Draw_line(show,f->centers->mat[0][0], f->centers->mat[0][1],
+                    f->centers->mat[1][0], f->centers->mat[1][1]);
+    Draw_line(show,f->centers->mat[0][0], f->centers->mat[0][1],
+                    f->centers->mat[2][0], f->centers->mat[2][1]);
+    Draw_line(show,f->centers->mat[1][0], f->centers->mat[1][1],
+                    f->centers->mat[2][0], f->centers->mat[2][1]);
+    drawFP(show, f->centers, f->ems_vector, A);
+
+}
+
+//----------------------------Free Functions----------------------------------
+
+void free_FPat(struct FPat *f)
+{
+    if(f == NULL)
+        return;
     free_Dmat(f->centers);
     free_Dvector(f->ems_vector);
     free(f);
 }
 
+void free_FPresults(struct FPresults *f)
+{
+    if(f == NULL)
+        return;
+    free(f);
+}
+
 void free_Finder(struct Finder *f)
 {
+    if(f == NULL)
+        return;
     free(f->center);
     free(f->ul);
     free(f->dr);
@@ -43,6 +72,8 @@ void free_Finder(struct Finder *f)
 
 void free_QrCode(struct QrCode *q)
 {
+    if(q == NULL)
+        return;
     free_Finder(q->A);
     free_Finder(q->B);
     free_Finder(q->C);
@@ -57,14 +88,17 @@ void free_QrCode(struct QrCode *q)
 
 void free_PCode(struct PCode *c)
 {
+    if(c == NULL)
+        return;
     free(c->msg);
     free(c->err_cor);
     free(c);
 }
 
-void free_segmentation(struct FPat *f, struct QrCode *q, struct PCode *c)
+void free_segmentation(struct FPat *f, struct FPresults *fp,  struct QrCode *q, struct PCode *c)
 {
-    free_Fpat(f);
+    free_FPat(f);
+    free_FPresults(fp);
     free_QrCode(q);
     free_PCode(c);
 }
@@ -80,29 +114,15 @@ void fPiter(char *file)
     img = blackAndWhite(img, 0);
     
     struct FPat *f = findFP(img);
-    struct FPresults *tmp = QrCode_found(f);
-    if(tmp == NULL)
+    struct FPresults *fp = QrCode_found(f);
+    if(fp == NULL)
         err(EXIT_FAILURE, "Sorry, i didn't find any QrCodes"); 
-    
-    printf("Finder pattern A is : %d \n ", tmp->indexA);
    
-    //Draw_point(show, f->centers->mat[0][0], f->centers->mat[0][1]);
-    //Draw_point(show, f->centers->mat[1][0], f->centers->mat[1][1]);
-    //Draw_point(show, f->centers->mat[2][0], f->centers->mat[2][1]);
-    
-    //Draw_line(show,f->centers->mat[0][0], f->centers->mat[0][1],
-    //                f->centers->mat[1][0], f->centers->mat[1][1]);
-    //Draw_line(show,f->centers->mat[0][0], f->centers->mat[0][1],
-    //                f->centers->mat[2][0], f->centers->mat[2][1]);
-    //Draw_line(show,f->centers->mat[1][0], f->centers->mat[1][1],
-    //                f->centers->mat[2][0], f->centers->mat[2][1]);
-    printf("Affine Transformation \n");
-    double *sol = SolveAffineEquations(tmp->x1, tmp->y1, tmp->x2, tmp->y2, tmp->x3, tmp->y3, tmp->dist);
-    SDL_Surface *trans = AffineTransformation(img, sol, tmp->dist);
-    //drawFP(show, f->centers, f->ems_vector, A);
-    //save_image(trans, "trans.bmp");
-    display_image(img);
-    free_Fpat(f);
+    SDL_Surface *geo = GeoTransform(img, fp);
+    display_image(show);
+    display_image(geo);
+    free_FPat(f);
+    free_FPresults(fp);
 }
 
 void full_segmentation(char *file)
@@ -134,7 +154,7 @@ void full_segmentation(char *file)
     printf("Cyphered Message Ready to be decoded : \n");
     printf("%s \n", c->msg);
     
-    free_segmentation(f, qr, c);
+    free_segmentation(f, NULL, qr, c);
 }
 
 int main(int argc, char *argv[]){
@@ -144,9 +164,7 @@ int main(int argc, char *argv[]){
         fPiter(argv[1]);
     else
         fPiter("../resources/wall.jpg"); 
-    //full_segmentation("../resources/QrV8.png");
- 
-    //free_segmentation(FPs, qr, code);
+
     SDL_Quit();
     return 1;
 }

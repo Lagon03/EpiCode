@@ -138,3 +138,72 @@ SDL_Surface* otzu(SDL_Surface* img, int w_min, int w_max, int h_min, int h_max)
   }
   return img;
 }
+void binarize(SDL_Surface *img, int threshold) {
+	Uint8 r;
+	for (int x = 0; x < img->h; x++) {
+		for (int y = 0; y < img->w; y++) {
+			Uint32 pix = getpixel(img, y, x);
+			SDL_GetRGB(pix, img->format, &r, &r, &r);
+			Uint8 v = r < threshold ? 0 : 255;
+			Uint32 npix = SDL_MapRGB(img->format, v, v, v);
+			putpixel(img, y, x, npix);
+		}
+	}
+}
+
+void contrast(SDL_Surface *img, int value) {
+	double factor = (259.0 * (value + 255.0)) / (255.0 * (259.0 - value));
+	Uint8 r, g, b;
+	for (int x = 0; x < img->h; x++) {
+		for (int y = 0; y < img->w; y++) {
+			Uint32 pix = getpixel(img, y, x);
+			SDL_GetRGB(pix, img->format, &r, &g, &b);
+			r = factor * (r - 128) + 128;
+			g = factor * (g - 128) + 128;
+			b = factor * (b - 128) + 128;
+			Uint32 npix = SDL_MapRGB(img->format, r, g, b);
+			putpixel(img, y, x, npix);
+		}
+	}
+}
+
+int otsu(SDL_Surface *img) {
+	int hist[256] = {0};
+	double proba[256] = {0};
+	double omega[256] = {0};
+	double sigma[256] = {0};
+	double individual_prob = 1.0 / (img->w * img->h);
+	double average_pix = 0.0;
+	Uint8 r;
+	for (int x = 0; x < img->w; x++) {
+		for (int y = 0; y < img->h; y++) {
+			Uint32 pix = getpixel(img, x, y);
+			SDL_GetRGB(pix, img->format, &r, &r, &r);
+			hist[r]++;
+			proba[r] += individual_prob;
+			average_pix += (r * individual_prob);
+		}
+	}
+	omega[0] = proba[0];
+	sigma[0] = 0.0;
+	for (int i = 1; i < 256; i++) {
+		omega[i] = omega[i - 1] + proba[i];
+		sigma[i] = sigma[i - 1] + i * proba[i];
+	}
+	
+	int optimal_thresh = 0;
+	double sigmax = 0;
+	for (int i = 0; i < 255; i++) {
+		if (omega[i] != 0.0 && omega[i] != 1.0) {
+			sigma[i] = pow(sigma[255] * omega[i] - sigma[i], 2) /
+			(omega[i] * (1.0 - omega[i]));
+		} else {
+			sigma[i] = 0.0;
+		}
+		if (sigma[i] > sigmax) {
+			sigmax = sigma[i];
+			optimal_thresh = i;
+		}
+	}
+	return optimal_thresh;
+}
