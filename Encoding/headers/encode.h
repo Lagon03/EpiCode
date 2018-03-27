@@ -3,6 +3,7 @@
 
 # include <stdio.h>
 # include <stdlib.h>
+# include <stdint.h>
 
 # include "analysis.h"
 
@@ -82,6 +83,7 @@ struct Block
 size_t sPow(size_t x, int n);
 size_t getLastInf(size_t x);
 char* adjustSize(char* bits, int limit);
+char* adjustSizeInv(char* bits, int limit);
 
 // --------------
 void freeCodeWords(struct Codewords* codewords);

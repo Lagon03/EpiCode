@@ -61,19 +61,29 @@ char* num_encoding(char* data, size_t len)
         for(int y = 0; y < 3 && i < len; ++y, ++i)
         {
             pair[y] = data[i];
+            pair[y + 1] = '\0';
         } 
         size_t numC = strtol(pair, NULL, 10);
+        printf("%li ", numC);
         char *bits = convertToByte(numC);
-        bits = adjustSize(bits, 10);
+        /*if(numC < 512)
+        {
+            bits = adjustSize(bits, 8);
+        }
+        else if(numC < 256)
+        {
+            bits = adjustSize(bits, 5);
+        }*/
+        bits = adjustSizeInv(bits, 10);
 
         enc_message = adjustString(enc_message, bits, nbpair * 10, size, 10);
         size += 10;
         
-        printf("%s ", bits);
+        //printf("%s ", bits);
         free(pair);
         free(bits);
     }
-    printf("\n %s\n", enc_message);
+    printf("\nResult : %s\n", enc_message);
     return enc_message;
 }
 

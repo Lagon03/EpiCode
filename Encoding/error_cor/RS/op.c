@@ -219,21 +219,21 @@ struct Tuple* gf_poly_div(struct Array *dividend, struct Array *divisor, struct 
   }
   msg_out->used = divisor->used + dividend->used-1;
 
-  for(int a =0;a<msg_out->used;a++)
-    printf("msg_outAA[%u]: %x \n",a, msg_out->array[a]);
+  for(size_t a =0; a < msg_out->used;a++)
+    printf("msg_outAA[%li]: %x \n",a, msg_out->array[a]);
   //msg_out2 = split_arr(msg_out, 0, msg_out->used - separator);
   //msg_out3 = split_arr(msg_out, msg_out->used - separator + 1, msg_out->used);
-  printf("size msg_out %u, size msg_out2 %u, size msg_out3 %u%\n",msg_out->used, msg_out2->used, msg_out3->used );
+  printf("size msg_out %li, size msg_out2 %li, size msg_out3 %li\n",msg_out->used, msg_out2->used, msg_out3->used );
   memmove(msg_out2->array, msg_out->array, (msg_out->used - separator));
   msg_out2->used = msg_out->used - separator;
   msg_out3->array = msg_out->array + (msg_out->used - separator);
   msg_out3->used = separator;
   result->x = msg_out2;
   result->y = msg_out3;
-  for(int a =0;a<msg_out2->used;a++)
-    printf("msg_out2[%u]: %x \n",a, msg_out2->array[a]);
-  for(int a =0;a<msg_out3->used;a++)
-    printf("msg_out3[%u]: %x \n",a, msg_out3->array[a]);
+  for(size_t a =0;a<msg_out2->used;a++)
+    printf("msg_out2[%li]: %x \n",a, msg_out2->array[a]);
+  for(size_t a =0;a<msg_out3->used;a++)
+    printf("msg_out3[%li]: %x \n",a, msg_out3->array[a]);
   return result;
 
 }

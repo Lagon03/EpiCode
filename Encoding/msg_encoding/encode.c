@@ -398,6 +398,23 @@ char* adjustSize(char* bits, int limit) {
     return tmp;
 }
 
+
+char* adjustSizeInv(char* bits, int limit) {
+    // Use to add 0 if the count indicator is not X bits long
+    // the 0 added are added to the left
+    size_t cur_count = getSize(bits);
+    char *tmp = calloc(limit + 2, sizeof(char));
+    tmp[limit + 1] = '\0';
+    for(int i = 0; i < limit; ++i) {
+        if (i - (limit - (int)cur_count) >= 0)
+            tmp[i] = bits[i - (limit - cur_count)];
+        else
+            tmp[i] = '0';
+    }
+    free(bits);
+    return tmp;
+}
+
 char* getModeIndicator(int mode)
 {
     char* indicator = calloc(5, sizeof(char));
