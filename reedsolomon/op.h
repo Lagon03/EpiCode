@@ -28,13 +28,13 @@ struct Array* copy_arr(struct Array *l1, struct Array *l2);
 
 struct Array* pop_arr(struct Array *l);
 
-struct Array* reverse_arr(struct Array *l);
+void reverse_arr(struct Array *l);
 
 uint8_t gf_add(uint8_t x, uint8_t y);
 
 uint8_t gf_sub(uint8_t x, uint8_t y);
 
-uint8_t gf_pow(uint8_t x, uint8_t power, struct gf_tables *gf_table);
+uint8_t gf_pow(uint8_t x, uint16_t power, struct gf_tables *gf_table);
 
 uint8_t gf_mul(uint8_t x, uint8_t y, struct gf_tables *gf_table);
 

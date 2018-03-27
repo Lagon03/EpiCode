@@ -16,4 +16,8 @@ bool rs_check(struct Array *msg, uint8_t nsym, struct gf_tables *gf_table);
 
 struct Array* rs_find_errdata_locator(struct Array *e_pos, struct gf_tables *gf_table);
 
+struct Array* rs_find_error_evaluator(struct Array *synd, struct Array *err_loc, uint8_t nsym, struct gf_tables *gf_table);
+
+struct Array* rs_correct_errdata(struct Array *msg_in, struct Array *synd, struct Array *err_pos, struct gf_tables *gf_table);
+
 #endif /* decode_h */

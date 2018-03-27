@@ -40,7 +40,8 @@ int main()
   initArray(msg, 170);
 	
 	struct Array *synd = malloc(sizeof(struct Array));
-	
+	printf("gf_exp : %u and %u and %u", gf_table->gf_exp->array[25], gf_table->gf_log->array[2] * -230, (gf_table->gf_log->array[2] * -230)%255);
+	printf("GF_POW = %u", gf_pow(2, -230, gf_table));
   
   msg = rs_encode_msg(msg_in, 10, gf_table);
 	for(size_t i = 0; i < msg->used; i++){
@@ -60,6 +61,7 @@ int main()
 	initArray(list,2);
 	list->array[0] = 0;
 	list->used = 1;
+
 	msg = rs_correct_errdata(msg, synd, list, gf_table);
 	for(size_t i = 0; i < msg->used; i++){
 		printf("msg_out[%u] = %x\n", i, msg->array[i]);
