@@ -61,24 +61,11 @@ void free_FPresults(struct FPresults *f)
     free(f);
 }
 
-void free_Finder(struct Finder *f)
-{
-    if(f == NULL)
-        return;
-    free(f->center);
-    free(f->ul);
-    free(f->dr);
-    free(f);
-}
-
 void free_QrCode(struct QrCode *q)
 {
     if(q == NULL)
         return;
-    free_Finder(q->A);
-    free_Finder(q->B);
-    free_Finder(q->C);
-    
+  
     for(int i = 0; i < (q->version * 4 + 17); i++)
     {
         free(q->mat[i]);
@@ -91,8 +78,7 @@ void free_PCode(struct PCode *c)
 {
     if(c == NULL)
         return;
-    free(c->msg);
-    free(c->err_cor);
+    free(c->BStream);
     free(c);
 }
 
@@ -128,8 +114,6 @@ void fPiter(char *file)
         err(EXIT_FAILURE, "Segmentation error : x00"); 
    
     struct GeoImg *geo = GeoTransform(img, fp);
-    printf("coords of A, B, C : %d/%d , %d/%d, %d/%d \n", geo->coordA[0],
-geo->coordA[1], geo->coordB[0], geo->coordB[1],geo->coordC[0], geo->coordC[1]);
     display_image(geo->img);
     free_FPat(f);
     free_FPresults(fp);
@@ -138,6 +122,13 @@ geo->coordA[1], geo->coordB[0], geo->coordB[1],geo->coordC[0], geo->coordC[1]);
     Draw_point(geo->img, geo->coordB[0], geo->coordB[1]);
     Draw_point(geo->img, geo->coordC[0], geo->coordC[1]);
     display_image(geo->img);
+    struct PCode *c = get_code(qr);
+    printf("QrCode found :\n");
+    printf("    Version : %d\n", c->Version); 
+    printf("    Mask : %d\n", c->Mask);
+    printf("    Error Correction Level : %c\n", c->ECL);
+    printf("Bit Stream Ready to be decoded : \n");
+    printf("%s \n", c->BStream);
 }
 
 /*
@@ -179,7 +170,7 @@ int main(int argc, char *argv[]){
     if (argc > 1)
         fPiter(argv[1]);
     else
-        fPiter("../resources/HelloWorldv1skew2.png"); 
+        fPiter("../resources/HelloWorldv1.png"); 
 
     SDL_Quit();
     return 1;

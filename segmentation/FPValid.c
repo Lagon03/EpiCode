@@ -77,7 +77,8 @@ struct FPresults *QrCode_found(struct FPat *fp)
     return ret;    
 }
 
+/*
 double *getBandC (struct FPat *fp, int A, double distB_C )
 {
     
-}
+}*/

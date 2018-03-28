@@ -382,8 +382,8 @@ void V1QrCode(struct GeoImg *qrimg, struct QrCode *qr, double X)
     }
     
     qr->mat = mat;
-    
-    print_mat(mat, 21);
+    qr->version = 1;
+    //print_mat(mat, 21);
 }
 
 //Extracts QrCode struct for further computations
