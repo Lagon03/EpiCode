@@ -10,7 +10,7 @@
 
 ### Main -DONE-
 
-- [x] Locate finder patterns (+ Draw FPs)
+- [x] Locate finder patterns
 - [x] Check if there is 3 finder patterns at least. !
 - [x] Determine FP A
 
