@@ -28,14 +28,14 @@
 - [x] Affine transformation
 - [ ] Make size-adaptive transformations
 
-### Bonus
+### Bonus - Going Further
 
 - [ ] Harris Corner detection
 - [ ] Convex HULL
 - [ ] Get new A, B, C and D
 - [ ] Projection transformation 
 
-## Etract QrCode from image
+## Extract QrCode from image
 
 - [x] Estimate X the Width of a module
 - [x] Estimate V the Version !
@@ -56,7 +56,6 @@
 **-> Go To Bit Stream**
 
 ### Version 2 - 6
-
 - [ ] Set V as version
 
 ### Version 7+ 
@@ -65,9 +64,9 @@
 
 ## Find Alignment patterns and Sampling
 
-## Bit stream
+## Bit stream -DONE-
 
-### Main
+### Main -DONE-
 
 - [x] Get F1 Format information
 - [x] Decode Format information (Annexe C.2)
@@ -75,8 +74,8 @@
 - [x] Release Mask
 - [x] Retrieve Bit Stream
 
-### Bonus
+### Bonus -DONE-
 
-- [x] If Format not Valid, transpose x and y, and retry ! 
+- [x] If Format not Valid, transpose matrix, and retry ! 
 
 **-> END of Segmentation**
