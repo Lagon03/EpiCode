@@ -25,7 +25,7 @@ SDL_Surface* grayscale(SDL_Surface* img) {
 }
 
 // Constrast function based on the Histogram Equalisation
-SDL_Surface* contrast(SDL_Surface* img) {
+/*SDL_Surface* contrast(SDL_Surface* img) {
   Uint32 pixl;
   Uint8 r, g, b;
   int height = img->h, width = img->w, sum = 0, max_intensity = 255;
@@ -137,7 +137,8 @@ SDL_Surface* otzu(SDL_Surface* img, int w_min, int w_max, int h_min, int h_max)
     }
   }
   return img;
-}
+}*/
+
 void binarize(SDL_Surface *img, int threshold) {
 	Uint8 r;
 	for (int x = 0; x < img->h; x++) {

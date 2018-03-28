@@ -8,9 +8,7 @@
 # define _EXTCODE_H_
 
 # include <math.h>
-# include "fpfind.h"
-# include "Dvector.h"
-# include "Dmat.h"
+# include "geotrans.h"
 # include <stdlib.h>
 # include <err.h>
 
@@ -57,6 +55,6 @@ struct Finder *init_Finder(double x_center, double y_center, int m_size)
     return nov;
 }
 
-struct QrCode *extract_QrCode_NoG(SDL_Surface *img, struct FPat *finders);
+struct QrCode *extract_QrCode(struct GeoImg *qrimg);
 
 # endif
