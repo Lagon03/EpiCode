@@ -46,6 +46,7 @@ struct FPresults *QrCode_found(struct FPat *fp)
         ret->y1 = fp->centers->mat[2][1];
         ret->y2 = fp->centers->mat[0][1];
         ret->y3 = fp->centers->mat[1][1];
+        
     }
     else if(dist1_3 > dist1_2 && dist1_3 > dist2_3)
     {
@@ -76,56 +77,8 @@ struct FPresults *QrCode_found(struct FPat *fp)
     return ret;    
 }
 
-double *get_Dcoord (struct FPat *fp, int A) // for projection transform later, doesn't work btw
+/*
+double *getBandC (struct FPat *fp, int A, double distB_C )
 {
-    double *ret = malloc(sizeof(double));
-    double *Aco = fp->centers->mat[A];
-    double *Bco;
-    double *Cco;
-    if(A == 0)
-    {
-        Bco = fp->centers->mat[1];
-        Cco = fp->centers->mat[2]; 
-    }
-    else if(A == 1)
-    { 
-        Bco = fp->centers->mat[0];
-        Cco = fp->centers->mat[2]; 
-    }
-    else
-    { 
-        Bco = fp->centers->mat[0];
-        Cco = fp->centers->mat[1];
-    }
     
-    double dBx = (Bco[0] - Aco[0]);
-    double dCx = abs(Cco[0] - Aco[0]);
-    double dBy = abs(Bco[1] - Aco[1]);
-    double dCy = abs(Cco[1] - Aco[1]);
-    
-    double Bx = Bco[0];
-    double Cx = Cco[0];
-    double By = Bco[1];
-    double Cy = Cco[1];
-    
-    double Ba = dBy / dBx;
-    double Ca = dCy / dCx;
-    
-    if(dCx == 0)
-        Ca = 0;
-    if(dBx == 0)
-        Ba = 0;
-    double Bb = By - Ba * Bx;
-    double Cb = Cy - Ca * Cx;
-    
-    warn("%lf %lf %lf %lf", Aco[0], Bco[0], dCx, dCy);
-    double Dx = (Cb - Bb)/(Ba - Ca);
-    double Dy = Ba*Bx + Bb;
-    
-    
-    ret[0] = Dx;
-    ret[1] = Dy;
-
-    return ret;
-    
-}
+}*/

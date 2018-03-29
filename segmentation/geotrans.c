@@ -5,7 +5,8 @@
 **  Geometric  transformations.
 */
 
-# define SIZE 75
+# define SIZE 100
+# define MULT 5
 
 # include "geotrans.h"
 
@@ -89,11 +90,19 @@ x3, double y3, double size)
     
     //val to change
     
+    /*double u1 = size;
+    double v1 = size;
+    double u2 = size;
+    double v2 = size + size*MULT;
+    double u3 = size + size*MULT;
+    double v3 = size;*/
+    
+    
     double u1 = SIZE;
     double v1 = SIZE;
     double u2 = SIZE;
-    double v2 = SIZE + size;
-    double u3 = SIZE + size;
+    double v2 = SIZE + 200;
+    double u3 = SIZE + 200;
     double v3 = SIZE;
     
     AugMat[0][0] = x1;
@@ -279,7 +288,7 @@ int InvertMat(double *vals) //3*3 matrix
 
 SDL_Surface *FrontMapping(SDL_Surface *oldimg, double *vals, double size)
 {
-    int newsize = SIZE + size + SIZE; 
+    int newsize = size + size*2 + size; 
     SDL_Surface *img = create_image(newsize, newsize);
     double a = vals[0];
     double b = vals[1];
@@ -310,9 +319,9 @@ SDL_Surface *FrontMapping(SDL_Surface *oldimg, double *vals, double size)
 }
 
 SDL_Surface *BackMapping(SDL_Surface *oldimg, double *vals, double size)
-//vals have to be inerted first
+//vals have to be inverted first
 {
-    int newsize = SIZE + size + SIZE;
+    int newsize = SIZE + 200 + SIZE;
     SDL_Surface *img = create_image(newsize, newsize);
     
     double a = vals[0];
@@ -347,17 +356,37 @@ SDL_Surface *BackMapping(SDL_Surface *oldimg, double *vals, double size)
     return img;
 }
 
-SDL_Surface *GeoTransform(SDL_Surface *img, struct FPresults *f)
+struct GeoImg *GeoTransform(SDL_Surface *img, struct FPresults *f)
 {
     double *solutions = SolveAffineEquations(f->x1, f->y1, f->x2, f->y2, f->x3,
                                             f->y3, f->dist);
-   
+    
+    struct GeoImg *ret = malloc(sizeof(struct GeoImg));  
+
+    ret->coordA = malloc(sizeof(int) * 2);
+    ret->coordB = malloc(sizeof(int) * 2);
+    ret->coordC = malloc(sizeof(int) * 2);
+    
+    ret->coordA[0] = round(solutions[0] * f->x1 + solutions[1] * f->y1 +
+    solutions[2]); 
+    ret->coordA[1] = round(solutions[3] * f->x1 + solutions[4] * f->y1 +
+    solutions[5]); 
+    ret->coordB[0] = round(solutions[0] * f->x2 + solutions[1] * f->y2 +
+    solutions[2]); 
+    ret->coordB[1] = round(solutions[3] * f->x2 + solutions[4] * f->y2 +
+    solutions[5]); 
+    ret->coordC[0] = round(solutions[0] * f->x3 + solutions[1] * f->y3 +
+    solutions[2]); 
+    ret->coordC[1] = round(solutions[3] * f->x3 + solutions[4] * f->y3 +
+    solutions[5]);
+
     double size = f->dist; 
     if(InvertMat(solutions) == 0)
     {
-        warn("Backmapping failed");
-        return FrontMapping(img, solutions, size);
+        //ret->img FrontMapping(img, solutions, size);
+        err(EXIT_FAILURE, "Segmentation error : x02");
     }
-    
-    return BackMapping(img, solutions, size);
+ 
+    ret->img = BackMapping(img, solutions, size);
+    return ret;
 }
