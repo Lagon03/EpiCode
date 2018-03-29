@@ -565,7 +565,7 @@ struct Codewords* breakCodeword(struct EncData* data)
                 size_t* err_cw = JtoL(codewords->group[g]->blocks[b]->words, data_cd, nb_cw_err); 
                 for(size_t i = 0; i < nb_cw_err; ++i)
                 {
-                    printf("%li ", err_cw[i]);
+                    //printf("%li ", err_cw[i]);
                     codewords->group[g]->blocks[b]->correction[i] = malloc(8 * sizeof(char));
                     codewords->group[g]->blocks[b]->correction[i] = adjustSize(convertToByte(err_cw[i]), 8);
                 }
@@ -585,6 +585,7 @@ void freeCodeWords(struct Codewords* codewords) {
                 free(codewords->group[g]->blocks[b]->words[i]);
             }
             free(codewords->group[g]->blocks[b]->words);
+            free(codewords->group[g]->blocks[b]->correction);
             free(codewords->group[g]->blocks[b]);
         }
         free(codewords->group[g]->blocks);
@@ -604,22 +605,11 @@ struct EncData* getEncodedSize(struct options *arg)
     char_count = getSize(arg->message);
     count_bits = convertToByte(char_count);
     
-    printf("%s\n", count_bits);
+    //printf("%s\n", count_bits);
 
     size_t version = getSmallestVersion(arg->mode, char_count, arg->correction); 
     // need to specify the limit in function of the version and of the mod
 
-    /*if(arg->mode == 0)
-    {
-        char_count = getSize(arg->message);
-        if (char_count < 3)
-            char_count = 1;
-        else if(char_count % 3 == 0)
-            char_count = char_count % 3;
-        else
-            char_count = (char_count % 3) + 1;
-        count_bits = convertToByte(char_count);
-    }*/
     if(version <= 9) {
         if(arg->mode == 0)
             count_bits = adjustSize(count_bits, 10);    // Num

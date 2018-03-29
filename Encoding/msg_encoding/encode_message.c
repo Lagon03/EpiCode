@@ -52,7 +52,7 @@ char* num_encoding(char* data, size_t len)
     enc_message[0] = '\0';
     size_t size = 0;
     size_t i = 0;
-    printf("Nb of pair : %li\n", nbpair);
+    //printf("Nb of pair : %li\n", nbpair);
     while(i < len)
     {
         char* pair = calloc(4, sizeof(char));
@@ -64,7 +64,7 @@ char* num_encoding(char* data, size_t len)
             pair[y + 1] = '\0';
         } 
         size_t numC = strtol(pair, NULL, 10);
-        printf("%li ", numC);
+        //printf("%li ", numC);
         char *bits = convertToByte(numC);
         /*if(numC < 512)
         {
@@ -83,7 +83,7 @@ char* num_encoding(char* data, size_t len)
         free(pair);
         free(bits);
     }
-    printf("\nResult : %s\n", enc_message);
+    //printf("\nResult : %s\n", enc_message);
     return enc_message;
 }
 
@@ -141,7 +141,7 @@ char* alpha_encoding(char* data, size_t len)
 
 char* byte_encoding(char* data, size_t len)
 {
-    printf("Len : %li\n", len);
+    //printf("Len : %li\n", len);
     char* enc_message = calloc(len * 8, sizeof(char));
     enc_message[0] = '\0';
     size_t size = 0;
@@ -155,8 +155,8 @@ char* byte_encoding(char* data, size_t len)
         size += 8;
 
         free(bits);
-        printf("i : %li\n", i + 1);
-        printf("Dec : %li\n", numC);
+        /*printf("i : %li\n", i + 1);
+        printf("Dec : %li\n", numC);*/
         ++i;
     }
     return enc_message;

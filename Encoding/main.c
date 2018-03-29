@@ -11,6 +11,7 @@
 # include "headers/gen_img.h"
 # include "headers/draw.h"
 # include "headers/polynomials.h"
+# include "headers/decode.h"
 
 struct options* checkArg(int argc, char* argv[])
 {
@@ -189,15 +190,7 @@ int main (int argc, char* argv[])
 
 
     for(size_t x = 0; x < QrCode->size; ++x) {
-        /*printf("[");
-          for(size_t y = 0; y < QrCode->size; ++y) {
-          if(QrCode->mat[x][y] == 0)
-          printf("  ");
-          else
-          printf("%c ", QrCode->mat[x][y]);
-          }*/
         free(QrCode->mat[x]);
-        //printf("]\n");
     }
     free(QrCode->mat);
     free(QrCode);
@@ -215,6 +208,10 @@ int main (int argc, char* argv[])
     free(arg);
     free(weave_trans);
 
-
+    char* test = "0100000001000101010001100101011100110111010000001110110000010001111011000101000010101101111011100100011110011010101101110000001111010101111100000001110101000001101111111110110001001000010110111010011010010111\0";
+    // "Test" should be the output
+    char* test2 = "01000000110001001000011001010110110001101100011011110010110000100000010101110110111101110010011011000110010000001110110000010001100111000000001010010110011100011010001100110110010010100101000100011010100101110111110010100100001010000010111100010001011100000110010000111011100101011110000101001010110100001111100110000000101101000000111100111001001100110000000\0";
+    // "Hello, World" should be the output
+    decode(test2, 2, 3);
     return 1;
 }

@@ -85,6 +85,10 @@ size_t* JtoL(char** words, size_t size, size_t err_words)
     {
         output[i] = msg->array[i + msg_in->used];
     }
+
+    free(gf_table->gf_exp);
+    free(gf_table->gf_log);
+    free(gf_table);
     freeArray(msg);
     freeArray(msg_in);
     return output;
