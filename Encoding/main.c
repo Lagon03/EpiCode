@@ -132,10 +132,10 @@ int main (int argc, char* argv[])
         free(r_bits);
     }
     //weave->size = weave->size + Remainder_bits[data->version];
-    printf("Interweaved data : \n");
+    /*printf("Interweaved data : \n");
     for(size_t i = 0; i < weave->size; ++i)
         printf("%ld ", weave->forest[i]);
-    printf("\nLength : %li\n", weave->size);
+    printf("\nLength : %li\n", weave->size);*/
     printf("Interweaved data to binary : \n%s\n", weave_trans);
     printf("Total length : %li | with %li remainder bits\n", (weave->size * 8)
             + Remainder_bits[data->version], Remainder_bits[data->version]);

@@ -10,9 +10,9 @@
 
 char* num_decoding(char* input, size_t len, size_t c_count)
 {
-    size_t nbpair = 1;
-    if (c_count > 3)
-        nbpair = c_count % 3 == 0 ? c_count / 3 : c_count / 3 + 1;
+    //size_t nbpair = 1;
+    //if (c_count > 3)
+    //    nbpair = c_count % 3 == 0 ? c_count / 3 : c_count / 3 + 1;
     
     char* output = malloc((c_count + 1) * sizeof(char));
     output[c_count] = '\0';

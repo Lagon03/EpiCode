@@ -81,7 +81,7 @@ const size_t GROUP_BLOCK_CODEWORDS[2][4][41] = {
             14, 13, 4, 3, 23, 7, 10, 29, 23, 21, 23, 26, 34, 14, 32, 7, 31},
         {-1, 0, 0, 0, 0, 2, 0, 4, 2, 4, 2, 4, 6, 4, 5, 7, 2, 15, 1, 4, 5, 6, 16, 14,
             16, 22, 6, 26, 31, 37, 25, 1, 35, 19, 7, 14, 10, 10, 14, 22, 34},
-        {-1, 0, 0, 0, 0, 0, 2, 0, 1, 2, 4, 2, 8, 4, 5, 7, 13, 17, 19, 16, 10, 6, 0, 14,
+        {-1, 0, 0, 0, 0, 2, 0, 1, 2, 4, 2, 8, 4, 5, 7, 13, 17, 19, 16, 10, 6, 0, 14,
             2, 13, 4, 28, 31, 26, 25, 28, 35, 46, 1, 41, 64, 46, 32, 67, 61}
     }
 };
@@ -506,7 +506,8 @@ struct Codewords* breakCodeword(struct EncData* data)
 
     struct Codewords *codewords = malloc(sizeof(struct Codewords));
     size_t group = GROUP_BLOCK_CODEWORDS[0][correction][version];
-    size_t group_ = GROUP_BLOCK_CODEWORDS[1][correction][version]; 
+    size_t group_ = GROUP_BLOCK_CODEWORDS[1][correction][version];
+    printf("group 1 : %li\n group 2 : %li\n", group, group_);
     if(group != 0 && group_ == 0)
     {
         codewords->group = malloc(sizeof(struct Group*));
@@ -538,7 +539,6 @@ struct Codewords* breakCodeword(struct EncData* data)
             for(size_t b = 0; b < block_nb; ++b) {
                 //printf("\tBlock %2li:\n", b + 1);
                 size_t data_cd = GROUP_CODEWORDS[correction][g][version];
-                //printf("%i\n", data_cd);
                 //printf("\tNumber of word : %li\n", data_cd);
 
                 codewords->group[g]->blocks[b] = malloc(sizeof(struct Block));
@@ -554,9 +554,9 @@ struct Codewords* breakCodeword(struct EncData* data)
                     for(int i = 0; i < 8; ++i, ++cur) {
                         codewords->group[g]->blocks[b]->words[w][i] = full_data[cur];
                     }
-                    printf("\t\tCodeword %2li: %s | value : %ld\n", w + 1, 
+                    /*printf("\t\tCodeword %2li: %s | value : %ld\n", w + 1, 
                       codewords->group[g]->blocks[b]->words[w], 
-                      convertToDec(codewords->group[g]->blocks[b]->words[w]));
+                      convertToDec(codewords->group[g]->blocks[b]->words[w]));*/
                 }
 
                 // Here we compute the correction codewords
@@ -605,6 +605,7 @@ struct EncData* getEncodedSize(struct options *arg)
     char* count_bits;
     
     char_count = getSize(arg->message);
+    printf("input length : %li\n", char_count);
     count_bits = convertToByte(char_count);
     
     //printf("%s\n", count_bits);
@@ -689,14 +690,14 @@ struct EncData* getEncodedSize(struct options *arg)
     // Now we need to break the whole (mode indicator + characters count +
     // encoded data) into 8-bits Codewords to prepare the error correction
     adjustBits(data, full_size);
-    /*for(size_t i = 0; i < full_size; ++i)
+    for(size_t i = 0; i < full_size; ++i)
     {
         if(i % 8 == 0)
             printf(" ");
         printf("%c", data->encoded_data[i]);
     }
     printf("\n");
-    for(size_t i = 0; i < full_size; ++i)
+    /*for(size_t i = 0; i < full_size; ++i)
     {
         if(i % 8 == 0)
             printf(" ");

@@ -189,7 +189,7 @@ char* byte_encoding(char* data, size_t len)
 
         free(bits);
         /*printf("i : %li\n", i + 1);
-        printf("Dec : %li\n", numC);*/
+        printf("Dec : %li = %c\n", numC, data[i]);*/
         ++i;
     }
     return enc_message;
