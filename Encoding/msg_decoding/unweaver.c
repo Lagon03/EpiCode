@@ -6,8 +6,6 @@
 
 struct Codewords* unweave(char* input, int version, int level)
 {
-
-    printf("input : %s\n", input);
     size_t w_count = TOTAL_DECC[level][version];
         // Total word count
     size_t ecc_count = ECC_CODEWORDS_PER_BLOCK[level][version];

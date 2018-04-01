@@ -326,9 +326,10 @@ char* convertToByte(size_t input)
 size_t convertToDec(char* input) {
     //printf("Input to convert : %s\n", input);
     size_t dec = 0;
-    for(size_t i = 0; i < 8; ++i) {
+    size_t length = getSize(input);
+    for(size_t i = 0; i < length; ++i) {
         if(input[i] == '1')
-            dec += sPow(2,7 - i);
+            dec += sPow(2,(length - 1) - i);
     }
     return dec;
 }
@@ -537,6 +538,7 @@ struct Codewords* breakCodeword(struct EncData* data)
             for(size_t b = 0; b < block_nb; ++b) {
                 //printf("\tBlock %2li:\n", b + 1);
                 size_t data_cd = GROUP_CODEWORDS[correction][g][version];
+                //printf("%i\n", data_cd);
                 //printf("\tNumber of word : %li\n", data_cd);
 
                 codewords->group[g]->blocks[b] = malloc(sizeof(struct Block));

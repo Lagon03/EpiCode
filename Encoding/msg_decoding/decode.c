@@ -55,10 +55,11 @@ static int getCLength(int version, int mode)
 }
 
 static int modeToInt(char* mode)
-{        
-    if (strcmp("0001", mode) == 0)
+{       
+    size_t val = convertToDec(mode);
+    if (val == 1)
         return 0;
-    else if (strcmp("0010", mode) == 0)
+    else if (val == 2)
         return 1;
     else
         return 2;
@@ -77,7 +78,7 @@ char* decode(char* input, int version, int level)
      */
 
     struct Codewords* DCR = unweave(input, version, level);
-    for(size_t g = 0; g < DCR->size; ++g)
+    /*for(size_t g = 0; g < DCR->size; ++g)
     {
         for(size_t b = 0; b < DCR->group[g]->size; ++b)
         {
@@ -86,7 +87,7 @@ char* decode(char* input, int version, int level)
             for(size_t w = 0; w < (size_t)ECC_CODEWORDS_PER_BLOCK[level][version]; ++w)
                 printf("CCode word %2li : %s\n", w + 1, DCR->group[g]->blocks[b]->correction[w]);
         }
-    }
+    }*/
 
     /*
      * After the determining codewords and all we need to check them using
@@ -99,39 +100,6 @@ char* decode(char* input, int version, int level)
     //  TODO : Add function to check health of the data using RS
     //-------------------------------------------------------------------------
 
-
-    char* c_mode;                           // mode : 0001 / 0010 / 0100
-                                            // the mode is the first 4 byte of
-                                            // the input
-    char* c_count;                          // characters count
-                                            // its length is computed after
-                                            // defining the mode
-
-    c_mode = listTakeAt(input, 0, 4);
-
-    int i_mode = modeToInt(c_mode);                 // mode converted to int
-                                                    // 0/1/2
-    int char_count = getCLength(version, i_mode);   // number of characters
-                                                    // for the char count
-                                                    // in the encoded message
-    c_count = listTakeAt(input, 4, char_count);
-
-    /*
-     * At this point we got the mode as a string and a int :
-     *      Example : c_mode = "0001\0" and i_mode = 0
-     * We should also have the characters count with X bits :
-     *      Example : c_count = "00001000" and char_count = 8 
-     *              | byte mode version <= 9vim 
-     */
-
-    int m_length = getLength(input) - char_count - 4;   // total length of the
-                                                        // untouched data
-
-    /*
-     * At this point we are sure that the data is not corrupted so all we 
-     * need to do is to make a new string which will contain the data to
-     * convert from binary to char.
-     */
 
     size_t l_data = TOTAL_DECC[level][version]; // length of the data codewords
     
@@ -148,12 +116,49 @@ char* decode(char* input, int version, int level)
         }
     }
     freeCodeWords(DCR);
-    
+
+    char* c_mode;                           // mode : 0001 / 0010 / 0100
+                                            // the mode is the first 4 byte of
+                                            // the input
+    char* c_count;                          // characters count
+                                            // its length is computed after
+                                            // defining the mode
+    c_mode = listTakeAt(data, 0, 4);
+    c_mode = realloc(c_mode, 5 * sizeof(char));
+    c_mode[4] = '\0';
+
+    int i_mode = modeToInt(c_mode);                 // mode converted to int
+                                                    // 0/1/2
+    int char_count = getCLength(version, i_mode);   // number of characters
+                                                    // for the char count
+                                                    // in the encoded message
+
+    c_count = listTakeAt(data, 4, char_count);
+    c_count = realloc(c_count, (char_count + 1) * sizeof(char));
+    c_count[char_count] = '\0';
+
+    int i_count = convertToDec(c_count);
+
+    /*
+     * At this point we got the mode as a string and a int :
+     *      Example : c_mode = "0001\0" and i_mode = 0
+     * We should also have the characters count with X bits :
+     *      Example : c_count = "00001000" and char_count = 8 
+     *              | byte mode version <= 9vim 
+     */
+
+
+    /*
+     * At this point we are sure that the data is not corrupted so all we 
+     * need to do is to make a new string which will contain the data to
+     * convert from binary to char.
+     */
+  
     // Now we need to take only the relevant data
-    size_t l = getLength(data) - 4 - char_count;
-    char* tmp = listTakeAt(data, 4 + char_count, l);
-    tmp = realloc(tmp, (l + 1) * sizeof(char));
-    tmp[l] = '\0';
+    size_t lim = getLength(data) - 4 - char_count;
+    char* tmp = listTakeAt(data, 4 + char_count, lim);
+    tmp = realloc(tmp, (lim + 1) * sizeof(char));
+    tmp[lim] = '\0';
     //-------------------------------------------
 
     free(data);
@@ -163,15 +168,17 @@ char* decode(char* input, int version, int level)
     switch(i_mode)
     {
         case 1:
+            output = alpha_decoding(data, getLength(data), i_count);
             break;
         case 2:
-            output = byte_decoding(data, getLength(data), convertToDec(c_count));
-            printf("Output : %s\n", output);
-            free(output);
+            output = byte_decoding(data, getLength(data), i_count);
             break;
         default:
+            output = num_decoding(data, getLength(data), i_count);
             break;
     }
+    free(c_count);
+    free(c_mode);
 
-    return c_mode;
+    return output;
 }
