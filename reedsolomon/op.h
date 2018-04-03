@@ -28,7 +28,7 @@ struct Array* copy_arr(struct Array *l1, struct Array *l2);
 
 struct Array* pop_arr(struct Array *l);
 
-void reverse_arr(struct Array *l);
+struct Array* reverse_arr(struct Array *l);
 
 uint8_t gf_add(uint8_t x, uint8_t y);
 

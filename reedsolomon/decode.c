@@ -44,23 +44,24 @@ bool rs_check(struct Array *msg, uint8_t nsym, struct gf_tables *gf_table)
 
 struct Array* rs_find_errdata_locator(struct Array *e_pos, struct gf_tables *gf_table)
 {
-  struct Array *e_loc = malloc(sizeof(struct Array));
-  initZArray(e_loc, e_pos->used+1);
-  e_loc->array[0] = 1;
-  insertArray(e_loc);
-  struct Array *one = malloc(sizeof(struct Array));
-  initZArray(one, 2);
-  one->array[0] = 1;
-  insertArray(one);
-  for(size_t i = 0; i < e_pos->used; i++){
-    uint8_t pow_two = gf_pow(2, i, gf_table);
-    struct Array *arr = malloc(sizeof(struct Array));
-    initArray(arr, 2);
-    arr->array[0] = pow_two;
-    insertArray(arr);
-    arr->array[1] = 0;
-    insertArray(arr);
-    e_loc = gf_poly_mul(e_loc, gf_poly_add(one, arr), gf_table);
+	struct Array *e_loc = malloc(sizeof(struct Array));
+	initZArray(e_loc, e_pos->used+1);
+	e_loc->array[0] = 1;
+	insertArray(e_loc);
+	struct Array *one = malloc(sizeof(struct Array));
+	initZArray(one, 2);
+	one->array[0] = 1;
+	insertArray(one);
+	for(size_t i = 0; i < e_pos->used; i++){
+		uint8_t pow_two = gf_pow(2, e_pos->array[i], gf_table);
+		struct Array *arr = malloc(sizeof(struct Array));
+		initArray(arr, 2);
+		arr->array[0] = pow_two;
+		insertArray(arr);
+		arr->array[1] = 0;
+		insertArray(arr);
+		struct Array *add = gf_poly_add(one, arr);
+		e_loc = gf_poly_mul(e_loc, add, gf_table);
   }
   return e_loc;
 }
@@ -72,12 +73,9 @@ struct Array* rs_find_error_evaluator(struct Array *synd, struct Array *err_loc,
 	struct Array *res = malloc(sizeof(struct Array));
 	initArray(res, nsym+2);
 	res = gf_poly_mul(synd, err_loc, gf_table);
-	for(int i = 0; i < res->used; i++){
-		printf("rs_find_error ; %u \n", res->array[i]);
-	}
-	unsigned int len = res->used - (nsym+1);
+	size_t len = res->used - (nsym+1);
 	memmove(res->array, res->array+len, len);
-	res->used = len;
+	res->used = res->used - len;
 	return res;
 }
 
@@ -95,17 +93,13 @@ struct Array* rs_correct_errdata(struct Array *msg_in, struct Array *synd, struc
 	struct Array *err_loc = malloc(sizeof(struct Array));
 	initArray(err_loc, coef_pos->used+1);
 	err_loc= rs_find_errdata_locator(coef_pos, gf_table);
-
-	struct Array *rev_synd = malloc(sizeof(struct Array));
-	initArray(rev_synd, synd->used);
-	memcpy(rev_synd->array, synd->array, synd->used);
-	reverse_arr(rev_synd);
-	rev_synd->used = synd->used;
+	
+	struct Array *rev_synd = reverse_arr(synd);
 	struct Array *err_eval = malloc(sizeof(struct Array));
 	uint8_t nsym = err_loc->used - 1;
-	printf("nsym : %u \n", nsym);
 	err_eval = rs_find_error_evaluator(rev_synd, err_loc, nsym, gf_table);
-	reverse_arr(err_eval);
+	err_eval = reverse_arr(err_eval);
+
 	struct Array *X = malloc(sizeof(struct Array));
 	initArray(X, coef_pos->used);
 	for(size_t t = 0; t < coef_pos->used; t++){
@@ -113,8 +107,10 @@ struct Array* rs_correct_errdata(struct Array *msg_in, struct Array *synd, struc
 		X->array[t] = gf_pow(2, q, gf_table);
 		insertArray(X);
 	}
+
 	struct Array *E = malloc(sizeof(struct Array));
-	initZArray(E, len+1);
+	initZArray(E, len);
+	E->used = len;
 	for(size_t i = 0; i < X->used; i++){
 		uint8_t Xi_inv = gf_inverse(X->array[i], gf_table);
 		struct Array *err_loc_prime_tmp = malloc(sizeof(struct Array));
@@ -125,25 +121,18 @@ struct Array* rs_correct_errdata(struct Array *msg_in, struct Array *synd, struc
 				insertArray(err_loc_prime_tmp);
 		  	}
     	}
+		
 		uint8_t err_loc_prime = 1;
-		printf("err_loc_prime_tmp size: %u and X size: %u",err_loc_prime_tmp->used, X->used);
 		for(size_t k = 0; k < err_loc_prime_tmp->used; k++)
 			err_loc_prime = gf_mul(err_loc_prime, err_loc_prime_tmp->array[k], gf_table);
-		printf("err_loc_prime = %u", err_loc_prime);
-		reverse_arr(err_eval);
-		printf("err_eval : %u", err_eval->array[1]);
+		err_eval = reverse_arr(err_eval);
+		
 		uint8_t y = gf_poly_eval(err_eval, Xi_inv, gf_table);
-		printf("First y : %u", y);
 		y = gf_mul(gf_pow(X->array[i], 1, gf_table), y, gf_table);
-		printf("Second y : %u", y);
 		uint8_t magnitude = gf_div(y, err_loc_prime, gf_table);
-		printf("Ata3na 5");
 		E->array[err_pos->array[i]] = magnitude;
-		insertArray(E);
 	}
-	printf("Ata3na 6");
 	msg_in = gf_poly_add(msg_in, E);
-	printf("Ata3na 7");
 	return msg_in;
 }
 
@@ -168,7 +157,7 @@ struct Array* rs_find_error_locator(struct Array* synd, uint8_t nsym, uint8_t er
 			struct Array *rev = malloc(sizeof(struct Array*));
 			initArray(rev, err_loc->used);
 			memmove(rev->array, err_loc->array, err_loc->used);
-			reverse_arr(rev);
+			rev = reverse_arr(rev);
 			delta ^= gf_mul(rev->array[j - 1], synd->array[K - j], gf_table);
 		}
     old_loc->array[old_loc->used + 1] = 0;

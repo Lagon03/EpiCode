@@ -41,17 +41,17 @@ struct Array* merge(struct Array *l1, struct Array *l2)
     return l;
 }
 
-void reverse_arr(struct Array *l)
+struct Array* reverse_arr(struct Array *l)
 {
-	int j = l->used -1;
-	int  i = 0;
-	uint8_t temp;
-	while(j > i){
-		temp = l->array[i];
-		l->array[i] = l->array[j];
-		l->array[j] = temp;
-		i++, j--;
+	struct Array *res = malloc(sizeof(struct Array*));
+	initArray(res, l->used);
+	size_t j = l->used;
+	size_t  i = 0;
+	for(;i < l->used; i++, j--){
+		res->array[i] = l->array[j-1];
+		insertArray(res);
 	}
+	return res;
 }
 
 struct Array* copy_arr(struct Array *l1, struct Array *l2)
@@ -161,17 +161,16 @@ struct Array* gf_poly_scale(struct Array *p, uint8_t x, struct gf_tables *gf_tab
 /* Adds two polynomials in a GF(2^8) finite field */
 struct Array* gf_poly_add(struct Array *p, struct Array *q)
 {
-    size_t len = p->used ? p->used < q->used : q->used; 
+    size_t len = p->used >= q->used ? p->used : q->used;
     struct Array *res = malloc(sizeof(struct Array));
     initZArray(res, len);
     for(size_t i = 0; i < p->used; i++){
-        res->array[i + res->used - p->used] = p->array[i];
-        insertArray(res);
+        res->array[i + len - p->used] = p->array[i];
     }
     for(size_t i = 0; i < q->used; i++){
-        res->array[i + res->used - q->used] ^= q->array[i];
-        insertArray(res);
+        res->array[i + len - q->used] ^= q->array[i];
     }
+	res->used = len;
     return res;
 }
 
@@ -195,9 +194,6 @@ struct Array* gf_poly_mul(struct Array *p, struct Array *q, struct gf_tables *gf
         }
     }
     res->used = q->used + p->used-1;
-	for(int i = 0; i < res->used; i++){
-		printf("gf_poly_mul ; %u \n", res->array[i]);
-	}
     return res;
 }
 
