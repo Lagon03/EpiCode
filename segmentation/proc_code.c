@@ -6,8 +6,25 @@
 */
 
 # include "proc_code.h"
+# include "constfile.h"
 
 // STATIC FUNCTION
+
+static inline
+void print_mat(char **mat, int size)
+{
+    printf("\n");
+    for(int i = 0; i < size; i++)
+    {
+        printf("[ ");
+        for(int j = 0; j < size; j++)
+        {
+            printf("%c ", mat[i][j]);
+        }
+        printf("]\n");
+    }
+    printf("\n");
+}
 
 static inline
 char *strbinXOR(char* a, char *b)
@@ -59,7 +76,7 @@ char get_correction_lvl(char* a)
         return 'Q';
 
     return EXIT_FAILURE;
-}
+}   
 
 static inline
 char *get_format1(char **mat)
@@ -80,21 +97,6 @@ char *get_format1(char **mat)
     fmt[12] = mat[2][8];
     fmt[13] = mat[1][8];
     fmt[14] = mat[0][8];
-    mat[8][0] ='c';
-    mat[8][1] ='c';
-    mat[8][2] ='c';
-    mat[8][3] ='c';
-    mat[8][4] ='c';
-    mat[8][5] ='c';
-    mat[8][7] ='c';
-    mat[8][8] ='c';
-    mat[7][8] ='c';
-    mat[5][8] ='c';
-    mat[4][8] ='c';
-    mat[3][8] ='c';
-    mat[2][8] ='c';
-    mat[1][8] ='c';
-    mat[0][8] ='c';
     return fmt;
 }
 
@@ -119,283 +121,150 @@ char *get_format2(char **mat, int version)
     fmt[12] = mat[8][size-3];
     fmt[13] = mat[8][size-2];
     fmt[14] = mat[8][size-1];
-    mat[size-1][8] = 'c';
-    mat[size-2][8] = 'c';
-    mat[size-3][8] = 'c';
-    mat[size-4][8] = 'c';
-    mat[size-5][8] = 'c';
-    mat[size-6][8] = 'c';
-    mat[size-7][8] = 'c';
-    mat[8][size-8] = 'c';
-    mat[8][size-7] = 'c';
-    mat[8][size-6] = 'c';
-    mat[8][size-5] = 'c';
-    mat[8][size-4] = 'c';
-    mat[8][size-3] = 'c';
-    mat[8][size-2] = 'c';
-    mat[8][size-1] = 'c';
     return fmt;   
 }
 
 static inline
-void color_timing_pat(char **mat, int size)
+int CorrectFormat(char *fmt)
 {
-    for(int i = 8; i < size - 8; i++)
-    {
-        mat[i][6] = 't';
-        mat[6][i] = 't';
-    }
-}
-
-static inline
-void color_finders(char **mat, int size)
-{
-    //A
-    for(int i = 0; i < 7; i++)
-    {
-        for(int j = 0; j < 7; j++)
-        {
-            mat[i][j] = 'f';
-        }
-    }
-
-    //B
-    for(int i = size - 7; i < size; i++)
-    {
-        for(int j = 0; j < 7; j++)
-        {
-            mat[i][j] = 'f';
-        }
-    }
+    int besti = 0;
+    int bestdiff = 4;
+    int diff = 0;
     
-    //C
-    for(int i = 0; i < 7; i++)
+    for(int i = 0; i < 32; i++)
     {
-        for(int j = size - 7; j < size; j++)
+        diff = 0;
+        for(int j = 0; j < 15; j++)
         {
-            mat[i][j] = 'f';
+            if(fmt[j] != F_bits[i][j])
+                diff++; 
         }
-    }
-}
-
-static inline
-void color_separators(char **mat, int size)
-{
-    for(int i = 0; i < 8; i++)
-    {   
-        mat[7][i] = 's';
-    }
-    
-    for(int i = 0; i < 8; i++)
-    {   
-        mat[i][7] = 's';
-    }
-
-    for(int i = size - 8; i < size; i++)
-    {   
-        mat[7][i] = 's';
-    }
-
-    for(int i = size - 8; i < size; i++)
-    {   
-        mat[i][7] = 's';
-    }
-
-    for(int i = 0; i < 8; i++)
-    {   
-        mat[i][size - 8] = 's';
-    }
-
-    for(int i = 0; i < 8; i++)
-    {   
-        mat[size - 8][i] = 's';
-    }       
-}
-
-static inline
-void sub_color_alignment(char **mat, int i, int j)
-{
-    //warn("sub function");
-    mat[i][j] = 'a';
-    mat[i - 1][j] = 'a';
-    mat[i - 1][j - 1] = 'a';
-    mat[i - 1][j - 2] = 'a';
-    mat[i - 1][j + 1] = 'a';
-    mat[i - 1][j + 2] = 'a';
-    mat[i - 2][j - 1] = 'a';
-    mat[i - 2][j - 2] = 'a';
-    mat[i - 2][j + 1] = 'a';
-    mat[i - 2][j + 2] = 'a';
-    mat[i - 2][j] = 'a';
-    mat[i + 1][j] = 'a';
-    mat[i + 1][j - 1] = 'a';
-    mat[i + 1][j - 2] = 'a';
-    mat[i + 1][j + 1] = 'a';
-    mat[i + 1][j + 2] = 'a';
-    mat[i + 2][j] = 'a';
-    mat[i + 2][j - 1] = 'a';
-    mat[i + 2][j - 2] = 'a';
-    mat[i + 2][j + 1] = 'a';
-    mat[i + 2][j + 2] = 'a';
-    mat[i][j - 1] = 'a';
-    mat[i][j - 2] = 'a';
-    mat[i][j + 1] = 'a';
-    mat[i][j + 2] = 'a';
-}
-
-static inline
-void color_alignment(char **mat, int version)
-{
-    const int *ap = Ap_coord[version-1];
-    
-    for(int i = 1; i < 8; i++)
-    {
-        for(int j = 1; j < 8; j++)
-        { 
-            //warn("in loop");
-            if((mat[ap[i]][ap[j]] != '0' && mat[ap[i]][ap[j]] != '1' 
-                && mat[ap[i]][ap[j]] != 't') || 
-                ap[i] == 0 || ap[j] == 0)
-            {       
-                    //warn("bad coord %d %d", ap[i], ap[j]);
-                    continue;
-            }
+       
+        //printf("%s %s %d\n", fmt, F_bits[i], diff);
+         
+        if(diff < bestdiff)
+        {
+            if(diff == 0)
+                return i;
+            bestdiff = diff;    
+            besti = i;
             
-            //warn("good coord %d %d", ap[i], ap[j]);
-            sub_color_alignment(mat, ap[i], ap[j]);
         }
-    }  
+            
+    }
+    
+    if(bestdiff >= 3)
+        return -1;
+    
+    return besti;    
 }
 
 static inline
-void get_version1(char **mat, int size)
+int CorrectFormatInv(char *fmt)
 {
-    mat[size - 9][0] = 'v';
-    mat[size - 9][1] = 'v';
-    mat[size - 9][2] = 'v';
-    mat[size - 9][3] = 'v';
-    mat[size - 9][4] = 'v';
-    mat[size - 9][5] = 'v';
-    mat[size - 10][0] = 'v';
-    mat[size - 10][1] = 'v';
-    mat[size - 10][2] = 'v';
-    mat[size - 10][3] = 'v';
-    mat[size - 10][4] = 'v';
-    mat[size - 10][5] = 'v';
-    mat[size - 11][0] = 'v';
-    mat[size - 11][1] = 'v';
-    mat[size - 11][2] = 'v';
-    mat[size - 11][3] = 'v';
-    mat[size - 11][4] = 'v';
-    mat[size - 11][5] = 'v';
+    int besti = 0;
+    int bestdiff = 4;
+    int diff = 0;
+    
+    for(int i = 0; i < 32; i++)
+    {
+        diff = 0;
+        for(int j = 0; j < 15; j++)
+        {
+            if(fmt[14 - j] != F_bits[i][j])
+                diff++; 
+        }
+        
+        //printf("%s %s %d\n", fmt, F_bits[i], diff);
+        
+        if(diff < bestdiff)
+        {
+            if(diff == 0)
+                return i;
+            bestdiff = diff;    
+            besti = i;
+            
+        }
+            
+    }
+    
+    if(bestdiff >= 3)
+        return -1;
+    
+    return besti;    
 }
 
 static inline
-void get_version2(char **mat, int size)
-{
-    mat[0][size - 9] = 'v';
-    mat[1][size - 9] = 'v';
-    mat[2][size - 9] = 'v';
-    mat[3][size - 9] = 'v';
-    mat[4][size - 9] = 'v';
-    mat[5][size - 9] = 'v';
-    mat[0][size - 10] = 'v';
-    mat[1][size - 10] = 'v';
-    mat[2][size - 10] = 'v';
-    mat[3][size - 10] = 'v';
-    mat[4][size - 10] = 'v';
-    mat[5][size - 10] = 'v';
-    mat[0][size - 11] = 'v';
-    mat[1][size - 11] = 'v';
-    mat[2][size - 11] = 'v';
-    mat[3][size - 11] = 'v';
-    mat[4][size - 11] = 'v';
-    mat[5][size - 11] = 'v';
+char GetErrorCorrectionlvl(int i)
+{ 
+    char ErrorCorrectionlvl = 'H';
+    if(i <= 23)
+        ErrorCorrectionlvl = 'Q';
+    if(i <= 15)
+        ErrorCorrectionlvl = 'M';
+    if(i <= 7)
+        ErrorCorrectionlvl = 'L';
+    return ErrorCorrectionlvl;
 }
 
 static inline
-void color_spec_pat(char **mat, int version)
+void TransposeMat(char **mat, int size)
 {
-    int size = 4 * version + 17;
-    //warn("d");
-    mat[4 * version + 9][8] = 'd';
-    //warn("f");
-    color_finders(mat, size);
-    //warn("s");
-    color_separators(mat, size);
-    //warn("t");
-    color_timing_pat(mat, size);
-    //warn("a");
-    color_alignment(mat, version);
-    //warn("end");
-}   
+    char tmp;
+    for(int i = 0; i < size; i++)
+    {
+        for(int j = i; j < size; j++)
+        {
+            tmp = mat[i][j];
+            mat[i][j] = mat[j][i];
+            mat[j][i] = tmp;
+        }
+    }
+}
 
 // MAIN FUNCTION
 
 struct PCode *get_code(struct QrCode *qr)
 {
     struct PCode *code = malloc(sizeof(struct PCode));
-    //warn("coloring matrix");
-    
-    int sizei = qr->version * 4 + 17;
-    
-    get_version1(qr->mat, sizei);
-    get_version2(qr->mat, sizei); 
-    color_spec_pat(qr->mat, qr->version);
     
     char *fmt1 = get_format1(qr->mat);
-    char *fmt2 = get_format2(qr->mat, qr->version);
-    //warn("fmt1 %s, fmt2 %s", fmt1, fmt2);
+    int fmtIndex = CorrectFormat(fmt1);
+    if(fmtIndex == -1)
+    {
+        char *fmt2 = get_format2(qr->mat, qr->version);
+        fmtIndex = CorrectFormat(fmt2);
+        if(fmtIndex == -1)
+        {
+            fmtIndex = CorrectFormatInv(fmt1);
+            if(fmtIndex == -1)
+            {
+                fmtIndex = CorrectFormatInv(fmt2);
+                if(fmtIndex == -1)
+                    err(EXIT_FAILURE, "Segmentation error : x10");
+            }
+            TransposeMat(qr->mat, qr->version * 4 + 17);
+            //print_mat(qr->mat, qr->version * 4 + 17);
+        }
+        free(fmt2); 
+    }
+    free(fmt1);
     
-    if (strcmp(fmt1, fmt2) != 0) // for now we will just use fmt1
-        warn("fmt1 != fmt2");
-    
-    // verify the version
-    char *key = "101010000010010";
-    char *xored = strbinXOR(fmt1, key); 
-    //warn("xored %s", xored);
-    
-    char *err_cor_lvl = calloc(2, sizeof(char));
-    char *mask = calloc(3, sizeof(char));
-    err_cor_lvl[0] = xored[0];
-    err_cor_lvl[1] = xored[1];
-    mask[0] = xored[2];
-    mask[1] = xored[3];
-    mask[2] = xored[4];
-    char *err_f = calloc(10, sizeof(char));
-    err_f[0] = xored[5];
-    err_f[1] = xored[6];
-    err_f[2] = xored[7];
-    err_f[3] = xored[8];
-    err_f[4] = xored[9];
-    err_f[5] = xored[10];
-    err_f[6] = xored[11];
-    err_f[7] = xored[12];
-    err_f[8] = xored[13];
-    err_f[9] = xored[14];
-    int maskv = bin_int(mask);
-    char cor_lvl = get_correction_lvl(err_cor_lvl);
-    
-    //warn("error level correction %s %c, mask %s %d", err_cor_lvl, cor_lvl,  mask, maskv);
-   
+    char ECL = GetErrorCorrectionlvl(fmtIndex);
+    int Mask = fmtIndex % 8;
     size_t size = qr->version * 4 + 17;
-    
-    demask(qr->mat, size, maskv);  
-    
+    //print_mat(qr->mat, size);
+    color_spec_pat(qr->mat, qr->version);
+    //print_mat(qr->mat, size);
+    demask(qr->mat, size, Mask);
+    //print_mat(qr->mat, size); 
     char* msg = ext_cyphmsg(qr->mat, size, qr->version);
     
-    code->version = qr->version;
-    code->mask = maskv;
-    code->err_cor_lvl = cor_lvl;
-    code->err_cor = err_f;
-    code->msg = msg;
+    code->BStream = msg; 
+    code->Mask = Mask;
+    code->Version = qr->version;
+    code->ECL = ECL;
     
-    free(mask);
-    free(err_cor_lvl);
-    free(fmt1);
-    free(fmt2);
-    free(xored);
-    //free version 
     return code;
 }
 

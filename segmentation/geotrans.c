@@ -5,7 +5,8 @@
 **  Geometric  transformations.
 */
 
-# define SIZE 75
+# define SIZE 300
+# define MULT 5
 
 # include "geotrans.h"
 
@@ -89,12 +90,20 @@ x3, double y3, double size)
     
     //val to change
     
+    /*double u1 = size;
+    double v1 = size;
+    double u2 = size;
+    double v2 = size + size*MULT;
+    double u3 = size + size*MULT;
+    double v3 = size;*/
+    
+    
     double u1 = SIZE;
     double v1 = SIZE;
-    double u2 = SIZE;
-    double v2 = SIZE + size;
-    double u3 = SIZE + size;
-    double v3 = SIZE;
+    double u2 = SIZE + SIZE*2;
+    double v2 = SIZE;
+    double u3 = SIZE;
+    double v3 = SIZE + SIZE*2;
     
     AugMat[0][0] = x1;
     AugMat[1][0] = x2;
@@ -276,10 +285,39 @@ int InvertMat(double *vals) //3*3 matrix
     return 1;
 }
 
+Uint32 BilinearInterpolationUnitSquareBW(SDL_Surface *img, double x, double y)
+{
+    int xm = floor(x);
+    int ym = floor(y);
+    int xM = ceil(x);
+    int yM = ceil(y);
+    Uint32 p1 = getpixel(img, xm, ym); //top left
+    Uint32 p2 = getpixel(img, xM, ym); //top right
+    Uint32 p3 = getpixel(img, xm, yM); //bottom left
+    Uint32 p4 = getpixel(img, xM, yM); //bottom right
+    Uint8 r1, g1, b1;
+    Uint8 r2, g2, b2;
+    Uint8 r3, g3, b3;
+    Uint8 r4, g4, b4;
+    SDL_GetRGB(p1, img->format, &r1, &g1, &b1); 
+    SDL_GetRGB(p2, img->format, &r2, &g2, &b2);
+    SDL_GetRGB(p3, img->format, &r3, &g3, &b3);
+    SDL_GetRGB(p4, img->format, &r4, &g4, &b4);
+    double weightX = x - xm;
+    double weightY = y - ym;
+    Uint8 r = r1 * (1 - weightY) * (1 - weightX) + r2 * (1 - weightY) * weightX
+            + r3 * weightY * (1 - weightX) + r4 * weightY * weightX;
+    Uint8 g = g1 * (1 - weightY) * (1 - weightX) + g2 * (1 - weightY) * weightX
+            + g3 * weightY * (1 - weightX) + g4 * weightY * weightX;
+    Uint8 b = b1 * (1 - weightY) * (1 - weightX) + b2 * (1 - weightY) * weightX
+            + b3 * weightY * (1 - weightX) + b4 * weightY * weightX;
+    return SDL_MapRGB(img->format, r, g, b);
+    
+}
 
 SDL_Surface *FrontMapping(SDL_Surface *oldimg, double *vals, double size)
 {
-    int newsize = SIZE + size + SIZE; 
+    int newsize = size + size*2 + size; 
     SDL_Surface *img = create_image(newsize, newsize);
     double a = vals[0];
     double b = vals[1];
@@ -310,9 +348,9 @@ SDL_Surface *FrontMapping(SDL_Surface *oldimg, double *vals, double size)
 }
 
 SDL_Surface *BackMapping(SDL_Surface *oldimg, double *vals, double size)
-//vals have to be inerted first
+//vals have to be inverted first
 {
-    int newsize = SIZE + size + SIZE;
+    int newsize = SIZE + SIZE*2 + SIZE;
     SDL_Surface *img = create_image(newsize, newsize);
     
     double a = vals[0];
@@ -322,42 +360,66 @@ SDL_Surface *BackMapping(SDL_Surface *oldimg, double *vals, double size)
     double e = vals[4];
     double f = vals[5];
     
-    int x = 0;
-    int y = 0;
+    double x = 0;
+    double y = 0;
     
     for(int v = 0; v < img->h ; v++)
     {
         for(int u = 0; u < img->w; u++)
         {
-            x = round(a*u + b*v + c);
-            y = round(d*u + e*v + f);
+            x = a*u + b*v + c;
+            y = d*u + e*v + f;
             
             if( x < oldimg->w && x > 0 && y < oldimg->h && y > 0)
             {
-                Uint32 p = getpixel(oldimg, x, y);
-                putpixel(img, u, v, p);
+                
+                putpixel(img, u, v, BilinearInterpolationUnitSquareBW(oldimg, x, y)); 
+                //Uint32 p = getpixel(oldimg, x, y);
+                //putpixel(img, u, v, p);
             }
             else
             {
                 putpixel(img, u, v, SDL_MapRGB(img->format, 255, 255, 255));
-            } 
+            }
+            
         }
     }
     free(vals);
     return img;
 }
 
-SDL_Surface *GeoTransform(SDL_Surface *img, struct FPresults *f)
+struct GeoImg *GeoTransform(SDL_Surface *img, struct FPresults *f)
 {
     double *solutions = SolveAffineEquations(f->x1, f->y1, f->x2, f->y2, f->x3,
                                             f->y3, f->dist);
-   
+    
+    struct GeoImg *ret = malloc(sizeof(struct GeoImg));  
+
+    ret->coordA = malloc(sizeof(int) * 2);
+    ret->coordB = malloc(sizeof(int) * 2);
+    ret->coordC = malloc(sizeof(int) * 2);
+    
+    ret->coordA[0] = round(solutions[0] * f->x1 + solutions[1] * f->y1 +
+    solutions[2]); 
+    ret->coordA[1] = round(solutions[3] * f->x1 + solutions[4] * f->y1 +
+    solutions[5]); 
+    ret->coordB[0] = round(solutions[0] * f->x2 + solutions[1] * f->y2 +
+    solutions[2]); 
+    ret->coordB[1] = round(solutions[3] * f->x2 + solutions[4] * f->y2 +
+    solutions[5]); 
+    ret->coordC[0] = round(solutions[0] * f->x3 + solutions[1] * f->y3 +
+    solutions[2]); 
+    ret->coordC[1] = round(solutions[3] * f->x3 + solutions[4] * f->y3 +
+    solutions[5]);
+
     double size = f->dist; 
     if(InvertMat(solutions) == 0)
     {
-        warn("Backmapping failed");
-        return FrontMapping(img, solutions, size);
+        //ret->img FrontMapping(img, solutions, size);
+        err(EXIT_FAILURE, "Segmentation error : x02");
     }
-    
-    return BackMapping(img, solutions, size);
+ 
+    ret->img = BackMapping(img, solutions, size);
+    display_image(ret->img);
+    return ret;
 }

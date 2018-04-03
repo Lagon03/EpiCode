@@ -28,13 +28,13 @@ struct Weave* interweave(struct QrCode_Enc* data) {
     size_t* forest = malloc((w_count + (ecc_count * (nb_block01 + nb_block02))) * sizeof(size_t));
 
 
-    printf("Correction level : %i\n", msg_d->correction_level);
+    /*printf("Correction level : %i\n", msg_d->correction_level);
     printf("Version : %li\n", msg_d->version);
     printf("Number of codeword in block in g1 : %li\n", nb_block01);
     printf("Number of codeword in block 1 : %li\n", nb_cw_01);
     printf("Number of codeword in block in g2 : %li\n", nb_block02);
     printf("Number of codeword in block 2 : %li\n", nb_cw_02);
-    printf("Number of correction codeword : %li\n", ecc_count);
+    printf("Number of correction codeword : %li\n", ecc_count);*/
 
 
     size_t cur = 0; // Position in the forest (interweaved codewords)

@@ -11,6 +11,7 @@
 # include "headers/gen_img.h"
 # include "headers/draw.h"
 # include "headers/polynomials.h"
+# include "headers/decode.h"
 
 struct options* checkArg(int argc, char* argv[])
 {
@@ -131,15 +132,14 @@ int main (int argc, char* argv[])
         free(r_bits);
     }
     //weave->size = weave->size + Remainder_bits[data->version];
-    printf("Interweaved data : \n");
-      for(size_t i = 0; i < weave->size; ++i)
-      printf("%ld ", weave->forest[i]);
-      printf("\nLength : %li\n", weave->size);
-      printf("Interweaved data to binary : \n%s\n", weave_trans);
-      printf("Total length : %li | with %li remainder bits\n", (weave->size * 8)
-      + Remainder_bits[data->version], Remainder_bits[data->version]);
+    /*printf("Interweaved data : \n");
+    for(size_t i = 0; i < weave->size; ++i)
+        printf("%ld ", weave->forest[i]);
+    printf("\nLength : %li\n", weave->size);*/
+    printf("Interweaved data to binary : \n%s\n", weave_trans);
+    printf("Total length : %li | with %li remainder bits\n", (weave->size * 8)
+            + Remainder_bits[data->version], Remainder_bits[data->version]);
 
-    printf("test %li\n", (weave->size * 8) + Remainder_bits[data->version]);
     fill_mat(QrCode->mat, QrCode->size, data->version, weave_trans, (weave->size
                 * 8) + Remainder_bits[data->version]);
 
@@ -155,10 +155,10 @@ int main (int argc, char* argv[])
     int min = 99999999;
     for(size_t i = 0; i < 8; ++i) {
         /*printf("Mask %li result : %i\n", i, mask_point[i][4]);
-        printf("\t Penalty 1 : %i\n", mask_point[i][0]);
-        printf("\t Penalty 2 : %i\n", mask_point[i][1]);
-        printf("\t Penalty 3 : %i\n", mask_point[i][2]);
-        printf("\t Penalty 4 : %i\n", mask_point[i][3]);*/
+          printf("\t Penalty 1 : %i\n", mask_point[i][0]);
+          printf("\t Penalty 2 : %i\n", mask_point[i][1]);
+          printf("\t Penalty 3 : %i\n", mask_point[i][2]);
+          printf("\t Penalty 4 : %i\n", mask_point[i][3]);*/
         if(mask_point[i][4] < min) {
             cur = i;
             min = mask_point[i][4];
@@ -188,17 +188,27 @@ int main (int argc, char* argv[])
         setVersionString(QrCode, V_bits[data->version]);
     Generate_QrCode(QrCode->mat, data->version, "test.bmp", 8);
 
+    char* test = "0100000001000101010001100101011100110111010000001110110000010001111011000101000010101101111011100100011110011010101101110000001111010101111100000001110101000001101111111110110001001000010110111010011010010111\0";
+    // "Test" should be the output
+    char* test2 = "01000000110001001000011001010110110001101100011011110010110000100000010101110110111101110010011011000110010000001110110000010001100111000000001010010110011100011010001100110110010010100101000100011010100101110111110010100100001010000010111100010001011100000110010000111011100101011110000101001010110100001111100110000000101101000000111100111001001100110000000\0";
+    // "Hello, World" should be the output
+    char *test3 = "001000001101110111000011010100110000101101010100011110001010101011010001001010110111001000000000110111001110110001001101000100010100010011101100110110100001000111000101111011000110111000010001001000011110110011110100110101000100011000110000000001100101111110001010001011010101101110100011011011100001011110111000010011111100100100101100011000111101110101010110001101000100000110111011111110111010101001000000110110001101111110111101111111101110001000101001101100101111001010100100100100100110110010101011101101001011011001111111011100010011001100000111111101100000000\0";
+    // "HELLO WORLD HOW ARE THOU" should be the output
+    char* string = decode(test, 1, 3);
+    printf("Decoded string : %s\n", string);
+    free(string);
+    string = decode(test2, 2, 3);
+    printf("Decoded string : %s\n", string);
+    free(string);
+    string = decode(test3, 3, 3);
+    printf("Decoded string : %s\n", string);
+    free(string);
+    string = decode(weave_trans, data->version, data->correction_level);
+    printf("Decoded string : %s\n", string);
+    free(string);
 
     for(size_t x = 0; x < QrCode->size; ++x) {
-        /*printf("[");
-          for(size_t y = 0; y < QrCode->size; ++y) {
-          if(QrCode->mat[x][y] == 0)
-          printf("  ");
-          else
-          printf("%c ", QrCode->mat[x][y]);
-          }*/
         free(QrCode->mat[x]);
-        //printf("]\n");
     }
     free(QrCode->mat);
     free(QrCode);
@@ -215,7 +225,5 @@ int main (int argc, char* argv[])
     free(mod);
     free(arg);
     free(weave_trans);
-
-
     return 1;
 }

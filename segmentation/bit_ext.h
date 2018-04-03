@@ -10,6 +10,7 @@
 # include <stddef.h>
 # include <stdlib.h>
 # include "proc_code.h"
+# include "constfile.h"
 
 char *ext_cyphmsg(char **mat, size_t size, int version);
 

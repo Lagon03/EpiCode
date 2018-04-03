@@ -26,8 +26,6 @@ int main()
 	msg_in->array[7] = 0x06;
 	msg_in->array[8] = 0x27;
 	msg_in->array[9] = 0x26;
-
-
 	msg_in->array[10] = 0x96;
 	msg_in->array[11] = 0xc6;
 	msg_in->array[12] = 0xc6;
