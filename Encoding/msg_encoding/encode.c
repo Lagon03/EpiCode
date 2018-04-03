@@ -81,7 +81,7 @@ const size_t GROUP_BLOCK_CODEWORDS[2][4][41] = {
             14, 13, 4, 3, 23, 7, 10, 29, 23, 21, 23, 26, 34, 14, 32, 7, 31},
         {-1, 0, 0, 0, 0, 2, 0, 4, 2, 4, 2, 4, 6, 4, 5, 7, 2, 15, 1, 4, 5, 6, 16, 14,
             16, 22, 6, 26, 31, 37, 25, 1, 35, 19, 7, 14, 10, 10, 14, 22, 34},
-        {-1, 0, 0, 0, 0, 0, 2, 0, 1, 2, 4, 2, 8, 4, 5, 7, 13, 17, 19, 16, 10, 6, 0, 14,
+        {-1, 0, 0, 0, 0, 2, 0, 1, 2, 4, 2, 8, 4, 5, 7, 13, 17, 19, 16, 10, 6, 0, 14,
             2, 13, 4, 28, 31, 26, 25, 28, 35, 46, 1, 41, 64, 46, 32, 67, 61}
     }
 };
@@ -326,9 +326,10 @@ char* convertToByte(size_t input)
 size_t convertToDec(char* input) {
     //printf("Input to convert : %s\n", input);
     size_t dec = 0;
-    for(size_t i = 0; i < 8; ++i) {
+    size_t length = getSize(input);
+    for(size_t i = 0; i < length; ++i) {
         if(input[i] == '1')
-            dec += sPow(2,7 - i);
+            dec += sPow(2,(length - 1) - i);
     }
     return dec;
 }
@@ -505,7 +506,8 @@ struct Codewords* breakCodeword(struct EncData* data)
 
     struct Codewords *codewords = malloc(sizeof(struct Codewords));
     size_t group = GROUP_BLOCK_CODEWORDS[0][correction][version];
-    size_t group_ = GROUP_BLOCK_CODEWORDS[1][correction][version]; 
+    size_t group_ = GROUP_BLOCK_CODEWORDS[1][correction][version];
+    printf("group 1 : %li\n group 2 : %li\n", group, group_);
     if(group != 0 && group_ == 0)
     {
         codewords->group = malloc(sizeof(struct Group*));
@@ -552,9 +554,9 @@ struct Codewords* breakCodeword(struct EncData* data)
                     for(int i = 0; i < 8; ++i, ++cur) {
                         codewords->group[g]->blocks[b]->words[w][i] = full_data[cur];
                     }
-                    printf("\t\tCodeword %2li: %s | value : %ld\n", w + 1, 
+                    /*printf("\t\tCodeword %2li: %s | value : %ld\n", w + 1, 
                       codewords->group[g]->blocks[b]->words[w], 
-                      convertToDec(codewords->group[g]->blocks[b]->words[w]));
+                      convertToDec(codewords->group[g]->blocks[b]->words[w]));*/
                 }
 
                 // Here we compute the correction codewords
@@ -565,7 +567,7 @@ struct Codewords* breakCodeword(struct EncData* data)
                 size_t* err_cw = JtoL(codewords->group[g]->blocks[b]->words, data_cd, nb_cw_err); 
                 for(size_t i = 0; i < nb_cw_err; ++i)
                 {
-                    printf("%li ", err_cw[i]);
+                    //printf("%li ", err_cw[i]);
                     codewords->group[g]->blocks[b]->correction[i] = malloc(8 * sizeof(char));
                     codewords->group[g]->blocks[b]->correction[i] = adjustSize(convertToByte(err_cw[i]), 8);
                 }
@@ -585,6 +587,7 @@ void freeCodeWords(struct Codewords* codewords) {
                 free(codewords->group[g]->blocks[b]->words[i]);
             }
             free(codewords->group[g]->blocks[b]->words);
+            free(codewords->group[g]->blocks[b]->correction);
             free(codewords->group[g]->blocks[b]);
         }
         free(codewords->group[g]->blocks);
@@ -602,24 +605,14 @@ struct EncData* getEncodedSize(struct options *arg)
     char* count_bits;
     
     char_count = getSize(arg->message);
+    printf("input length : %li\n", char_count);
     count_bits = convertToByte(char_count);
     
-    printf("%s\n", count_bits);
+    //printf("%s\n", count_bits);
 
     size_t version = getSmallestVersion(arg->mode, char_count, arg->correction); 
     // need to specify the limit in function of the version and of the mod
 
-    /*if(arg->mode == 0)
-    {
-        char_count = getSize(arg->message);
-        if (char_count < 3)
-            char_count = 1;
-        else if(char_count % 3 == 0)
-            char_count = char_count % 3;
-        else
-            char_count = (char_count % 3) + 1;
-        count_bits = convertToByte(char_count);
-    }*/
     if(version <= 9) {
         if(arg->mode == 0)
             count_bits = adjustSize(count_bits, 10);    // Num
@@ -697,14 +690,14 @@ struct EncData* getEncodedSize(struct options *arg)
     // Now we need to break the whole (mode indicator + characters count +
     // encoded data) into 8-bits Codewords to prepare the error correction
     adjustBits(data, full_size);
-    /*for(size_t i = 0; i < full_size; ++i)
+    for(size_t i = 0; i < full_size; ++i)
     {
         if(i % 8 == 0)
             printf(" ");
         printf("%c", data->encoded_data[i]);
     }
     printf("\n");
-    for(size_t i = 0; i < full_size; ++i)
+    /*for(size_t i = 0; i < full_size; ++i)
     {
         if(i % 8 == 0)
             printf(" ");

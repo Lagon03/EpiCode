@@ -7,6 +7,7 @@
 # include "analysis.h"
 # include "encode.h"
 
+extern const char* alpha_;
 
 char* num_encoding(char* data, size_t len);
 char* alpha_encoding(char* data, size_t len);

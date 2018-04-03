@@ -7,6 +7,8 @@ size_t getSize(char *input)
 {
   size_t i = 0;
   for(; input[i] != '\0'; ++i);
+      /*printf("%c",input[i]);
+  printf("\n");*/
   return i;
 }
 
