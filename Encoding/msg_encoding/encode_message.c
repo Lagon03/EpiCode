@@ -154,8 +154,8 @@ char* alpha_encoding(char* data, size_t len)
             bits = convertToByte(bin_num);
             bits = adjustSize(bits, 11);
         }
-        printf("bin_num : %li\n", bin_num);
-        printf("bits : %s\n", bits);
+        /*printf("bin_num : %li\n", bin_num);
+        printf("bits : %s\n", bits);*/
         // then we concatenate the binary and the whole encoded message
         enc_message = adjustString(enc_message, bits, nbpair * 10, size, 11);
         // we increment the used size of the encoded message var

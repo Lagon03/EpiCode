@@ -13,6 +13,8 @@
 # include "headers/polynomials.h"
 # include "headers/decode.h"
 
+# include "headers/freect.h"
+
 struct options* checkArg(int argc, char* argv[])
 {
     struct options *arg = malloc(sizeof(struct options));
@@ -95,22 +97,20 @@ int main (int argc, char* argv[])
         data->correction_level = 0;
 
     printf("\nEncoded data informations  :\n");
-    printf("\tMode indicator             : %s\n", data->mode_ind);
-    printf("\tCharacters count indicator : %s\n", data->character_count_ind);
-    printf("\tEncoded message            : %s\n", data->encoded_data);
+    /*printf("\tMode indicator             : %s\n", data->mode_ind);
+    printf("\tCharacters count indicator : %s\n", data->character_count_ind);*/
+    //printf("\tEncoded message            : %s\n", data->encoded_data);
     printf("------ Options  ------\n");
     printf("\tVersion                    : %li\n", data->version);
     printf("\tCorrection                 : %i\n", data->correction_level);
     printf("------ Raw bits ------\n");
-    printf("\tRaw encoded bits           : %s%s%s\n", data->mode_ind,
+    /*printf("\tRaw encoded bits           : %s%s%s\n", data->mode_ind,
             data->character_count_ind, data->encoded_data);
     size_t size = 4 + getSize(data->character_count_ind) 
         + getSize(data->encoded_data);
-    printf("\tRaw encoded bits length    : %li\n", size);
+    printf("\tRaw encoded bits length    : %li\n", size);*/
+    
     // Generating the QrCode Matrix
-
-    //data->version = 8;
-    //printf("!--------------Modified version to %li--------------!\n", data->version);
     struct QrCode_Enc* QrCode = initQrCode(data);
     struct Weave* weave = interweave(QrCode);
 
@@ -131,14 +131,19 @@ int main (int argc, char* argv[])
         strcat(weave_trans, r_bits);
         free(r_bits);
     }
+
+
     //weave->size = weave->size + Remainder_bits[data->version];
     /*printf("Interweaved data : \n");
     for(size_t i = 0; i < weave->size; ++i)
         printf("%ld ", weave->forest[i]);
-    printf("\nLength : %li\n", weave->size);*/
+    printf("\nLength : %li\n", weave->size);
     printf("Interweaved data to binary : \n%s\n", weave_trans);
     printf("Total length : %li | with %li remainder bits\n", (weave->size * 8)
-            + Remainder_bits[data->version], Remainder_bits[data->version]);
+            + Remainder_bits[data->version], Remainder_bits[data->version]);*/
+
+
+
 
     fill_mat(QrCode->mat, QrCode->size, data->version, weave_trans, (weave->size
                 * 8) + Remainder_bits[data->version]);
@@ -186,7 +191,7 @@ int main (int argc, char* argv[])
     setFormatString(QrCode, S_bits[data->correction_level][cur]);
     if(data->version >= 7)
         setVersionString(QrCode, V_bits[data->version]);
-    Generate_QrCode(QrCode->mat, data->version, "test.bmp", 8);
+    Generate_QrCode(QrCode->mat, data->version, "test.bmp", 4);
 
     char* test = "0100000001000101010001100101011100110111010000001110110000010001111011000101000010101101111011100100011110011010101101110000001111010101111100000001110101000001101111111110110001001000010110111010011010010111\0";
     // "Test" should be the output
@@ -205,9 +210,9 @@ int main (int argc, char* argv[])
     free(string);
     string = decode(weave_trans, data->version, data->correction_level);
     printf("Decoded string : %s\n", string);
-    free(string);
-
-    for(size_t x = 0; x < QrCode->size; ++x) {
+    free(string);    
+    
+    /*for(size_t x = 0; x < QrCode->size; ++x) {
         free(QrCode->mat[x]);
     }
     free(QrCode->mat);
@@ -221,9 +226,12 @@ int main (int argc, char* argv[])
     free(data->character_count_ind);
     free(data->encoded_data);
     free(data);
+    free(arg);*/
     // ---
+    
+    Completefree(data, arg, QrCode, weave);
+
     free(mod);
-    free(arg);
     free(weave_trans);
     return 1;
 }
