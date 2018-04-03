@@ -92,6 +92,7 @@ void free_segmentation(struct FPat *f, struct FPresults *fp,  struct QrCode *q, 
 
 //----------------------------------------------------------------------------
 
+static inline
 void imageProcessing(SDL_Surface *img)
 {
     grayscale(img);
@@ -101,28 +102,36 @@ void imageProcessing(SDL_Surface *img)
     binarize(img, threshold);
 }
 
+
 void fPiter(char *file)
 {
     SDL_Surface *img = load_image(file);
     SDL_Surface *show = load_image(file);
     imageProcessing(img);
+    warn("Image Processing passed");
 
     display_image(show);
     struct FPat *f = findFP(img);
+    warn("Find Finder Patterns passed");
     struct FPresults *fp = QrCode_found(f);
+    warn("QrCode validation passed");
     if(fp == NULL)
         err(EXIT_FAILURE, "Segmentation error : x00"); 
    
     struct GeoImg *geo = GeoTransform(img, fp);
-    display_image(geo->img);
+    warn("GeoTrans passed");
+    imageProcessing(geo->img);
+    //display_image(geo->img);
     free_FPat(f);
     free_FPresults(fp);
     struct QrCode *qr = extract_QrCode(geo);
+    warn("Extraction passed");
     Draw_point(geo->img, geo->coordA[0], geo->coordA[1]);
     Draw_point(geo->img, geo->coordB[0], geo->coordB[1]);
     Draw_point(geo->img, geo->coordC[0], geo->coordC[1]);
-    display_image(geo->img);
+    //display_image(geo->img);
     struct PCode *c = get_code(qr);
+    warn("Bit stream gotten");
     printf("QrCode found :\n");
     printf("    Version : %d\n", c->Version); 
     printf("    Mask : %d\n", c->Mask);
@@ -131,38 +140,6 @@ void fPiter(char *file)
     printf("%s \n", c->BStream);
 }
 
-/*
-void full_segmentation(char *file)
-{
-    SDL_Surface *img = load_image(file);
-    SDL_Surface *show = load_image(file);
-    imageProcessing(img);
-    
-    //struct FPat *f = findFP(img);
-    
-    //drawFP(show, f->centers, f->ems_vector, 0);
-     
-    //struct QrCode *qr = extract_QrCode(img, f);
-    printf("\n\nQrCode Found : \n");
-    printf("Version : V%0d \n", qr->version);
-    printf("Estimated module size : %lf \n", qr->m_size);
-    //printf("QrCode Data Matrix : \n");
-    //print_mat(qr->mat, qr->version * 4 + 17);
-    printf("\n");
-    
-    display_image(show);
-    
-    //struct PCode *c = get_code(qr);
-    printf("Format :\n");
-    printf("    Mask : %d\n", c->mask);
-    printf("    Error Correction Level : %c\n", c->err_cor_lvl);
-    printf("    Error Correction Bits : %s\n\n", c->err_cor);
-    printf("Cyphered Message Ready to be decoded : \n");
-    printf("%s \n", c->msg);
-    
-    free_segmentation(f, NULL, qr, c);
-}
-*/
 
 int main(int argc, char *argv[]){
     init_sdl();
@@ -170,7 +147,7 @@ int main(int argc, char *argv[]){
     if (argc > 1)
         fPiter(argv[1]);
     else
-        fPiter("../resources/HelloWorldv1.png"); 
+        fPiter("../resources/QrV2.png"); 
 
     SDL_Quit();
     return 1;

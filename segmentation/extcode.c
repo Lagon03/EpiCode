@@ -293,7 +293,7 @@ double UpdateY(SDL_Surface *img, int center_x , int center_y, double Y, int bin)
 }
 // MAIN FUNCTION
 
-void V1QrCode(struct GeoImg *qrimg, struct QrCode *qr, double X)
+void SampleCodeV1(struct GeoImg *qrimg, struct QrCode *qr, double X)
 {
     int HA = GetHeightFP(qrimg->img, qrimg->coordA[0], qrimg->coordA[1]);
     int HC = GetHeightFP(qrimg->img, qrimg->coordC[0], qrimg->coordC[1]);
@@ -378,7 +378,7 @@ void V1QrCode(struct GeoImg *qrimg, struct QrCode *qr, double X)
             //display_image(qrimg->img);
         }
         ux = 0;
-        uy = 0;
+        //uy = 0;
     }
     
     qr->mat = mat;
@@ -386,46 +386,119 @@ void V1QrCode(struct GeoImg *qrimg, struct QrCode *qr, double X)
     //print_mat(mat, 21);
 }
 
+static inline
+int CorrectVersion(char *fmt)
+{
+    int besti = 0;
+    int bestdiff = 4;
+    int diff = 0;
+    
+    for(int i = 0; i < 34; i++)
+    {
+        diff = 0;
+        for(int j = 0; j < 18; j++)
+        {
+            if(fmt[j] != V_bits[i][j])
+                diff++; 
+        }
+        
+        //printf("%s %s %d\n", fmt, F_bits[i], diff);
+        
+        if(diff < bestdiff)
+        {
+            if(diff == 0)
+                return i;
+            bestdiff = diff;    
+            besti = i;
+            
+        }
+            
+    }
+    
+    if(bestdiff > 3)
+        return -1;
+    
+    return besti;    
+}
+
+static inline
+int GetVersionV7_40N1(struct GeoImg *qrimg, int HB, int WB)
+{
+    char *fmt = calloc(18, sizeof(char));
+    double CPx = (double)WB / 7;
+    double CPy = (double)HB / 7;
+    double Vx0 = qrimg->coordB[0] - 7 * CPx;
+    double Vy0 = qrimg->coordB[1] - 3 * CPy;
+    int X;
+    int Y;
+    for(int y = 0; y < 6; y++)
+    {
+        for(int x = 0; x < 3; x++)
+        {
+            X = round(Vx0 + CPx * x);
+            Y = round(Vy0 + CPy * y);
+            if(get_BW(qrimg->img, X, Y) == 0)
+                fmt[17 - (x + y * 3)] = '1';
+            else
+                fmt[17 - (x + y * 3)] = '0';
+            //putpixel(qrimg->img, X, Y, SDL_MapRGB(qrimg->img->format, 255, 0, 0));
+            //display_image(qrimg->img);
+        }
+    }
+    warn("Version String : %s", fmt);
+    return CorrectVersion(fmt) + 7; 
+}
+/*
+static inline
+int GetVersionV7_40N2(struct GeoImg *qrimg, int HC, int WC)
+{
+
+}
+*/
+
 //Extracts QrCode struct for further computations
 struct QrCode *extract_QrCode (struct GeoImg *qrimg)
 {
     struct QrCode *qr = malloc(sizeof(struct QrCode));
     
-    //determine D distance between A and B
-    
     double D = sqrt(pow(qrimg->coordA[0] - qrimg->coordB[0], 2) +
     pow(qrimg->coordA[1] - qrimg->coordB[1], 2));
-     
-    //determine WA and WB
     
     int WA = GetWidthFP(qrimg->img, qrimg->coordA[0], qrimg->coordA[1]);
     int WB = GetWidthFP(qrimg->img, qrimg->coordB[0], qrimg->coordB[1]);
+    int WC = GetWidthFP(qrimg->img, qrimg->coordC[0], qrimg->coordC[1]);
+    int HA = GetHeightFP(qrimg->img, qrimg->coordA[0], qrimg->coordA[1]);
+    int HB = GetHeightFP(qrimg->img, qrimg->coordB[0], qrimg->coordB[1]);
+    int HC = GetHeightFP(qrimg->img, qrimg->coordC[0], qrimg->coordC[1]);
     
-    if(WA == 0 || WB == 0)
+    if(WA == 0 || WB == 0 || WC == 0 || HA == 0 || HB == 0 || HC == 0)
         err(EXIT_FAILURE, "Segmentation error : x03");
-
-    //determine nominal X dimension of the symbol.
     
     double X = (WA + WB) / 14;
 
-    //determine V estimated version
-
     int V = round((D / X - 10) / 4);
-    
-    //printf("Version is : %d\n", V);
-    //then condition using V
     
     if( V >= 7 && V <= 40)
     {
+        V = GetVersionV7_40N1(qrimg, HB, WB);
+        if( V == 6)
+        {
+            V = GetVersionV7_40N2(qrimg, HC, WB);
+            if( V == 6)
+                err(EXIT_FAILURE, "Segmentation error : Version Corrupted"
+        }
+        qr->version = V;
+        //warn("Version decoded : %d", V);
         err(EXIT_FAILURE, "Segmentation NOT IMPLEMENTED V7 - 40");
     }
     else if( V >= 2 && V <= 6)
     {
-        err(EXIT_FAILURE, "Segmentation NOT IMPLEMENTED V2 - 6");
+        qr->version = V;
+        SampleCodeV2_6(qrimg, qr, WA, WB, WC, HA, HB, HC);
     }
     else if( V == 1)
     {
-        V1QrCode(qrimg, qr, X);  
+        SampleCodeV1(qrimg, qr, X);  
     }
     else
     {

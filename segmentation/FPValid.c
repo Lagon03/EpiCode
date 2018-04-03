@@ -10,13 +10,14 @@
 static inline
 struct FPresults *Find_QrCodes(void)
 {
+    err(EXIT_FAILURE, "Segmentation not implemented : possible multiple QrCodes");
     return NULL;
 }
 
 struct FPresults *QrCode_found(struct FPat *fp)
 {
     if(fp->centers->size < 3)
-        return NULL;
+        err(EXIT_FAILURE, "Segmentation error : No QrCode found");
 
     //Multiple Case not handled
     if(fp->centers->size > 3)

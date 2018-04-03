@@ -6,7 +6,7 @@ CFLAGS= -Wall -Wextra -std=c99 -O2
 LDFLAGS=
 LDLIBS= `pkg-config --libs sdl2` -lSDL2_image -lm
 
-SRC= ../sdl/mysdl.c ../preproc/preproc.c fpfind.c extcode.c surfdraw.c demask.c color_mat.c proc_code.c bit_ext.c FPValid.c geotrans.c main.c
+SRC= ../sdl/mysdl.c ../preproc/preproc.c fpfind.c apsamp.c extcode.c surfdraw.c demask.c color_mat.c proc_code.c bit_ext.c FPValid.c geotrans.c main.c
 OBJ=${SRC:.c=.o}
 DEP=${SRC:.c=.d}
 
