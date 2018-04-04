@@ -448,13 +448,13 @@ int GetVersionV7_40N1(struct GeoImg *qrimg, int HB, int WB)
     warn("Version String : %s", fmt);
     return CorrectVersion(fmt) + 7; 
 }
-/*
+
 static inline
 int GetVersionV7_40N2(struct GeoImg *qrimg, int HC, int WC)
 {
-
+    return 1;
 }
-*/
+
 
 //Extracts QrCode struct for further computations
 struct QrCode *extract_QrCode (struct GeoImg *qrimg)
@@ -485,7 +485,7 @@ struct QrCode *extract_QrCode (struct GeoImg *qrimg)
         {
             V = GetVersionV7_40N2(qrimg, HC, WB);
             if( V == 6)
-                err(EXIT_FAILURE, "Segmentation error : Version Corrupted"
+                err(EXIT_FAILURE, "Segmentation error : Version Corrupted");
         }
         qr->version = V;
         //warn("Version decoded : %d", V);

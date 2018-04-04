@@ -7,76 +7,76 @@
 #include "op.h"
 
 /*Given the received codeword msg and the number of error correcting symbols (nsym), computes the
-	syndromes polynomial. Mathematically, it's essentially equivalent to a Fourrier Transform 
-	(Chien search being the inverse).*/
+  syndromes polynomial. Mathematically, it's essentially equivalent to a Fourrier Transform 
+  (Chien search being the inverse).*/
 
 struct Array* rs_calc_syndromes(struct Array *msg, uint8_t nsym, struct gf_tables *gf_table)
 {
-  struct Array *synd = malloc(sizeof(struct Array));
-  initZArray(synd, nsym+1);
-  struct Array *res = malloc(sizeof(struct Array));
-  initZArray(res, nsym+2);
-  for(uint8_t i = 0; i < nsym; i++){
-    synd->array[i] = gf_poly_eval(msg, gf_pow(2, i, gf_table), gf_table);
-    insertArray(synd);
-  }
-	insertArray(res);
-  for(uint8_t i = 1; i < nsym + 1; i++){
-	res->array[i] = synd->array[i-1]; //pad with one 0 for mathematical precision
-	insertArray(res);
-  }
-  //(else we can end up with weird calculations sometimes)
-  return res;
+    struct Array *synd = malloc(sizeof(struct Array));
+        initZArray(synd, nsym+1);
+        struct Array *res = malloc(sizeof(struct Array));
+        initZArray(res, nsym+2);
+        for(uint8_t i = 0; i < nsym; i++){
+            synd->array[i] = gf_poly_eval(msg, gf_pow(2, i, gf_table), gf_table);
+                insertArray(synd);
+        }
+    insertArray(res);
+        for(uint8_t i = 1; i < nsym + 1; i++){
+            res->array[i] = synd->array[i-1]; //pad with one 0 for mathematical precision
+            insertArray(res);
+        }
+    //(else we can end up with weird calculations sometimes)
+    free(synd);
+    return res;
 }
 
 /*Returns true if the message + ecc has no error of false otherwise (may not always catch a wrong
-	decoding or a wrong message,particularly if there are too many errors, but it usually does)*/
+  decoding or a wrong message,particularly if there are too many errors, but it usually does)*/
 bool rs_check(struct Array *msg, uint8_t nsym, struct gf_tables *gf_table)
 {
-  struct Array *synd = malloc(sizeof(struct Array));
-  initArray(synd, nsym+1);
-  synd = rs_calc_syndromes(msg, nsym, gf_table);
-  bool res = true;
-  for(uint8_t i = 0; i < nsym+1; i++)
-    res &= synd->array[i] == 0;
-  return res;
+    struct Array *synd = malloc(sizeof(struct Array));
+        initArray(synd, nsym+1);
+        synd = rs_calc_syndromes(msg, nsym, gf_table);
+        bool res = true;
+        for(uint8_t i = 0; i < nsym+1; i++)
+            res &= synd->array[i] == 0;
+                return res;
 }
 
 struct Array* rs_find_errdata_locator(struct Array *e_pos, struct gf_tables *gf_table)
 {
-	struct Array *e_loc = malloc(sizeof(struct Array));
-	initZArray(e_loc, e_pos->used+1);
-	e_loc->array[0] = 1;
-	insertArray(e_loc);
-	struct Array *one = malloc(sizeof(struct Array));
-	initZArray(one, 2);
-	one->array[0] = 1;
-	insertArray(one);
-	for(size_t i = 0; i < e_pos->used; i++){
-		uint8_t pow_two = gf_pow(2, e_pos->array[i], gf_table);
-		struct Array *arr = malloc(sizeof(struct Array));
-		initArray(arr, 2);
-		arr->array[0] = pow_two;
-		insertArray(arr);
-		arr->array[1] = 0;
-		insertArray(arr);
-		struct Array *add = gf_poly_add(one, arr);
-		e_loc = gf_poly_mul(e_loc, add, gf_table);
-  }
-  return e_loc;
-}
-
-/*Compute the error (or erasures if you supply sigma=erasures locator polynomial, or errata) evaluator
-	polynomial Omega from the syndrome and the error/erasures/errata locator Sigma*/
-struct Array* rs_find_error_evaluator(struct Array *synd, struct Array *err_loc, uint8_t nsym, struct gf_tables *gf_table)
+    struct Array *e_loc = malloc(sizeof(struct Array));
+        initZArray(e_loc, e_pos->used+1);
+        e_loc->array[0] = 1;
+        insertArray(e_loc);
+        struct Array *one = malloc(sizeof(struct Array));
+        initZArray(one, 2);
+        one->array[0] = 1;
+        insertArray(one);
+        for(size_t i = 0; i < e_pos->used; i++){
+            uint8_t pow_two = gf_pow(2, e_pos->array[i], gf_table);
+                struct Array *arr = malloc(sizeof(struct Array));
+                initArray(arr, 2);
+                arr->array[0] = pow_two;
+                insertArray(arr);
+                arr->array[1] = 0;
+                insertArray(arr);
+            struct Array *add = gf_poly_add(one, arr);
+                e_loc = gf_poly_mul(e_loc, add, gf_table);
+        }
+    return e_loc;}
+    
+    /*Compute the error (or erasures if you supply sigma=erasures locator polynomial, or errata) evaluator
+      polynomial Omega from the syndrome and the error/erasures/errata locator Sigma*/
+    struct Array* rs_find_error_evaluator(struct Array *synd, struct Array *err_loc, uint8_t nsym, struct gf_tables *gf_table)
 {
-	struct Array *res = malloc(sizeof(struct Array));
-	initArray(res, nsym+2);
-	res = gf_poly_mul(synd, err_loc, gf_table);
-	size_t len = res->used - (nsym+1);
-	memmove(res->array, res->array+len, len);
-	res->used = res->used - len;
-	return res;
+    struct Array *res = malloc(sizeof(struct Array));
+    initArray(res, nsym+2);
+    res = gf_poly_mul(synd, err_loc, gf_table);
+    size_t len = res->used - (nsym+1);
+    memmove(res->array, res->array+len, len);
+    res->used = res->used - len;
+    return res;
 }
 
 /*Forney algorithm, computes the values (error magnitude) to correct the input message.*/
@@ -181,7 +181,7 @@ struct Array* rs_find_error_locator(struct Array* synd, uint8_t nsym, uint8_t er
 	}
 	return err_loc;
 }
-
+    
 struct Array* rs_find_errors(struct Array *err_loc, size_t nmess, struct gf_tables *gf_table)//nmess is len(msg_in)
 {
 	size_t errs = err_loc->used - 1;
