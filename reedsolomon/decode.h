@@ -20,4 +20,10 @@ struct Array* rs_find_error_evaluator(struct Array *synd, struct Array *err_loc,
 
 struct Array* rs_correct_errdata(struct Array *msg_in, struct Array *synd, struct Array *err_pos, struct gf_tables *gf_table);
 
+struct Array* rs_find_errors(struct Array *err_loc, size_t nmess, struct gf_tables *gf_table);
+
+struct Array* rs_correct_msg(struct Array *msg_in, uint8_t nsym, struct Array *erase_pos, struct gf_tables *gf_table);
+
+struct Array* rs_forney_syndromes(struct Array *synd, struct Array *pos, uint8_t nmess, struct gf_tables *gf_table);
+
 #endif /* decode_h */

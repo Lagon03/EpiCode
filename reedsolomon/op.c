@@ -179,17 +179,8 @@ struct Array* gf_poly_mul(struct Array *p, struct Array *q, struct gf_tables *gf
 {
     struct Array *res = malloc(sizeof(struct Array));
     initZArray(res, (p->used + q->used));
-	printf("P : [");
-	for(int a = 0; a < p->used; a++)
-		printf("%u, ", p->array[a]);
-	printf("] \n");
-	printf("Q : [");
-	for(int k = 0; k < q->used; k++)
-		printf("%u, ", q->array[k]);
-	printf("] \n");
     for(size_t j = 0; j < q->used; j++){
         for(size_t i = 0; i < p->used; i++){
-			//printf("p[%u] = %u, q[%u] = %u, res = %u\n", i, p->array[i] , j, q->array[j], gf_add(res->array[i+j], gf_mul(p->array[i], q->array[j], gf_table)));
             res->array[i+j] = gf_add(res->array[i+j], gf_mul(p->array[i], q->array[j], gf_table));
         }
     }

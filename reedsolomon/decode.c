@@ -196,7 +196,63 @@ struct Array* rs_find_errors(struct Array *err_loc, size_t nmess, struct gf_tabl
         }
     if(err_pos->used != errs){
         fprintf(stderr, "Too many (or few) errors found by Chien Search for the errdata locator polynomial!");
-            exit(EXIT_FAILURE);
+		exit(EXIT_FAILURE);
     }
     return err_pos;
+}
+
+struct Array* rs_forney_syndromes(struct Array *synd, struct Array *pos, uint8_t nmess, struct gf_tables *gf_table){
+	struct Array *erase_pos_reversed = malloc(sizeof(struct Array*));
+	initArray(erase_pos_reversed, pos->used);
+	for (size_t i = 0; i < pos->used; i++) {
+		erase_pos_reversed->array[i] = nmess - 1 - pos->array[i];
+	}
+	erase_pos_reversed->used = pos->used;
+	struct Array *fsynd = malloc(sizeof(struct Array*));
+	initArray(fsynd, synd->used - 1);
+	fsynd->array = synd->array + 1;
+	fsynd->used = synd->used - 1;
+	for (size_t i = 0; i < pos->used; i++) {
+		uint8_t x = gf_pow(2, erase_pos_reversed->array[i], gf_table);
+		for (size_t j = 0; j < fsynd->used - 1; j++)
+			fsynd->array[j] = gf_mul(fsynd->array[j], x, gf_table) ^ fsynd->array[j + 1];
+	}
+	return fsynd;
+}
+
+struct Array* rs_correct_msg(struct Array *msg_in, uint8_t nsym, struct Array *erase_pos, struct gf_tables *gf_table){
+	if (msg_in->used > 255) {
+		fprintf(stderr, "Message is too long ");
+		exit(EXIT_FAILURE);
+	}
+	struct Array *msg_out = malloc(sizeof(struct Array*));
+	initArray(msg_out, msg_in->used);
+	memmove(msg_out->array, msg_in->array, msg_in->used);
+	
+	struct Array *synd = rs_calc_syndromes(msg_out, nsym, gf_table);
+	uint8_t max = synd->array[0];
+	for (size_t i = 0; i < synd->used; i++) {
+		max = synd->array[i] ? synd->array[i] > max : max;
+	}
+	if (max == 0) { //No errors
+		return msg_out;
+	}
+	struct Array *fsynd = rs_forney_syndromes(synd, erase_pos, msg_out->used, gf_table);
+	struct Array *err_loc = rs_find_error_locator(fsynd, nsym, 0, gf_table);
+	struct Array *err_pos = rs_find_errors(reverse_arr(err_loc) , msg_out->used, gf_table);
+	if (err_pos == NULL) {
+		fprintf(stderr, "Could not locate error");
+		exit(EXIT_FAILURE);
+	}
+	msg_out = rs_correct_errdata(msg_out, synd, err_pos, gf_table);
+	synd = rs_calc_syndromes(msg_out, nsym, gf_table);
+	max = synd->array[0];
+	for (size_t i = 0; i < synd->used; i++) {
+		max = synd->array[i] ? synd->array[i] > max : max;
+	}
+	if (max > 0) { //Couldn't correct
+		fprintf(stderr, "Could not correct message");
+		exit(EXIT_FAILURE);
+	}
+	return msg_out;
 }
