@@ -22,6 +22,7 @@ struct options* checkArg(int argc, char* argv[])
     arg->message = NULL;
     arg->correction = -1;
     arg->mode = -1;
+    arg->version = 99;
     for(int i = 1; i < argc; ++i)
     {
         if(strcmp(argv[i], "-d") == 0) { // arg for the data
@@ -30,7 +31,13 @@ struct options* checkArg(int argc, char* argv[])
                 err(1, "!!!--------> Error missing arguments.\n");
             arg->message = argv[i];
         }
-        if(strcmp(argv[i], "-c") == 0){
+        else if(strcmp(argv[i], "-v") == 0) { // arg for the data
+            ++i;
+            if (i >= argc)
+                err(1, "!!!--------> Error missing arguments.\n");
+            arg->version = strtol(argv[i], NULL, 10);
+        }
+        else if(strcmp(argv[i], "-c") == 0) {
             ++i;
             if (i >= argc)
                 err(1, "!!!--------> Error missing arguments.\n");
@@ -68,18 +75,26 @@ char* GenName(void)
 
     time (&rawtime);
     struct tm  *timeinfo = localtime (&rawtime);
-    strftime(name, sizeof(name)-1, "%d.%m.%y_%H:%M:%S", timeinfo);
+    strftime(name, sizeof(name)-1, "%d.%m", timeinfo);
 
-    name[24] = '\0';
+    name[5] = '\0';
     printf("%s\n", name);
     return name;
 }
 
 int main (int argc, char* argv[])
 {
+    for(size_t i = 0; i < argc; ++i)
+        printf("%s\n", argv[i]);
+    printf("test\n");
     struct options *arg = checkArg(argc, argv);
     if(arg->message == NULL)
+    {
         arg->message = "HELLO WORLD";
+        arg->correction = -1;
+        arg->mode = -1;
+        arg->version = 99;
+    }
     int* mod;
     Mode mode;
 
@@ -162,7 +177,7 @@ int main (int argc, char* argv[])
 
     setFormatString(QrCode, S_bits[data->correction_level][6]);
     if(data->version >= 7)
-        setVersionString(QrCode, V_bits[data->version]);
+        setVersionString(QrCode, V_bits[data->version - 7]);
     protectMatrix(QrCode);
 
     //We now evaluate
@@ -188,7 +203,7 @@ int main (int argc, char* argv[])
       unprotectMatrix_B(QrCode);
       setFormatString(QrCode, S_bits[data->correction_level][i]);
       if(data->version >= 7)
-      setVersionString(QrCode, V_bits[data->version]);
+      setVersionString(QrCode, V_bits[data->version - 7]);
       Generate_QrCode(QrCode->mat, data->version, "test.bmp", 8);
       printf("Applying mask %i\n", i);
       protectMatrix(QrCode);
@@ -201,14 +216,14 @@ int main (int argc, char* argv[])
 
     setFormatString(QrCode, S_bits[data->correction_level][cur]);
     if(data->version >= 7)
-        setVersionString(QrCode, V_bits[data->version]);
+        setVersionString(QrCode, V_bits[data->version - 7]);
 
     char* name = GenName();
     if(data->version >= 15)
-        Generate_QrCode(QrCode->mat, data->version, name, 8);
-    else
         Generate_QrCode(QrCode->mat, data->version, name, 4);
-    char* test = "0100000001000101010001100101011100110111010000001110110000010001111011000101000010101101111011100100011110011010101101110000001111010101111100000001110101000001101111111110110001001000010110111010011010010111\0";
+    else
+        Generate_QrCode(QrCode->mat, data->version, name, 8);
+    /*char* test = "0100000001000101010001100101011100110111010000001110110000010001111011000101000010101101111011100100011110011010101101110000001111010101111100000001110101000001101111111110110001001000010110111010011010010111\0";
     // "Test" should be the output
     char* test2 = "01000000110001001000011001010110110001101100011011110010110000100000010101110110111101110010011011000110010000001110110000010001100111000000001010010110011100011010001100110110010010100101000100011010100101110111110010100100001010000010111100010001011100000110010000111011100101011110000101001010110100001111100110000000101101000000111100111001001100110000000\0";
     // "Hello, World" should be the output
@@ -225,7 +240,7 @@ int main (int argc, char* argv[])
     free(string);
     string = decode(weave_trans, data->version, data->correction_level);
     printf("Decoded string : %s\n", string);
-    free(string);    
+    free(string);    */
 
     /*for(size_t x = 0; x < QrCode->size; ++x) {
       free(QrCode->mat[x]);
