@@ -317,7 +317,7 @@ void SampleCodeV1(struct GeoImg *qrimg, struct QrCode *qr, double X)
     
     double UT1y = qrimg->coordA[1] + 3 * Y;
     double UT1x = qrimg->coordA[0] + 5 * X;
-    //double UTxEnd = qrimg->coordB[0] - 5 * X;  
+    //double UTxEnd = qrimg->coordB[0] - 5 * X;
     
     // coord left timing pattern
     

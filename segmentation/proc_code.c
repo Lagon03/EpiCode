@@ -82,21 +82,22 @@ static inline
 char *get_format1(char **mat)
 {
     char *fmt = malloc(sizeof(char) * 15);
-    fmt[0] = mat[8][0];
-    fmt[1] = mat[8][1];
-    fmt[2] = mat[8][2];
-    fmt[3] = mat[8][3];
-    fmt[4] = mat[8][4];
-    fmt[5] = mat[8][5];
-    fmt[6] = mat[8][7];
+    fmt[14] = mat[8][0];
+    fmt[13] = mat[8][1];
+    fmt[12] = mat[8][2];
+    fmt[11] = mat[8][3];
+    fmt[10] = mat[8][4];
+    fmt[9] = mat[8][5];
+    fmt[8] = mat[8][7];
     fmt[7] = mat[8][8];
-    fmt[8] = mat[7][8];
-    fmt[9] = mat[5][8];
-    fmt[10] = mat[4][8];
-    fmt[11] = mat[3][8];
-    fmt[12] = mat[2][8];
-    fmt[13] = mat[1][8];
-    fmt[14] = mat[0][8];
+    fmt[6] = mat[7][8];
+    fmt[5] = mat[5][8];
+    fmt[4] = mat[4][8];
+    fmt[3] = mat[3][8];
+    fmt[2] = mat[2][8];
+    fmt[1] = mat[1][8];
+    fmt[0] = mat[0][8];
+    printf("%s \n", fmt);
     return fmt;
 }
 
@@ -236,15 +237,16 @@ struct PCode *get_code(struct QrCode *qr)
         fmtIndex = CorrectFormat(fmt2);
         if(fmtIndex == -1)
         {
+            TransposeMat(qr->mat, qr->version * 4 + 17);
             fmtIndex = CorrectFormatInv(fmt1);
             if(fmtIndex == -1)
             {
                 fmtIndex = CorrectFormatInv(fmt2);
                 if(fmtIndex == -1)
-                    err(EXIT_FAILURE, "Segmentation error : x10");
+                    err(EXIT_FAILURE, "Segmentation error : Corrupted Format");
             }
-            TransposeMat(qr->mat, qr->version * 4 + 17);
-            //print_mat(qr->mat, qr->version * 4 + 17);
+            //TransposeMat(qr->mat, qr->version * 4 + 17);
+            print_mat(qr->mat, qr->version * 4 + 17);
         }
         free(fmt2); 
     }
@@ -253,7 +255,7 @@ struct PCode *get_code(struct QrCode *qr)
     char ECL = GetErrorCorrectionlvl(fmtIndex);
     int Mask = fmtIndex % 8;
     size_t size = qr->version * 4 + 17;
-    //print_mat(qr->mat, size);
+    print_mat(qr->mat, size);
     color_spec_pat(qr->mat, qr->version);
     //print_mat(qr->mat, size);
     demask(qr->mat, size, Mask);
