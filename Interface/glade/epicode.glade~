@@ -2,118 +2,185 @@
 <!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.0"/>
-  <object class="GtkMenu">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
+  <object class="GtkListStore" id="liststore1">
+    <columns>
+      <!-- column-name Correction -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0">L</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">M</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Q</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">H</col>
+      </row>
+    </data>
   </object>
-  <object class="GtkDialog" id="dialog1">
-    <property name="can_focus">False</property>
-    <property name="border_width">5</property>
-    <property name="type_hint">dialog</property>
-    <child>
-      <placeholder/>
-    </child>
-    <child internal-child="vbox">
-      <object class="GtkBox" id="dialog-vbox1">
-        <property name="can_focus">False</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox" id="dialog-action_area1">
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
-            <child>
-              <object class="GtkButton" id="save_button">
-                <property name="label" translatable="yes">Save</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="relief">half</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="button4">
-                <property name="label" translatable="yes">Exit</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="pack_type">end</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkImage" id="image1">
-            <property name="width_request">306</property>
-            <property name="height_request">200</property>
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="stock">gtk-missing-image</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-    <action-widgets>
-      <action-widget response="0">save_button</action-widget>
-      <action-widget response="0">button4</action-widget>
-    </action-widgets>
+  <object class="GtkListStore" id="liststore2">
+    <columns>
+      <!-- column-name Version -->
+      <column type="gint"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0">1</col>
+      </row>
+      <row>
+        <col id="0">2</col>
+      </row>
+      <row>
+        <col id="0">3</col>
+      </row>
+      <row>
+        <col id="0">4</col>
+      </row>
+      <row>
+        <col id="0">5</col>
+      </row>
+      <row>
+        <col id="0">6</col>
+      </row>
+      <row>
+        <col id="0">7</col>
+      </row>
+      <row>
+        <col id="0">8</col>
+      </row>
+      <row>
+        <col id="0">9</col>
+      </row>
+      <row>
+        <col id="0">10</col>
+      </row>
+      <row>
+        <col id="0">11</col>
+      </row>
+      <row>
+        <col id="0">12</col>
+      </row>
+      <row>
+        <col id="0">13</col>
+      </row>
+      <row>
+        <col id="0">14</col>
+      </row>
+      <row>
+        <col id="0">15</col>
+      </row>
+      <row>
+        <col id="0">16</col>
+      </row>
+      <row>
+        <col id="0">17</col>
+      </row>
+      <row>
+        <col id="0">18</col>
+      </row>
+      <row>
+        <col id="0">19</col>
+      </row>
+      <row>
+        <col id="0">20</col>
+      </row>
+      <row>
+        <col id="0">21</col>
+      </row>
+      <row>
+        <col id="0">22</col>
+      </row>
+      <row>
+        <col id="0">23</col>
+      </row>
+      <row>
+        <col id="0">24</col>
+      </row>
+      <row>
+        <col id="0">25</col>
+      </row>
+      <row>
+        <col id="0">26</col>
+      </row>
+      <row>
+        <col id="0">27</col>
+      </row>
+      <row>
+        <col id="0">28</col>
+      </row>
+      <row>
+        <col id="0">29</col>
+      </row>
+      <row>
+        <col id="0">30</col>
+      </row>
+      <row>
+        <col id="0">31</col>
+      </row>
+      <row>
+        <col id="0">32</col>
+      </row>
+      <row>
+        <col id="0">33</col>
+      </row>
+      <row>
+        <col id="0">34</col>
+      </row>
+      <row>
+        <col id="0">35</col>
+      </row>
+      <row>
+        <col id="0">36</col>
+      </row>
+      <row>
+        <col id="0">37</col>
+      </row>
+      <row>
+        <col id="0">38</col>
+      </row>
+      <row>
+        <col id="0">39</col>
+      </row>
+      <row>
+        <col id="0">40</col>
+      </row>
+    </data>
   </object>
-  <object class="GtkFileChooserDialog" id="filechooserdialog1">
-    <property name="can_focus">False</property>
-    <property name="border_width">5</property>
-    <property name="role">GtkFileChooserDialog</property>
-    <property name="type_hint">dialog</property>
-    <child>
-      <placeholder/>
-    </child>
-    <child internal-child="vbox">
-      <object class="GtkBox" id="filechooserdialog-vbox1">
-        <property name="can_focus">False</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox" id="filechooserdialog-action_area1">
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="pack_type">end</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-      </object>
-    </child>
+  <object class="GtkListStore" id="liststore3">
+    <columns>
+      <!-- column-name mask -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0">0</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">1</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">2</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">3</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">4</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">5</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">6</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">7</col>
+      </row>
+    </data>
   </object>
   <object class="GtkWindow" id="window1">
     <property name="can_focus">False</property>
@@ -284,41 +351,6 @@
           </object>
         </child>
         <child>
-          <object class="GtkRadioButton" id="radiobutton1">
-            <property name="label" translatable="yes">write text :</property>
-            <property name="width_request">132</property>
-            <property name="height_request">59</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">False</property>
-            <property name="relief">none</property>
-            <property name="xalign">0</property>
-            <property name="active">True</property>
-            <property name="draw_indicator">True</property>
-          </object>
-          <packing>
-            <property name="x">40</property>
-            <property name="y">140</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkRadioButton" id="radiobutton2">
-            <property name="label" translatable="yes">Choose file :</property>
-            <property name="width_request">141</property>
-            <property name="height_request">80</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">False</property>
-            <property name="xalign">0</property>
-            <property name="active">True</property>
-            <property name="draw_indicator">True</property>
-          </object>
-          <packing>
-            <property name="x">40</property>
-            <property name="y">330</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkButton" id="button1">
             <property name="label" translatable="yes">Encode</property>
             <property name="width_request">100</property>
@@ -341,6 +373,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <signal name="clicked" handler="on_button2_clicked" swapped="no"/>
           </object>
           <packing>
             <property name="x">450</property>
@@ -349,11 +382,12 @@
         </child>
         <child>
           <object class="GtkEntry" id="input">
-            <property name="width_request">518</property>
-            <property name="height_request">173</property>
+            <property name="width_request">250</property>
+            <property name="height_request">150</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="invisible_char">●</property>
+            <property name="width_chars">26</property>
           </object>
           <packing>
             <property name="x">180</property>
@@ -361,15 +395,124 @@
           </packing>
         </child>
         <child>
-          <object class="GtkFileChooserButton" id="out_path">
-            <property name="width_request">513</property>
-            <property name="height_request">6</property>
+          <object class="GtkComboBox" id="level">
+            <property name="width_request">60</property>
+            <property name="height_request">28</property>
             <property name="visible">True</property>
+            <property name="sensitive">False</property>
             <property name="can_focus">False</property>
+            <property name="model">liststore1</property>
+            <property name="active">0</property>
+            <property name="id_column">0</property>
+            <property name="active_id">0</property>
+            <child>
+              <object class="GtkCellRendererText" id="clevel"/>
+              <attributes>
+                <attribute name="text">0</attribute>
+              </attributes>
+            </child>
           </object>
           <packing>
-            <property name="x">180</property>
-            <property name="y">356</property>
+            <property name="x">612</property>
+            <property name="y">142</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="clevel_label">
+            <property name="width_request">162</property>
+            <property name="height_request">80</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Correction level :</property>
+          </object>
+          <packing>
+            <property name="x">440</property>
+            <property name="y">114</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="version_label">
+            <property name="width_request">100</property>
+            <property name="height_request">80</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Version :</property>
+          </object>
+          <packing>
+            <property name="x">432</property>
+            <property name="y">150</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkComboBox" id="version">
+            <property name="width_request">60</property>
+            <property name="height_request">28</property>
+            <property name="visible">True</property>
+            <property name="sensitive">False</property>
+            <property name="can_focus">False</property>
+            <property name="model">liststore2</property>
+            <property name="active">0</property>
+            <property name="id_column">0</property>
+            <property name="active_id">0</property>
+            <child>
+              <object class="GtkCellRendererText" id="clevel1"/>
+              <attributes>
+                <attribute name="text">0</attribute>
+              </attributes>
+            </child>
+          </object>
+          <packing>
+            <property name="x">612</property>
+            <property name="y">175</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkComboBox" id="mask">
+            <property name="width_request">60</property>
+            <property name="height_request">28</property>
+            <property name="visible">True</property>
+            <property name="sensitive">False</property>
+            <property name="can_focus">False</property>
+            <property name="model">liststore3</property>
+            <property name="active">0</property>
+            <property name="id_column">0</property>
+            <property name="active_id">0</property>
+            <child>
+              <object class="GtkCellRendererText" id="clevel2"/>
+              <attributes>
+                <attribute name="text">0</attribute>
+              </attributes>
+            </child>
+          </object>
+          <packing>
+            <property name="x">612</property>
+            <property name="y">208</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="clevel_label1">
+            <property name="width_request">100</property>
+            <property name="height_request">80</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Mask :</property>
+          </object>
+          <packing>
+            <property name="x">418</property>
+            <property name="y">186</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkToggleButton" id="adv_opts">
+            <property name="label" translatable="yes">enable custom options</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <signal name="toggled" handler="on_adv_opts_toggled" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">447</property>
+            <property name="y">250</property>
           </packing>
         </child>
       </object>

@@ -1,7 +1,15 @@
 #include <gtk/gtk.h>
 #include <string.h>
+
+
 GtkWidget* input;
 GtkWidget* out_path;
+GtkWidget* adv_opt;
+
+GtkWidget* level;
+GtkWidget* vers;
+GtkWidget* mask;
+
 
 int main(int argc, char *argv[])
 {
@@ -18,6 +26,12 @@ int main(int argc, char *argv[])
 
     input = GTK_WIDGET(gtk_builder_get_object(builder, "input"));
     out_path = GTK_WIDGET(gtk_builder_get_object(builder, "out_path"));
+    adv_opt = GTK_WIDGET(gtk_builder_get_object(builder, "adv_opts"));
+ 
+
+    level = GTK_WIDGET(gtk_builder_get_object(builder, "level"));
+    vers = GTK_WIDGET(gtk_builder_get_object(builder, "version"));
+    mask = GTK_WIDGET(gtk_builder_get_object(builder, "mask"));
  
     g_object_unref(builder);
  
@@ -33,8 +47,27 @@ void on_window_main_destroy()
     gtk_main_quit();
 }
 
+void on_adv_opts_toggled()
+{
+    gtk_widget_set_sensitive(level, !gtk_widget_get_sensitive(level));
+    gtk_widget_set_sensitive(vers, !gtk_widget_get_sensitive(vers));
+    gtk_widget_set_sensitive(mask, !gtk_widget_get_sensitive(mask));
+}
+
 void on_button1_clicked()
 {
+    gint c_level = 0;
+    gint c_vers = 0;
+    gint c_mask = 8;
+
+    if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(adv_opt)))
+    {
+       // if the advanced options are enabled then we need to retrieve them
+       c_level = gtk_combo_box_get_active(GTK_COMBO_BOX(level));
+       c_vers = gtk_combo_box_get_active(GTK_COMBO_BOX(vers)) + 1;
+       c_mask = gtk_combo_box_get_active(GTK_COMBO_BOX(mask));
+    }
+
     const char* input_txt;
 
     input_txt = gtk_entry_get_text(GTK_ENTRY(input));
@@ -42,9 +75,14 @@ void on_button1_clicked()
         printf("Entry empty.\n");
     else
         printf("%s\n", input_txt);
+
+    printf("Sending stuff to the encoding part :\n");
+    printf("Correction : %i\n", c_level);
+    printf("Version : %i\n", c_vers);
+    printf("Mask : %i\n", c_mask);
 }
 
 void on_button2_clicked()
 {
-    gtk_entry_set_text(GTK_ENTRY(input), "t");
+    gtk_entry_set_text(GTK_ENTRY(input), "");
 }
