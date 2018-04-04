@@ -5,7 +5,7 @@
 **  Geometric  transformations.
 */
 
-# define SIZE 300
+# define SIZE 500
 # define MULT 5
 
 # include "geotrans.h"
@@ -82,7 +82,7 @@ double *GaussianElimination(double **mat, size_t rows, size_t cols)//Gauss-Jorda
 }
 
 double *SolveAffineEquations(double x1, double y1, double x2, double y2, double
-x3, double y3, double size)
+x3, double y3)
 {
     double **AugMat = malloc(sizeof(double*)*6);
     for(size_t i = 0; i < 6; i++)
@@ -226,7 +226,6 @@ int inverse(double **mat, double **inv, int n)
     double det = determinant(mat, n);
     if (det == 0)
     {
-        warn("Determinant == 0");
         return 0;
     }
  
@@ -347,7 +346,7 @@ SDL_Surface *FrontMapping(SDL_Surface *oldimg, double *vals, double size)
     return img;
 }
 
-SDL_Surface *BackMapping(SDL_Surface *oldimg, double *vals, double size)
+SDL_Surface *BackMapping(SDL_Surface *oldimg, double *vals) //add size later
 //vals have to be inverted first
 {
     int newsize = SIZE + SIZE*2 + SIZE;
@@ -391,7 +390,7 @@ SDL_Surface *BackMapping(SDL_Surface *oldimg, double *vals, double size)
 struct GeoImg *GeoTransform(SDL_Surface *img, struct FPresults *f)
 {
     double *solutions = SolveAffineEquations(f->x1, f->y1, f->x2, f->y2, f->x3,
-                                            f->y3, f->dist);
+                                            f->y3);
     
     struct GeoImg *ret = malloc(sizeof(struct GeoImg));  
 
@@ -412,14 +411,14 @@ struct GeoImg *GeoTransform(SDL_Surface *img, struct FPresults *f)
     ret->coordC[1] = round(solutions[3] * f->x3 + solutions[4] * f->y3 +
     solutions[5]);
 
-    double size = f->dist; 
+    //double size = f->dist; 
     if(InvertMat(solutions) == 0)
     {
         //ret->img FrontMapping(img, solutions, size);
-        err(EXIT_FAILURE, "Segmentation error : x02");
+        err(EXIT_FAILURE, "Segmentation error : Transformation Inversion");
     }
  
-    ret->img = BackMapping(img, solutions, size);
-    display_image(ret->img);
+    ret->img = BackMapping(img, solutions);
+    //display_image(ret->img);
     return ret;
 }

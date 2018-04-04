@@ -106,11 +106,11 @@ void imageProcessing(SDL_Surface *img)
 void fPiter(char *file)
 {
     SDL_Surface *img = load_image(file);
-    SDL_Surface *show = load_image(file);
+    //SDL_Surface *show = load_image(file);
     imageProcessing(img);
     warn("Image Processing passed");
 
-    display_image(show);
+    //display_image(show);
     struct FPat *f = findFP(img);
     warn("Find Finder Patterns passed");
     struct FPresults *fp = QrCode_found(f);
@@ -120,6 +120,7 @@ void fPiter(char *file)
    
     struct GeoImg *geo = GeoTransform(img, fp);
     warn("GeoTrans passed");
+    //display_image(geo->img);
     imageProcessing(geo->img);
     //display_image(geo->img);
     free_FPat(f);
