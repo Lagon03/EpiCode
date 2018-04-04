@@ -299,7 +299,7 @@ void SampleCodeV1(struct GeoImg *qrimg, struct QrCode *qr, double X)
     int HC = GetHeightFP(qrimg->img, qrimg->coordC[0], qrimg->coordC[1]);
     
     if(HA == 0 || HC == 0)
-        err(EXIT_FAILURE, "Segmentation error : x05");
+        err(EXIT_FAILURE, "Segmentation error : Corrupted Geometry");
     
     double Y = (HA + HC) / 14;
     
@@ -524,7 +524,8 @@ struct QrCode *extract_QrCode (struct GeoImg *qrimg)
     }
     else
     {
-        err(EXIT_FAILURE, "Segmentation error : x04");
+        warn("V = %d", V);
+        err(EXIT_FAILURE, "Segmentation error : Corrupted QrCode size");
     }
     
     return qr;

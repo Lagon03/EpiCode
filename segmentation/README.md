@@ -57,18 +57,19 @@
 
 ### Version 2 - 6
 
-- [ ] Set V as version
+- [x] Set V as version
 
 **->Go To AP and Sampling**
 
 ### Version 7+ 
 
-- [ ] Decode Version and compare error
+- [x] Decode Version and compare error
 
 ## Find Alignment patterns and Sampling
 
 - [x] Determine Central Coordinate of each AP
 - [x] Scan each AP
+- [ ] Upgrade AP Scan
 - [x] Sample Between each AP
 
 ## Bit stream -DONE-

@@ -5,7 +5,7 @@
 **  Geometric  transformations.
 */
 
-# define SIZE 500
+# define SIZE 400
 # define MULT 5
 
 # include "geotrans.h"

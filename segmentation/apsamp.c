@@ -277,14 +277,13 @@ void LocateAP(SDL_Surface *img, double *Px, double *Py, double CPx, double CPy) 
     //printf("color at %lf/ %lf : %d\n", P[0], P[1], get_BW(img, P[0], P[1]));
     if(get_BW(img, *Px, *Py) == 1)
     {
-        err(EXIT_FAILURE, "Segmentation not implemented : x 14");
+        err(EXIT_FAILURE, "Segmentation not implemented : AP not found x00");
     }
     //check horizontal
     int check = VerifyCenterH(img, *Px, *Py, CPx);
     if(check == -CPx)
     {
-        display_image(img);
-        err(EXIT_FAILURE, "Segmentation not implemented : x11");
+        err(EXIT_FAILURE, "Segmentation not implemented : AP not found x01");
     }
     
     *Px += check;   
@@ -292,16 +291,14 @@ void LocateAP(SDL_Surface *img, double *Px, double *Py, double CPx, double CPy) 
     check = VerifyCenterV(img, *Px, *Py, CPy);
     if(check == -CPy)
     {
-        display_image(img);
-        err(EXIT_FAILURE, "Segmentation not implemented : x12");
+        err(EXIT_FAILURE, "Segmentation not implemented : AP not found x02");
     }
     
     *Py += check;
     //check diagonal
     if(VerifyCenterD(img, *Px, *Py, (CPx + CPy)/2) == 0)
     {
-        display_image(img);
-        err(EXIT_FAILURE, "Segmentation not implemented : x13");
+        err(EXIT_FAILURE, "Segmentation not implemented : AP not found x03");
     }
 }
 
@@ -574,12 +571,10 @@ void SampleCodeV2_6(struct GeoImg *qrimg, struct QrCode *qr, int WA, int WB, int
     double YC = qrimg->coordC[1] - 3 * CPCy;
     double Px = ((XA + CPAx * (AP[0] - 6)) + XB + (XC + CPCx * (AP[0] - 6))) / 3;
     double Py = ((YA + CPAy * (AP[1] - 6)) + (YB + CPCy * (AP[1] - 6)) + YC) / 3;
-    putpixel(qrimg->img, XA, YA, SDL_MapRGB(qrimg->img->format, 255, 0, 0));
-    putpixel(qrimg->img, XB, YB, SDL_MapRGB(qrimg->img->format, 255, 0, 0));
-    putpixel(qrimg->img, XC, YC, SDL_MapRGB(qrimg->img->format, 255, 0, 0));
-    putpixel(qrimg->img, Px, Py, SDL_MapRGB(qrimg->img->format, 255, 0, 0));
+    Draw_point(qrimg->img, XA, YA);
+    Draw_point(qrimg->img, XB, YB);
+    Draw_point(qrimg->img, XC, YC);
     LocateAP(qrimg->img, &Px, &Py, CPX, CPY); //FIX ME (PROV)
-    putpixel(qrimg->img, Px, Py, SDL_MapRGB(qrimg->img->format, 255, 0, 0));
     
     //AP SCANNED
     
@@ -603,6 +598,7 @@ void SampleCodeV2_6(struct GeoImg *qrimg, struct QrCode *qr, int WA, int WB, int
     //Sample Grid Corner
     SampleGridCorner(qrimg->img, mat, Px, Py, CPx, CPy, distAP, 0);
     qr->mat = mat;
+    Draw_point(qrimg->img, Px, Py);
 }
 
 void SampleCodeV7_40(struct GeoImg *qrimg, struct QrCode *qr, int WA, int WB, int WC, int HA, int HB, int HC)
