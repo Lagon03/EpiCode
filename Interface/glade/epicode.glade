@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.22.1 -->
 <interface>
-  <!-- interface-requires gtk+ 3.0 -->
+  <requires lib="gtk+" version="3.0"/>
+  <object class="GtkMenu">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+  </object>
   <object class="GtkDialog" id="dialog1">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
     <property name="type_hint">dialog</property>
+    <child>
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox1">
         <property name="can_focus">False</property>
@@ -75,6 +83,9 @@
     <property name="border_width">5</property>
     <property name="role">GtkFileChooserDialog</property>
     <property name="type_hint">dialog</property>
+    <child>
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="filechooserdialog-vbox1">
         <property name="can_focus">False</property>
@@ -106,6 +117,12 @@
   </object>
   <object class="GtkWindow" id="window1">
     <property name="can_focus">False</property>
+    <property name="resizable">False</property>
+    <property name="default_width">400</property>
+    <property name="default_height">400</property>
+    <child>
+      <placeholder/>
+    </child>
     <child>
       <object class="GtkFixed" id="fixed1">
         <property name="visible">True</property>
@@ -232,14 +249,6 @@
               </object>
             </child>
             <child>
-              <object class="GtkMenuItem" id="menuitem3">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">_View</property>
-                <property name="use_underline">True</property>
-              </object>
-            </child>
-            <child>
               <object class="GtkMenuItem" id="menuitem4">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -262,12 +271,22 @@
                 </child>
               </object>
             </child>
+            <child>
+              <object class="GtkMenuItem" id="menuitem3">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="right_justified">True</property>
+                <property name="label" translatable="yes">_Quit</property>
+                <property name="use_underline">True</property>
+                <signal name="activate" handler="on_window_main_destroy" swapped="no"/>
+              </object>
+            </child>
           </object>
         </child>
         <child>
           <object class="GtkRadioButton" id="radiobutton1">
             <property name="label" translatable="yes">write text :</property>
-            <property name="width_request">115</property>
+            <property name="width_request">132</property>
             <property name="height_request">59</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
@@ -278,14 +297,14 @@
             <property name="draw_indicator">True</property>
           </object>
           <packing>
-            <property name="x">79</property>
-            <property name="y">136</property>
+            <property name="x">40</property>
+            <property name="y">140</property>
           </packing>
         </child>
         <child>
           <object class="GtkRadioButton" id="radiobutton2">
             <property name="label" translatable="yes">Choose file :</property>
-            <property name="width_request">100</property>
+            <property name="width_request">141</property>
             <property name="height_request">80</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
@@ -295,40 +314,42 @@
             <property name="draw_indicator">True</property>
           </object>
           <packing>
-            <property name="x">73</property>
-            <property name="y">332</property>
+            <property name="x">40</property>
+            <property name="y">330</property>
           </packing>
         </child>
         <child>
           <object class="GtkButton" id="button1">
             <property name="label" translatable="yes">Encode</property>
             <property name="width_request">100</property>
-            <property name="height_request">80</property>
+            <property name="height_request">32</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <signal name="clicked" handler="on_button1_clicked" swapped="no"/>
           </object>
           <packing>
-            <property name="x">264</property>
-            <property name="y">440</property>
+            <property name="x">250</property>
+            <property name="y">420</property>
           </packing>
         </child>
         <child>
           <object class="GtkButton" id="button2">
             <property name="label" translatable="yes">Clear</property>
             <property name="width_request">100</property>
-            <property name="height_request">80</property>
+            <property name="height_request">32</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <signal name="clicked" handler="on_button2_clicked" swapped="no"/>
           </object>
           <packing>
-            <property name="x">464</property>
-            <property name="y">443</property>
+            <property name="x">450</property>
+            <property name="y">420</property>
           </packing>
         </child>
         <child>
-          <object class="GtkEntry" id="entry1">
+          <object class="GtkEntry" id="input">
             <property name="width_request">518</property>
             <property name="height_request">173</property>
             <property name="visible">True</property>
@@ -336,21 +357,20 @@
             <property name="invisible_char">●</property>
           </object>
           <packing>
-            <property name="x">174</property>
-            <property name="y">145</property>
+            <property name="x">180</property>
+            <property name="y">140</property>
           </packing>
         </child>
         <child>
-          <object class="GtkFileChooserButton" id="filechooserbutton1">
+          <object class="GtkFileChooserButton" id="out_path">
             <property name="width_request">513</property>
             <property name="height_request">6</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="orientation">vertical</property>
           </object>
           <packing>
-            <property name="x">179</property>
-            <property name="y">355</property>
+            <property name="x">180</property>
+            <property name="y">356</property>
           </packing>
         </child>
       </object>
