@@ -78,15 +78,16 @@ char* GenName(void)
     strftime(name, sizeof(name)-1, "%d.%m", timeinfo);
 
     name[5] = '\0';
-    printf("%s\n", name);
+    //printf("%s\n", name);
+    name[0] = 't';
+    name[1] = 'e';
+    name[2] = 's';
+    name[3] = 't';
     return name;
 }
 
-int main (int argc, char* argv[])
+int enc_main (int argc, char* argv[])
 {
-    for(size_t i = 0; i < argc; ++i)
-        printf("%s\n", argv[i]);
-    printf("test\n");
     struct options *arg = checkArg(argc, argv);
     if(arg->message == NULL)
     {
@@ -219,6 +220,7 @@ int main (int argc, char* argv[])
         setVersionString(QrCode, V_bits[data->version - 7]);
 
     char* name = GenName();
+    name = "test.bmp";
     if(data->version >= 15)
         Generate_QrCode(QrCode->mat, data->version, name, 4);
     else
@@ -240,7 +242,7 @@ int main (int argc, char* argv[])
     free(string);
     string = decode(weave_trans, data->version, data->correction_level);
     printf("Decoded string : %s\n", string);
-    free(string);    */
+    free(string);   */ 
 
     /*for(size_t x = 0; x < QrCode->size; ++x) {
       free(QrCode->mat[x]);

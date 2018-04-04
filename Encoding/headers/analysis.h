@@ -10,6 +10,7 @@ struct options
   char* message;
   int correction;
   int mode;
+  int version;
 };
 
 enum data

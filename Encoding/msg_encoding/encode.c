@@ -490,10 +490,10 @@ void adjustBits(struct EncData *input, size_t length)
 
 struct Codewords* breakCodeword(struct EncData* data)
 {
-    printf("\033[0;31m");
+    /*printf("\033[0;31m");
     printf("First checkpoint\n");
     printf("\033[0m");
-    printf("Version = %li\n", data->version);
+    printf("Version = %li\n", data->version);*/
     size_t correction = data->correction_level;
     size_t version = data->version;
     size_t f_size = getSize(data->character_count_ind) 
@@ -601,9 +601,9 @@ struct Codewords* breakCodeword(struct EncData* data)
         }
     }
 
-    printf("\033[0;31m");
+    /*printf("\033[0;31m");
     printf("Sixth checkpoint\n");
-    printf("\033[0m");
+    printf("\033[0m");*/
 
     //printf("Total blocks : %li\n", codewords->nb_block);
     free(full_data);
@@ -635,12 +635,14 @@ struct EncData* getEncodedSize(struct options *arg)
     char* count_bits;
     
     char_count = getSize(arg->message);
-    printf("%li\n", char_count);
     count_bits = convertToByte(char_count);
     
     //printf("%s\n", count_bits);
-    
-    size_t version = getSmallestVersion(arg->mode, char_count, arg->correction); 
+    size_t version = arg->version;
+    size_t tmp_version = getSmallestVersion(arg->mode, char_count, arg->correction); 
+    if((version > 40) | (tmp_version > version))
+        version = tmp_version;
+    printf("version : %li\n",version);
     // need to specify the limit in function of the version and of the mod
 
     if(version <= 9) {
@@ -693,9 +695,9 @@ struct EncData* getEncodedSize(struct options *arg)
     // full size according to the correction level and version * 8 (bits)
     size_t full_size = TOTAL_DECC[data->correction_level][data->version] * 8;
 
-    printf("Version is %li\n", data->version);
+    /*printf("Version is %li\n", data->version);
     printf("Version size is %li\n", full_size);
-    printf("Current encoded size is %li\n", enc_size);
+    printf("Current encoded size is %li\n", enc_size);*/
 
     // We add terminating 0 if neccessary, maximum of 4
     if(enc_size < full_size) {
@@ -717,7 +719,6 @@ struct EncData* getEncodedSize(struct options *arg)
         }
         enc_size += (x + 1);
     }
-    printf("%li && %li\n", getSize(data->encoded_data), full_size);
     while(getSize(data->encoded_data) > full_size)
     {
         data->version += 1;
