@@ -59,7 +59,7 @@ void display_image(SDL_Surface *img)
 
     SDL_UpdateWindowSurface(window);
     
-    wait_for_keypressed();
+    //wait_for_keypressed();
     getchar();
 
     SDL_DestroyWindow(window);

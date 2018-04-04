@@ -332,7 +332,7 @@ void fill_mat(char **mat, size_t size, int version, char *msg, size_t msg_length
             }
             else if (stop == 10)
             {
-                warn("end");
+                //warn("end");
                 break;
             }
             else
