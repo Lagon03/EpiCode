@@ -152,7 +152,8 @@ char* decode(char* input, int version, int level)
      * At this point we are sure that the data is not corrupted so all we 
      * need to do is to make a new string which will contain the data to
      * convert from binary to char.
-     */
+     */ 
+
   
     // Now we need to take only the relevant data
     size_t lim = getLength(data) - 4 - char_count;
