@@ -142,18 +142,6 @@
           </packing>
         </child>
         <child>
-          <object class="GtkSwitch" id="demo">
-            <property name="width_request">72</property>
-            <property name="height_request">10</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-          </object>
-          <packing>
-            <property name="x">714</property>
-            <property name="y">473</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkLabel" id="label1">
             <property name="width_request">100</property>
             <property name="height_request">80</property>
@@ -274,6 +262,21 @@
           </object>
           <packing>
             <property name="x">90</property>
+            <property name="y">212</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkToggleButton" id="demo">
+            <property name="label" translatable="yes">demo</property>
+            <property name="width_request">62</property>
+            <property name="height_request">28</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <signal name="toggled" handler="demo_act" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">147</property>
             <property name="y">212</property>
           </packing>
         </child>

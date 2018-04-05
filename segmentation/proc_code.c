@@ -281,7 +281,7 @@ struct PCode *get_code(struct QrCode *qr)
                 if(fmtIndex == -1)
                     err(EXIT_FAILURE, "Segmentation error : Corrupted Format");
             }
-            TransposeMat(qr->mat, qr->version * 4 + 17);
+            //TransposeMat(qr->mat, qr->version * 4 + 17);
             //print_mat(qr->mat, qr->version * 4 + 17);
         }
         free(fmt2); 

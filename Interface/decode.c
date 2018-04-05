@@ -5,6 +5,8 @@
 #include <unistd.h>
 
 //# include "../Encoding/headers/enc_main.h"
+# include "../segmentation/segmentation.h"
+# include "../Encoding/headers/decode.h"
 
 GtkBuilder* builder; 
 GtkWidget* window;
@@ -16,6 +18,8 @@ GtkWidget* output;
 GtkWidget* qrcode;
 
 char *filename;
+
+int demo = 0;
 
 int main(int argc, char *argv[])
 {
@@ -52,10 +56,45 @@ void destroy()
     gtk_main_quit();
 }
 
+void demo_act()
+{
+    demo = demo == 0 ? 1 : 0;
+    printf("%i\n", demo);
+}
+
 void decod_clicked()
 {
-    //char* string = "Not implemented yet.";
-    gtk_entry_set_text(GTK_ENTRY(output), filename);
+    if(!filename)
+        printf("No decoding file.");
+    else
+    {
+        struct PCode* data;
+        if (demo == 1)
+            data = SegmentationFromFile(filename, 1);
+        else
+            data = SegmentationFromFile(filename, 0);
+        int s_level;
+        switch(data->ECL)
+        {
+            case 'M':
+                s_level = 1;
+                break;
+            case 'Q':
+                s_level = 2;
+                break;
+            case 'H':
+                s_level = 3;
+                break;
+            default:
+                s_level = 0;
+                break;
+
+        }
+        char* string = "Not implemented yet.";
+        string = decode(data->BStream, data->Version, s_level);
+
+        gtk_entry_set_text(GTK_ENTRY(output), string);
+    }
 }
 
 void file_set()
@@ -64,7 +103,7 @@ void file_set()
     filename = gtk_file_chooser_get_filename(chooser);
 
     gtk_widget_destroy(dialog);
-    
+
     gtk_image_set_from_file(GTK_IMAGE(qrcode), filename);
 
     GdkPixbuf *pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(qrcode));

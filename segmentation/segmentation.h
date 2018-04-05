@@ -30,4 +30,6 @@ struct PCode *SegmentationDemo(SDL_Surface *img, SDL_Surface *demo);
 /* Frees the structure PCode */
 void Free_PCode(struct PCode *c);
 
+struct PCode* SegmentationFromFile(char* File, int Demo);
+
 # endif

@@ -193,7 +193,8 @@ char *ext_cyphmsg(char **mat, size_t size, int version)
     int nb_ap = Ap_coord[version - 1][0];
     int totnb_bit = size * size - ( 3*8*8 + nb_ap*5*5 + 2*(size - 8*2)) - 31 -
                     version_m + nv * 5;
-    char *msg = calloc(totnb_bit, sizeof(char));
+    char *msg = calloc(totnb_bit + 1, sizeof(char));
+    msg[totnb_bit] = '\0';
     int i = size - 1;
     int j = size - 1;
     int k = 0;

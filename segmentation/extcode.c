@@ -211,8 +211,8 @@ double UpdateX(SDL_Surface *img, int center_x , int center_y, double X, int bin)
         cleft++;
         x--;
     }
-    if(x < 0)
-        err(EXIT_FAILURE, "Segmentation error x06");
+    /*if(x < 0)
+        err(EXIT_FAILURE, "Segmentation error x06");*/
     
     x = center_x + 1;
     
@@ -258,8 +258,8 @@ double UpdateY(SDL_Surface *img, int center_x , int center_y, double Y, int bin)
         cup++;
         y--;
     }
-    if(y < 0)
-        err(EXIT_FAILURE, "Segmentation error x08");
+    /*if(y < 0)
+        err(EXIT_FAILURE, "Segmentation error x08");*/
     
     y = center_y + 1;
     

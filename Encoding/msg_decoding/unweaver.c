@@ -181,10 +181,12 @@ struct Codewords* unweave(char* input, int version, int level)
     }
     else
     {
+        nb_cc = ecc_count;
         for(size_t c1 = 0; (c1 < nb_cc); ++c1)
         {
             for(size_t b1 = 0; b1 < nb_block_01; ++b1) 
             {
+                printf("%li && %li\n", c1, b1);
                 char* p_cc = DCR->group[0]->blocks[b1]->correction[c1];
                 for(size_t i = 0; i < 8; ++i, ++index)
                     p_cc[i] = input[index];
