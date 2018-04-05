@@ -67,6 +67,8 @@ int main()
 	
 	struct Array *pos = malloc(sizeof(struct Array));
 	
+	struct Array *rev_pos = malloc(sizeof(struct Array));
+	
 	msg = rs_encode_msg(msg_in, 10, gf_table);
 	
 	printf("Msg Encoded: [");
@@ -80,6 +82,8 @@ int main()
 	msg->array[0] = 0;
 	msg->array[3] = 0;
 	msg->array[10] = 0;
+	msg->array[2] = 0;
+	msg->array[5] = 0;
 	
 	printf("Msg Tempered: [");
 	for (size_t i = 0; i < strlen(my_msg); i++) {
@@ -96,10 +100,11 @@ int main()
 	synd = rs_calc_syndromes(msg, 10, gf_table);
 	err_loc = rs_find_error_locator(synd, 10, 0, gf_table);
 	pos = rs_find_errors(reverse_arr(err_loc), msg->used, gf_table);
+	rev_pos = reverse_arr(pos);
 	
 	printf("Error positions: [");
-	for (size_t i = 0; i < pos->used; i++) {
-		printf("%u,",pos->array[i]);
+	for (size_t i = 0; i < rev_pos->used; i++) {
+		printf("%u,", rev_pos->array[i]);
 	}
 	printf("]\n");
 	
