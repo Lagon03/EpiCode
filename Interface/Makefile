@@ -2,7 +2,7 @@
 TARGET=epicode
  
 # compiler
-CC=gcc -fsanitize=address
+CC=gcc #-fsanitize=address
 CPPFLAGS= `pkg-config --cflags sdl2` `pkg-config --cflags --libs gtk+-3.0` -MMD -pthread -export-dynamic
 CFLAGS= -Wall -Wextra -std=c99 -O2 -g
 LDFLAGS= -pthread -export-dynamic
