@@ -265,6 +265,7 @@ struct PCode *get_code(struct QrCode *qr)
 {
     struct PCode *code = malloc(sizeof(struct PCode));
     
+    //TransposeMat(qr->mat, qr->version * 4 + 17);
     char *fmt1 = get_format1(qr->mat);
     int fmtIndex = CorrectFormat(fmt1);
     if(fmtIndex == -1)

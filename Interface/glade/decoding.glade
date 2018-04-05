@@ -242,6 +242,7 @@
           <object class="GtkFileChooserButton" id="GetFile">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="create_folders">False</property>
             <property name="dialog">SET_FILE</property>
             <property name="title" translatable="yes">Choose an image</property>
             <signal name="file-set" handler="file_set" swapped="no"/>
