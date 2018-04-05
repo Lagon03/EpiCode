@@ -108,31 +108,31 @@ void fPiter(char *file)
     SDL_Surface *img = load_image(file);
     //SDL_Surface *show = load_image(file);
     imageProcessing(img);
-    warn("Image Processing passed");
+    warn("Image Processing done");
 
     //display_image(show);
     struct FPat *f = findFP(img);
-    warn("Find Finder Patterns passed");
+    warn("Find Finder Patterns done");
     struct FPresults *fp = QrCode_found(f);
-    warn("QrCode validation passed");
+    warn("QrCode validation done");
     if(fp == NULL)
-        err(EXIT_FAILURE, "Segmentation error : x00"); 
+        err(EXIT_FAILURE, "Segmentation error : No Valid QrCode Found"); 
    
     struct GeoImg *geo = GeoTransform(img, fp);
-    warn("GeoTrans passed");
+    warn("Geometric transformation done");
     //display_image(geo->img);
     imageProcessing(geo->img);
     //display_image(geo->img);
     free_FPat(f);
     free_FPresults(fp);
     struct QrCode *qr = extract_QrCode(geo);
-    warn("Extraction passed");
+    warn("Extraction done");
     Draw_point(geo->img, geo->coordA[0], geo->coordA[1]);
     Draw_point(geo->img, geo->coordB[0], geo->coordB[1]);
     Draw_point(geo->img, geo->coordC[0], geo->coordC[1]);
     //display_image(geo->img);
     struct PCode *c = get_code(qr);
-    warn("Bit stream gotten");
+    warn("Bit stream done");
     printf("QrCode found :\n");
     printf("    Version : %d\n", c->Version); 
     printf("    Mask : %d\n", c->Mask);
