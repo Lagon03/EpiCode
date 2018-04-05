@@ -97,7 +97,7 @@ void on_button1_clicked()
     char s_vers[4];
     sprintf(s_vers, "%d", c_vers);
 
-    char* input_txt;
+    const char* input_txt;
 
     input_txt = gtk_entry_get_text(GTK_ENTRY(input));
     if(strlen(input_txt) == 0)
@@ -107,7 +107,7 @@ void on_button1_clicked()
         char* cmd[7];
         cmd[0] = "./enc_main";
         cmd[1] = "-d";
-        cmd[2] = input_txt;
+        cmd[2] = (char*)input_txt;
         cmd[3] = "-c";
         cmd[4] = s_level;
         cmd[5] = "-v";
@@ -117,6 +117,17 @@ void on_button1_clicked()
         enc_main(argc , cmd);
         gtk_widget_show(output);
         gtk_image_set_from_file(GTK_IMAGE(qrcode), "./output/test.bmp");
+
+        GdkPixbuf *pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(qrcode));
+        if (pixbuf == NULL)
+        {
+            g_printerr("Failed to resize image\n");
+        }
+        else
+        {
+            pixbuf = gdk_pixbuf_scale_simple(pixbuf, gtk_widget_get_allocated_width(qrcode), gtk_widget_get_allocated_height(qrcode), GDK_INTERP_BILINEAR);
+            gtk_image_set_from_pixbuf(GTK_IMAGE(qrcode), pixbuf);
+        }
     }
 }
 

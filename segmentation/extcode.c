@@ -299,7 +299,7 @@ void SampleCodeV1(struct GeoImg *qrimg, struct QrCode *qr, double X)
     int HC = GetHeightFP(qrimg->img, qrimg->coordC[0], qrimg->coordC[1]);
     
     if(HA == 0 || HC == 0)
-        err(EXIT_FAILURE, "Segmentation error : x05");
+        err(EXIT_FAILURE, "Segmentation error : Corrupted Geometry");
     
     double Y = (HA + HC) / 14;
     
@@ -317,7 +317,7 @@ void SampleCodeV1(struct GeoImg *qrimg, struct QrCode *qr, double X)
     
     double UT1y = qrimg->coordA[1] + 3 * Y;
     double UT1x = qrimg->coordA[0] + 5 * X;
-    //double UTxEnd = qrimg->coordB[0] - 5 * X;  
+    //double UTxEnd = qrimg->coordB[0] - 5 * X;
     
     // coord left timing pattern
     
@@ -417,7 +417,7 @@ int CorrectVersion(char *fmt)
     
     if(bestdiff > 3)
         return -1;
-    
+    free(fmt);
     return besti;    
 }
 
@@ -445,14 +445,36 @@ int GetVersionV7_40N1(struct GeoImg *qrimg, int HB, int WB)
             //display_image(qrimg->img);
         }
     }
-    warn("Version String : %s", fmt);
+    //warn("Version String : %s", fmt);
     return CorrectVersion(fmt) + 7; 
 }
 
 static inline
 int GetVersionV7_40N2(struct GeoImg *qrimg, int HC, int WC)
-{
-    return 1;
+{ 
+    char *fmt = calloc(18, sizeof(char));
+    double CPx = (double)WC / 7;
+    double CPy = (double)HC / 7;
+    double Vx0 = qrimg->coordC[0] - 3 * CPx;
+    double Vy0 = qrimg->coordC[1] - 7 * CPy;
+    int X;
+    int Y;
+    for(int x = 0; x < 6; x++)
+    {
+        for(int y = 0; y < 3; y++)
+        {
+            X = round(Vx0 + CPx * x);
+            Y = round(Vy0 + CPy * y);
+            if(get_BW(qrimg->img, X, Y) == 0)
+                fmt[17 - (y + x * 3)] = '1';
+            else
+                fmt[17 - (y + x * 3)] = '0';
+            //putpixel(qrimg->img, X, Y, SDL_MapRGB(qrimg->img->format, 255, 0, 0));
+        }
+    }
+    //warn("Version String : %s", fmt);
+    //display_image(qrimg->img);
+    return CorrectVersion(fmt) + 7;
 }
 
 
@@ -472,7 +494,7 @@ struct QrCode *extract_QrCode (struct GeoImg *qrimg)
     int HC = GetHeightFP(qrimg->img, qrimg->coordC[0], qrimg->coordC[1]);
     
     if(WA == 0 || WB == 0 || WC == 0 || HA == 0 || HB == 0 || HC == 0)
-        err(EXIT_FAILURE, "Segmentation error : x03");
+        err(EXIT_FAILURE, "Segmentation error : Bad Geometry");
     
     double X = (WA + WB) / 14;
 
@@ -480,16 +502,16 @@ struct QrCode *extract_QrCode (struct GeoImg *qrimg)
     
     if( V >= 7 && V <= 40)
     {
-        V = GetVersionV7_40N1(qrimg, HB, WB);
+        V = GetVersionV7_40N2(qrimg, HB, WB);
         if( V == 6)
         {
-            V = GetVersionV7_40N2(qrimg, HC, WB);
+            V = GetVersionV7_40N1(qrimg, HC, WB);
             if( V == 6)
                 err(EXIT_FAILURE, "Segmentation error : Version Corrupted");
         }
         qr->version = V;
-        //warn("Version decoded : %d", V);
-        err(EXIT_FAILURE, "Segmentation NOT IMPLEMENTED V7 - 40");
+        SampleCodeV7_40(qrimg, qr, WA, WB, WC, HA, HB, HC);
+        warn("next");
     }
     else if( V >= 2 && V <= 6)
     {
@@ -502,7 +524,8 @@ struct QrCode *extract_QrCode (struct GeoImg *qrimg)
     }
     else
     {
-        err(EXIT_FAILURE, "Segmentation error : x04");
+        warn("V = %d", V);
+        err(EXIT_FAILURE, "Segmentation error : Corrupted QrCode size");
     }
     
     return qr;

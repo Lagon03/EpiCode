@@ -9,7 +9,10 @@
       <placeholder/>
     </child>
     <child>
-      <placeholder/>
+      <object class="GtkFixed">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+      </object>
     </child>
   </object>
   <object class="GtkListStore" id="liststore1">
@@ -429,8 +432,8 @@
         <property name="can_focus">False</property>
         <child>
           <object class="GtkImage" id="qrCode">
-            <property name="width_request">100</property>
-            <property name="height_request">80</property>
+            <property name="width_request">200</property>
+            <property name="height_request">200</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="stock">gtk-missing-image</property>

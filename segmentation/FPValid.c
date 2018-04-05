@@ -17,7 +17,7 @@ struct FPresults *Find_QrCodes(void)
 struct FPresults *QrCode_found(struct FPat *fp)
 {
     if(fp->centers->size < 3)
-        err(EXIT_FAILURE, "Segmentation error : No QrCode found");
+        return NULL;
 
     //Multiple Case not handled
     if(fp->centers->size > 3)
