@@ -1,5 +1,6 @@
 #include <gtk/gtk.h>
 #include <string.h>
+#include <unistd.h>
 
 # include "../Encoding/headers/enc_main.h"
 

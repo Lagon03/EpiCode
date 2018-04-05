@@ -84,9 +84,6 @@ char* GenName(void)
 
 int main (int argc, char* argv[])
 {
-    for(size_t i = 0; i < argc; ++i)
-        printf("%s\n", argv[i]);
-    printf("test\n");
     struct options *arg = checkArg(argc, argv);
     if(arg->message == NULL)
     {
