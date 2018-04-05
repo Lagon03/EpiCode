@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "array.h"
 #include "op.h"
 
