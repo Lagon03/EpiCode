@@ -187,7 +187,7 @@ struct PCode *SegmentationFromFile(char *File, int Demo)
     return c;
 }
 
-/*int main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
     if(argc > 2 && strcmp(argv[2], "-d") == 0)
         SegmentationFromFile(argv[1], 1);
@@ -196,4 +196,4 @@ struct PCode *SegmentationFromFile(char *File, int Demo)
     else
         return EXIT_FAILURE;
     return EXIT_SUCCESS;
-}*/
+}
