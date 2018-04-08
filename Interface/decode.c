@@ -99,21 +99,38 @@ void decod_clicked()
 
 void file_set()
 {
-    GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
-    filename = gtk_file_chooser_get_filename(chooser);
+    GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
+    gint res;
+    dialog = gtk_file_chooser_dialog_new("Open File", GTK_WINDOW(window), action,
+            ("_Cancel"),
+            GTK_RESPONSE_CANCEL,
+            ("_Open"),
+            GTK_RESPONSE_ACCEPT,
+            NULL);
+
+    res = gtk_dialog_run(GTK_DIALOG(dialog));
+
+    if(res == GTK_RESPONSE_ACCEPT)
+    {
+        GtkFileChooser *chooser = GTK_FILE_CHOOSER (dialog);
+        filename = gtk_file_chooser_get_filename(chooser);
+
+        gtk_widget_destroy(dialog);
+
+        gtk_image_set_from_file(GTK_IMAGE(qrcode), filename);
+
+        GdkPixbuf *pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(qrcode));
+        if (pixbuf == NULL)
+        {
+            g_printerr("Failed to resize image\n");
+        }
+        else
+        {
+            pixbuf = gdk_pixbuf_scale_simple(pixbuf, gtk_widget_get_allocated_width(qrcode), gtk_widget_get_allocated_height(qrcode), GDK_INTERP_BILINEAR);
+            gtk_image_set_from_pixbuf(GTK_IMAGE(qrcode), pixbuf);
+        }
+    }
 
     gtk_widget_destroy(dialog);
 
-    gtk_image_set_from_file(GTK_IMAGE(qrcode), filename);
-
-    GdkPixbuf *pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(qrcode));
-    if (pixbuf == NULL)
-    {
-        g_printerr("Failed to resize image\n");
-    }
-    else
-    {
-        pixbuf = gdk_pixbuf_scale_simple(pixbuf, gtk_widget_get_allocated_width(qrcode), gtk_widget_get_allocated_height(qrcode), GDK_INTERP_BILINEAR);
-        gtk_image_set_from_pixbuf(GTK_IMAGE(qrcode), pixbuf);
-    }
 }

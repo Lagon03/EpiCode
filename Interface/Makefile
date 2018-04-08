@@ -1,6 +1,7 @@
-# change application name here (executable output name)
-TARGET=epidec
- 
+# executable output name
+TARGET1=epidec
+TARGET2=epicode
+
 # compiler
 CC=gcc #-fsanitize=address
 CPPFLAGS= `pkg-config --cflags sdl2` `pkg-config --cflags --libs gtk+-3.0` -MMD -pthread -export-dynamic
@@ -10,7 +11,8 @@ LDLIBS=`pkg-config --libs sdl2` -lSDL2_image -lm
 
 GTKLIB=`pkg-config --cflags --libs gtk+-3.0`
 
-ISRC= decode.c
+DISRC= decode.c
+EISRC= main.c
 
 MSRC= ../Encoding/enc_main.c ../Encoding/freect.c
 ASRC= ../Encoding/analysis/analysis.c
@@ -28,23 +30,26 @@ BSSRC= ../segmentation/proc_code.c ../segmentation/color_mat.c ../segmentation/d
 MSSRC= ../segmentation/segmentation.c
 
 
-OBJ=${ISRC:.c=.o} ${MSRC:.c=.o} ${ASRC:.c=.o} ${MESRC:.c=.o} ${DSRC:.c=.o} ${GSRC:.c=.o} ${RSSRC:.c=.o} ${SSRC:.c=.o} ${MDSRC:.c=.o} ${IPSRC:.c=.o} ${SGSRC:.c=.o} ${BSSRC:.c=.o} ${MSSRC:.c=.o}
-DEP=${ISRC:.c=.d} ${MSRC:.c=.d} ${ASRC:.c=.d} ${MESRC:.c=.d} ${DSRC:.c=.d} ${GSRC:.c=.d} ${RSSRC:.c=.d} ${SSRC:.c=.d} ${MDSRC:.c=.d} ${IPSRC:.c=.d} ${SGSRC:.c=.d} ${BSSRC:.c=.d} ${MSSRC:.c=.d}
+DOBJ=${DISRC:.c=.o} ${MSRC:.c=.o} ${ASRC:.c=.o} ${MESRC:.c=.o} ${DSRC:.c=.o} ${GSRC:.c=.o} ${RSSRC:.c=.o} ${SSRC:.c=.o} ${MDSRC:.c=.o} ${IPSRC:.c=.o} ${SGSRC:.c=.o} ${BSSRC:.c=.o} ${MSSRC:.c=.o}
+DDEP=${DISRC:.c=.d} ${MSRC:.c=.d} ${ASRC:.c=.d} ${MESRC:.c=.d} ${DSRC:.c=.d} ${GSRC:.c=.d} ${RSSRC:.c=.d} ${SSRC:.c=.d} ${MDSRC:.c=.d} ${IPSRC:.c=.d} ${SGSRC:.c=.d} ${BSSRC:.c=.d} ${MSSRC:.c=.d}
 
-IOBJ= ${ISRC:.c=.o}
-all : epi 
+EOBJ=${EISRC:.c=.o} ${MSRC:.c=.o} ${ASRC:.c=.o} ${MESRC:.c=.o} ${DSRC:.c=.o} ${GSRC:.c=.o} ${RSSRC:.c=.o} ${SSRC:.c=.o} ${MDSRC:.c=.o}
+EDEP=${EISRC:.c=.d} ${MSRC:.c=.d} ${ASRC:.c=.d} ${MESRC:.c=.d} ${DSRC:.c=.d} ${GSRC:.c=.d} ${RSSRC:.c=.d} ${SSRC:.c=.d} ${MDSRC:.c=.d}
 
-epi: ${OBJ}
-	${CC} ${CFLAGS} ${CPPFLAGS} ${OBJ} ${LDLIBS} ${GTKLIB} -o ${TARGET}
+all : epicode epidec 
 
-interface: main.c
-	${CC} -c ${CCFLAGS} main.c ${GTKLIB} -o main.o
+epicode: ${EOBJ}
+	${CC} ${CFLAGS} ${CPPFLAGS} ${EOBJ} ${LDLIBS} ${GTKLIB} -o ${TARGET2}
+epidec: ${DOBJ}
+	${CC} ${CFLAGS} ${CPPFLAGS} ${DOBJ} ${LDLIBS} ${GTKLIB} -o ${TARGET1}
+
 
 .PHONY: clean
 
 clean:
-	${RM} ${OBJ} ${DEP} *-
-	${RM} epicode
+	${RM} ${DOBJ} ${DDEP} *-
+	${RM} ${EOBJ} ${EDEP} *-
+	${RM} ${TARGET1} ${TARGET2}
 	${RM} *.d
 
--include ${DEP}
+-include ${DDEP} $ ${EDEP}
