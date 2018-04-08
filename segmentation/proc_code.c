@@ -118,21 +118,21 @@ static inline
 char *get_format1(char **mat)
 {
     char *fmt = malloc(sizeof(char) * 15);
-    fmt[14] = mat[8][0];
-    fmt[13] = mat[8][1];
-    fmt[12] = mat[8][2];
-    fmt[11] = mat[8][3];
-    fmt[10] = mat[8][4];
-    fmt[9] = mat[8][5];
-    fmt[8] = mat[8][7];
+    fmt[14] = mat[0][8];
+    fmt[13] = mat[1][8];
+    fmt[12] = mat[2][8];
+    fmt[11] = mat[3][8];
+    fmt[10] = mat[4][8];
+    fmt[9] = mat[5][8];
+    fmt[8] = mat[7][8];
     fmt[7] = mat[8][8];
-    fmt[6] = mat[7][8];
-    fmt[5] = mat[5][8];
-    fmt[4] = mat[4][8];
-    fmt[3] = mat[3][8];
-    fmt[2] = mat[2][8];
-    fmt[1] = mat[1][8];
-    fmt[0] = mat[0][8];
+    fmt[6] = mat[8][7];
+    fmt[5] = mat[8][5];
+    fmt[4] = mat[8][4];
+    fmt[3] = mat[8][3];
+    fmt[2] = mat[8][2];
+    fmt[1] = mat[8][1];
+    fmt[0] = mat[8][0];
     //printf("%s \n", fmt);
     return fmt;
 }
@@ -143,21 +143,21 @@ char *get_format2(char **mat, int version)
     int size = 4 * version + 17;
  
     char *fmt = malloc(sizeof(char) * 15);
-    fmt[14] = mat[size-1][8];
-    fmt[13] = mat[size-2][8];
-    fmt[12] = mat[size-3][8];
-    fmt[11] = mat[size-4][8];
-    fmt[10] = mat[size-5][8];
-    fmt[9] = mat[size-6][8];
-    fmt[8] = mat[size-7][8];
+    fmt[14] = mat[8][size-1];
+    fmt[13] = mat[8][size-2];
+    fmt[12] = mat[8][size-3];
+    fmt[11] = mat[8][size-4];
+    fmt[10] = mat[8][size-5];
+    fmt[9] = mat[8][size-6];
+    fmt[8] = mat[8][size-7];
     fmt[7] = mat[8][size-8];
-    fmt[6] = mat[8][size-7];
-    fmt[5] = mat[8][size-6];
-    fmt[4] = mat[8][size-5];
-    fmt[3] = mat[8][size-4];
-    fmt[2] = mat[8][size-3];
-    fmt[1] = mat[8][size-2];
-    fmt[0] = mat[8][size-1];
+    fmt[6] = mat[size-7][8];
+    fmt[5] = mat[size-6][8];
+    fmt[4] = mat[size-5][8];
+    fmt[3] = mat[size-4][8];
+    fmt[2] = mat[size-3][8];
+    fmt[1] = mat[size-2][8];
+    fmt[0] = mat[size-1][8];
     return fmt;   
 }
 
@@ -265,29 +265,42 @@ struct PCode *get_code(struct QrCode *qr)
 {
     struct PCode *code = malloc(sizeof(struct PCode));
     
+    //TransposeMat(qr->mat, qr->version * 4 + 17);
+    print_mat(qr->mat, qr->version * 4 + 17);
+    warn("Starting Mat->BStream");
     char *fmt1 = get_format1(qr->mat);
     int fmtIndex = CorrectFormat(fmt1);
+    warn("fmt1 = %s, Correction : %d", fmt1, fmtIndex);
     if(fmtIndex == -1)
     {
-        char *fmt2 = get_format2(qr->mat, qr->version);
-        fmtIndex = CorrectFormat(fmt2);
+        fmtIndex = CorrectFormatInv(fmt1);
+        warn("INV fmt1 = %s, Correction : %d", fmt1, fmtIndex);
         if(fmtIndex == -1)
         {
-            //TransposeMat(qr->mat, qr->version * 4 + 17);
-            fmtIndex = CorrectFormatInv(fmt1);
+            char *fmt2 = get_format2(qr->mat, qr->version);
+            fmtIndex = CorrectFormat(fmt2);
+            warn("fmt2 = %s, Correction : %d", fmt2, fmtIndex);
             if(fmtIndex == -1)
             {
                 fmtIndex = CorrectFormatInv(fmt2);
+                warn("INV fmt2 = %s, Correction : %d", fmt2, fmtIndex);
                 if(fmtIndex == -1)
-                    err(EXIT_FAILURE, "Segmentation error : Corrupted Format");
+                    err(EXIT_FAILURE, "Segmentation error : Corrupted format");
             }
-            TransposeMat(qr->mat, qr->version * 4 + 17);
-            //print_mat(qr->mat, qr->version * 4 + 17);
+            else
+            {
+                TransposeMat(qr->mat, qr->version * 4 + 17);
+            }
+            free(fmt2);
         }
-        free(fmt2); 
+        else
+        {
+            TransposeMat(qr->mat, qr->version * 4 + 17);
+        } 
     }
     free(fmt1);
-    
+    warn("End Format correction");
+    print_mat(qr->mat, qr->version * 4 + 17);
     char ECL = GetErrorCorrectionlvl(fmtIndex);
     int Mask = fmtIndex % 8;
     size_t size = qr->version * 4 + 17;

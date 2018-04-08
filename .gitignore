@@ -60,3 +60,5 @@ dkms.conf
 
 # Bitmap images BMP
 .bmp
+
+.DS_STORE
