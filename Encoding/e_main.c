@@ -70,15 +70,15 @@ struct options* checkArg(int argc, char* argv[])
 
 char* GenName(void)
 {
-    char* name = (char*)malloc(sizeof(char)*25);
     time_t rawtime;
+
+    char* name = (char*)malloc(sizeof(char)*17);
 
     time (&rawtime);
     struct tm  *timeinfo = localtime (&rawtime);
-    strftime(name, sizeof(name)-1, "%d.%m", timeinfo);
+    strftime(name, 16, "%d.%m - %H:%M", timeinfo);
 
-    name[5] = '\0';
-    printf("%s\n", name);
+    name[16] = '\0';
     return name;
 }
 
