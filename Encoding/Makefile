@@ -14,7 +14,7 @@ ASRC= analysis/analysis.c
 MESRC= msg_encoding/encode.c msg_encoding/encode_message.c msg_encoding/weaver.c
 DSRC= draw/draw.c draw/fill_mat.c draw/mask.c
 GSRC= gen_img/gen_img.c
-RSSRC= error_cor/RS/array.c error_cor/RS/op.c error_cor/RS/encode_RS.c
+RSSRC= error_cor/RS/array.c error_cor/RS/op.c error_cor/RS/encode_RS.c error_cor/RS/decode_RS.c
 SSRC= ../sdl/mysdl.c
 MDSRC= msg_decoding/decode.c msg_decoding/unweaver.c msg_decoding/decode_message.c
 
