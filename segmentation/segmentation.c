@@ -100,12 +100,12 @@ static inline
 void ImageProcessingDemo(SDL_Surface *img)
 {
     grayscale(img);
-    display_image(img);
+    //display_image(img);
     int threshold = otsu(img);
     if(threshold == 0)
         threshold = 1;
     binarize(img, threshold);
-    display_image(img);
+    //display_image(img);
 }
 
 struct PCode *Segmentation(SDL_Surface *img)
@@ -140,17 +140,17 @@ struct PCode *SegmentationDemo(SDL_Surface *img, SDL_Surface *demo)
         err(EXIT_FAILURE, "Segmentation error : No Valid QrCode found");
     }
     drawFP(demo, f->centers, f->ems_vector, fp->indexA);
-    display_image(demo);
+    //display_image(demo);
     printf("|                   + Finder Pattern and QrCode found and validated\n");
     struct GeoImg *g = GeoTransform(img, fp);
     ImageProcessingDemo(g->img);
     printf("|                   + Affine transformation done\n");
     struct QrCode *qr = extract_QrCode(g);
-    display_image(g->img);
+    //display_image(g->img);
     printf("|                   + Version determined -> V = %d\n", qr->version);
     printf("|                   + Alignement Patterns found and image sampled into bit matrix \n");
     printf("| Bit Matrix :\n");
-    print_mat(qr->mat, qr->version * 4 + 17);
+    //print_mat(qr->mat, qr->version * 4 + 17);
     struct PCode *c = get_code(qr);
     printf("|                   + Error correction level determined -> ECL = %c\n", c->ECL);
     printf("|                   + Mask determined and unveiled -> Mask = %d\n", c->Mask);
@@ -175,7 +175,7 @@ struct PCode *SegmentationFromFile(char *File, int Demo)
     if(Demo == 1)
     {
         SDL_Surface *demo = load_image(File);
-        display_image(img);
+        //display_image(img);
         c = SegmentationDemo(img, demo);
     }
     else
@@ -189,7 +189,7 @@ struct PCode *SegmentationFromFile(char *File, int Demo)
 
 int main(int argc, char *argv[])
 {
-    if(argc > 2 && strcmp(argv[2], "-d") == 0)
+    if(argc > 2 && strcmp(argv[2], "-d") == 0)  
         SegmentationFromFile(argv[1], 1);
     else if(argc > 1)
         SegmentationFromFile(argv[1], 0);

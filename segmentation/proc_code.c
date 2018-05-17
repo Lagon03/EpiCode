@@ -286,10 +286,8 @@ struct PCode *get_code(struct QrCode *qr)
                 warn("INV fmt2 = %s, Correction : %d", fmt2, fmtIndex);
                 if(fmtIndex == -1)
                     err(EXIT_FAILURE, "Segmentation error : Corrupted format");
-            }
-            else
-            {
-                TransposeMat(qr->mat, qr->version * 4 + 17);
+                else
+                    TransposeMat(qr->mat, qr->version * 4 + 17);
             }
             free(fmt2);
         }
