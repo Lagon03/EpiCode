@@ -100,8 +100,8 @@
         <child>
           <object class="GtkButton" id="decodeB">
             <property name="label" translatable="yes">Decode</property>
-            <property name="width_request">100</property>
-            <property name="height_request">80</property>
+            <property name="width_request">120</property>
+            <property name="height_request">20</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
@@ -115,15 +115,15 @@
         <child>
           <object class="GtkButton" id="button4">
             <property name="label" translatable="yes">Clear</property>
-            <property name="width_request">100</property>
-            <property name="height_request">80</property>
+            <property name="width_request">120</property>
+            <property name="height_request">28</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
           </object>
           <packing>
             <property name="x">90</property>
-            <property name="y">370</property>
+            <property name="y">286</property>
           </packing>
         </child>
         <child>
@@ -239,20 +239,6 @@
           </object>
         </child>
         <child>
-          <object class="GtkFileChooserButton" id="GetFile">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="create_folders">False</property>
-            <property name="dialog">SET_FILE</property>
-            <property name="title" translatable="yes">Choose an image</property>
-            <signal name="file-set" handler="file_set" swapped="no"/>
-          </object>
-          <packing>
-            <property name="x">90</property>
-            <property name="y">212</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkToggleButton" id="demo">
             <property name="label" translatable="yes">demo</property>
             <property name="width_request">62</property>
@@ -263,7 +249,22 @@
             <signal name="toggled" handler="demo_act" swapped="no"/>
           </object>
           <packing>
-            <property name="x">147</property>
+            <property name="x">148</property>
+            <property name="y">212</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton">
+            <property name="label" translatable="yes">...</property>
+            <property name="width_request">50</property>
+            <property name="height_request">20</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <signal name="clicked" handler="file_set" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">90</property>
             <property name="y">212</property>
           </packing>
         </child>

@@ -60,7 +60,7 @@ void Generate_QrCode(char **mat, int version, const char* name, int mod_size)
     }
     
     //warn("3");
-    //display_image(img);
+    display_image(img);
     // output path : "../output/.." -> 10 characters
     char * output = malloc((strlen(name) + 10) * sizeof(char));
     output[0] = '\0';

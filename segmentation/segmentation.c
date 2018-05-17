@@ -186,7 +186,7 @@ struct PCode *SegmentationFromFile(char *File, int Demo)
     SDL_Quit();
     return c;
 }
-
+/*
 int main(int argc, char *argv[])
 {
     if(argc > 2 && strcmp(argv[2], "-d") == 0)  
@@ -196,4 +196,4 @@ int main(int argc, char *argv[])
     else
         return EXIT_FAILURE;
     return EXIT_SUCCESS;
-}
+}*/
