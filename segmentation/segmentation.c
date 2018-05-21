@@ -124,6 +124,25 @@ struct PCode *Segmentation(SDL_Surface *img)
     return c;
 }
 
+
+struct PCode *SegmentationEpi(SDL_Surface *img, SDL_Surface *color)
+{
+    ImageProcessing(img);
+    struct FPat *f = findFP(img);
+    struct FPresults *fp = QrCode_found(f);
+    if(fp == NULL)
+        err(EXIT_FAILURE, "Segmentation error : No Valid QrCode found");
+    struct GeoImg *g = GeoTransform(img, fp);
+    ImageProcessing(g->img);
+    struct GeoImg *gcolor = GeoTransfrom(color, fp);
+    display_image(gcolor->img);
+    struct QrCode *qr = extract_QrCode(g);
+    struct PCode *c = get_code(qr);
+    free_segmentation(f, fp, g, qr);
+    SDL_FreeSurface(img);
+    return c;
+}
+
 struct PCode *SegmentationDemo(SDL_Surface *img, SDL_Surface *demo)
 {
     printf("--------------------------------------------------------------------------------------\n");
