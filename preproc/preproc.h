@@ -12,5 +12,5 @@
 SDL_Surface *grayscale(SDL_Surface* img);
 void binarize(SDL_Surface* img, int threshold);
 int otsu(SDL_Surface* img);
-void contrast(SDL_Surface* img, int value);
+SDL_Surface *contrast(SDL_Surface* img);
 #endif

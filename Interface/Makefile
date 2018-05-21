@@ -26,7 +26,7 @@ MDSRC= ../Encoding/msg_decoding/decode.c ../Encoding/msg_decoding/unweaver.c ../
 
 #SEGMENTATION
 IPSRC= ../preproc/preproc.c
-SGSRC= ../segmentation/fpfind.c ../segmentation/FPValid.c ../segmentation/geotrans.c ../segmentation/apsamp.c ../segmentation/extcode.c ../segmentation/surfdraw.c
+SGSRC= ../segmentation/fpfind.c ../segmentation/FPValid.c ../segmentation/geotrans.c ../segmentation/aploc.c ../segmentation/apsamp.c ../segmentation/extcode.c ../segmentation/surfdraw.c
 BSSRC= ../segmentation/proc_code.c ../segmentation/color_mat.c ../segmentation/demask.c ../segmentation/bit_ext.c
 MSSRC= ../segmentation/segmentation.c
 
