@@ -145,7 +145,7 @@ int AP, int pX, int pY)
             {
                 mat[y + AP * pY][x + AP * pX] = '0';
             }
-            putpixel(img, X, Y, SDL_MapRGB(img->format, 255, 0, 0));
+            //putpixel(img, X, Y, SDL_MapRGB(img->format, 255, 0, 0));
         }
     }
     //print_mat(mat, AP + 13);
@@ -183,7 +183,7 @@ double CPyp, double CPAx, double CPCx, int AP, int pY)
             {
                 mat[y + AP * pY][x] = '0';
             }
-            putpixel(img, X, Y, SDL_MapRGB(img->format, 255, 0, 0));
+            //putpixel(img, X, Y, SDL_MapRGB(img->format, 255, 0, 0));
         }
     }
     //print_mat(mat, AP + 13);
@@ -221,7 +221,7 @@ double CPxp, double CPAy, double CPBy, int AP, int pX)
             {
                 mat[y][x + AP * pX] = '0';
             }
-            putpixel(img, X, Y, SDL_MapRGB(img->format, 255, 0, 0));
+            //putpixel(img, X, Y, SDL_MapRGB(img->format, 255, 0, 0));
         }
     }
     //print_mat(mat, AP + 13);
@@ -261,7 +261,7 @@ double CPx, double CPCy, double CPy, int AP, int pX, int SNB)
             {
                 mat[y + SNB * AP][x + AP * pX] = '0';
             }
-            putpixel(img, X, Y, SDL_MapRGB(img->format, 255, 0, 0));
+            //putpixel(img, X, Y, SDL_MapRGB(img->format, 255, 0, 0));
             //display_image(img);
         }
     }
@@ -302,7 +302,7 @@ double CPx, double CPBx, double CPy, int AP, int pY, int SNB)
             {
                 mat[y + AP * pY][x + SNB * AP] = '0';
             }
-            putpixel(img, X, Y, SDL_MapRGB(img->format, 255, 0, 0));
+            //putpixel(img, X, Y, SDL_MapRGB(img->format, 255, 0, 0));
             //display_image(img);
         }
     }
@@ -333,7 +333,7 @@ double CPx, double CPy, int AP, int SNB)
             {
                 mat[y + SNB * AP][x + SNB * AP] = '0';
             }
-            putpixel(img, X, Y, SDL_MapRGB(img->format, 255, 0, 0));
+            //putpixel(img, X, Y, SDL_MapRGB(img->format, 255, 0, 0));
             //display_image(img);
         }
     }
