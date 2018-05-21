@@ -354,7 +354,6 @@ static size_t getSmallestVersion(int mod, size_t count, int correction_level)
                 for(size_t vers = 1; vers < 41; ++vers) {
                     if(Q_LEVEL[mod][vers] >= count) {
                         version = vers;
-                        printf("version : %li\n", version);
                         break;
                     }
                 }
@@ -630,7 +629,8 @@ void freeCodeWords(struct Codewords* codewords) {
 struct EncData* getEncodedSize(struct options *arg)
 {  
     struct EncData *data = malloc(sizeof(struct EncData));
-    
+   
+    data->epi_v = 41;
     size_t char_count = 0;
     char* count_bits;
     
@@ -639,9 +639,12 @@ struct EncData* getEncodedSize(struct options *arg)
     
     //printf("%s\n", count_bits);
     size_t version = arg->version;
-    size_t tmp_version = getSmallestVersion(arg->mode, char_count, arg->correction); 
+    size_t tmp_version = getSmallestVersion(arg->mode, char_count, arg->correction);
+    size_t tmp_ev = getSmallestVersion(arg->mode, char_count / 2, arg->correction);
     if((version > 40) | (tmp_version > version))
         version = tmp_version;
+    if((tmp_ev < data->epi_v) | (data->epi_v > 40))
+        data->epi_v = tmp_ev;
     printf("version : %li\n",version);
     // need to specify the limit in function of the version and of the mod
 

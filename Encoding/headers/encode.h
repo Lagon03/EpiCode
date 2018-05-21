@@ -48,6 +48,7 @@ struct EncData
   char* character_count_ind;
   char* encoded_data;
   size_t version;
+  size_t epi_v;
   int correction_level;
   struct Codewords* codewords;
 };

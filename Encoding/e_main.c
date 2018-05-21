@@ -209,7 +209,7 @@ int main (int argc, char* argv[])
             }
         }
         for(size_t i = epic_size, k = 0; 
-                i < (weave->size * 8) + Remainder_bits[data->version]; ++i, ++k) {
+                i < (weave->size * 8) + Remainder_bits[data->version]; ++i, k += 2) {
             if(weave_trans[k] == weave_trans[k + 1]) {
                 if (weave_trans[k] == '0')
                     epic[i] = 'w';
@@ -225,6 +225,9 @@ int main (int argc, char* argv[])
             if(k + 1 >= epic_size)
                 k = 0;
         }
+        printf("Epic size : %li\n", epic_size);
+        printf("Normal size : %li\n", (weave->size * 8) + Remainder_bits[data->version]);
+        printf("Epicode version : %li\n", data->epi_v);
         fill_mat(QrCode->mat, QrCode->size, data->version, epic, weave->size * 8 + Remainder_bits[data->version]);
     }
     else {

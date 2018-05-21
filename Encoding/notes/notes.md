@@ -3,7 +3,7 @@
 ## Major task to be done
 
 - [x] QR-Code encoding (at least from version 1 to 20)
-- [ ] Better interface (either two completes ones or one which can switch)
+- [x] Better interface (either two completes ones or one which can switch)
 - [ ] Epicode working
 
 ## Instruction / How to use
@@ -30,15 +30,15 @@ Epicode must be our own version of a QrCode, though it might be a simple modific
 
 Todo :
 
-- [ ] Encoding Epicode
+- [x] Encoding Epicode
 - [ ] Decoding Epicode
 
 #### - Interface -
 
 Todo :
 
-- [ ] Option to save Qrcode to specified path
-- [ ] Complete interface (both encoding / decoding finished)
+- [x] Option to save Qrcode to specified path
+- [x] Complete interface (both encoding / decoding finished)
 
 ### - Testing -
 
