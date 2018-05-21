@@ -230,26 +230,29 @@ struct Array* rs_correct_msg(struct Array *msg_in, uint8_t nsym, struct Array *e
 	initArray(msg_out, msg_in->used);
 	memmove(msg_out->array, msg_in->array, msg_in->used);
 	
-	struct Array *synd = rs_calc_syndromes(msg_out, nsym, gf_table);
+	struct Array *synd = rs_calc_syndromes(msg_in, nsym, gf_table);
+	
 	uint8_t max = synd->array[0];
 	for (size_t i = 0; i < synd->used; i++) {
-		max = synd->array[i] ? synd->array[i] > max : max;
+		max = synd->array[i] > max ? synd->array[i] : max;
 	}
 	if (max == 0) { //No errors
 		return msg_out;
 	}
-	struct Array *fsynd = rs_forney_syndromes(synd, erase_pos, msg_out->used, gf_table);
-	struct Array *err_loc = rs_find_error_locator(fsynd, nsym, 0, gf_table);
-	struct Array *err_pos = rs_find_errors(reverse_arr(err_loc) , msg_out->used, gf_table);
+	//struct Array *fsynd = rs_forney_syndromes(synd, erase_pos, msg_out->used, gf_table);
+	struct Array *err_loc = rs_find_error_locator(synd, nsym, 0, gf_table);
+	
+	struct Array *err_pos = rs_find_errors(reverse_arr(err_loc) , msg_in->used, gf_table);
+	
 	if (err_pos == NULL) {
 		fprintf(stderr, "Could not locate error");
 		exit(EXIT_FAILURE);
 	}
-	msg_out = rs_correct_errdata(msg_out, synd, err_pos, gf_table);
+	msg_out = rs_correct_errdata(msg_in, synd, err_pos, gf_table);
 	synd = rs_calc_syndromes(msg_out, nsym, gf_table);
 	max = synd->array[0];
 	for (size_t i = 0; i < synd->used; i++) {
-		max = synd->array[i] ? synd->array[i] > max : max;
+		max = synd->array[i] > max ? synd->array[i] : max;
 	}
 	if (max > 0) { //Couldn't correct
 		fprintf(stderr, "Could not correct message");
