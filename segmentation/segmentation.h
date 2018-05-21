@@ -27,7 +27,6 @@ struct PCode *Segmentation(SDL_Surface *img);
 /*  Same as above, but shows also the different steps of the segmentation */
 struct PCode *SegmentationDemo(SDL_Surface *img, SDL_Surface *demo);
 
-<<<<<<< HEAD
 /* Combines previous functions into one function that takes the path to the img
  * to treat and if a Demo is asked*/
 struct PCode *SegmentationFromFile(char *File, int Demo);
@@ -35,11 +34,4 @@ struct PCode *SegmentationFromFile(char *File, int Demo);
 /* Frees the structure PCode */
 void Free_PCode(struct PCode *c);
 
-=======
-/* Frees the structure PCode */
-void Free_PCode(struct PCode *c);
-
-struct PCode* SegmentationFromFile(char* File, int Demo);
-
->>>>>>> f156d9ff9f6a74cdaaae3b957b61a1c4b5e1e493
 # endif

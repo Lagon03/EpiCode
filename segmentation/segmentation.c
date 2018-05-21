@@ -176,6 +176,7 @@ struct PCode *SegmentationFromFile(char *File, int Demo)
     {
         SDL_Surface *demo = load_image(File);
         display_image(img);
+        c = SegmentationDemo(img, demo);
     }
     else
     {
