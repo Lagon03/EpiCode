@@ -210,8 +210,8 @@ struct Array* rs_forney_syndromes(struct Array *synd, struct Array *pos, uint8_t
 	}
 	erase_pos_reversed->used = pos->used;
 	struct Array *fsynd = malloc(sizeof(struct Array*));
-	initArray(fsynd, synd->used - 1);
-	fsynd->array = synd->array + 1;
+	initArray(fsynd, synd->used);
+	memmove(fsynd->array, synd->array + 1, synd->used-1);
 	fsynd->used = synd->used - 1;
 	for (size_t i = 0; i < pos->used; i++) {
 		uint8_t x = gf_pow(2, erase_pos_reversed->array[i], gf_table);
