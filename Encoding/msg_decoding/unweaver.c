@@ -19,7 +19,12 @@ struct Codewords* unweave(char* input, int version, int level)
         // Number of block in the first group
     size_t nb_block_02 = GROUP_BLOCK_CODEWORDS[1][level][version];
         // Number of block in the second group
-    
+   
+    /*printf("Codewords in first group : %li\n", nb_cw_01);
+    printf("Codewords in second group : %li\n", nb_cw_02);
+    printf("Blocks in first group : %li\n", nb_block_01);
+    printf("Blocks in second group : %li\n", nb_block_02);*/
+
     /*
      * During the encoding process we weaved/leaved the codewords together
      * block by block which means we know have to deweave/deleave it.
@@ -64,30 +69,30 @@ struct Codewords* unweave(char* input, int version, int level)
         {
             // group init
             DCR->group[g] = malloc(sizeof(struct Group));
-            DCR->group[g]->blocks = malloc(nb_block_01 * sizeof(struct Block*));
+            DCR->group[g]->blocks = malloc(block_nb * sizeof(struct Block*));
             DCR->group[g]->id = g;
             DCR->group[g]->size = block_nb;
            
             
             struct Group* p_group = DCR->group[g];
             // end group init
+            
             for(size_t b = 0; b < block_nb; ++b)
             {
                 // block init
                 size_t data_cw = (g == 0 ? nb_cw_01 : nb_cw_02);
                 p_group->blocks[b] = malloc(sizeof(struct Block));
                 struct Block* p_block = p_group->blocks[b];
-
                 p_block->words = malloc(data_cw * sizeof(char*));
                 p_block->id = g;
                 p_block->size = data_cw;
-                
+                                
                 // word init
                 for(size_t w = 0; w < data_cw; ++w) {
                     p_block->words[w] = malloc(9 * sizeof(char));
                     p_block->words[w][8] = '\0';
                 }
-                
+
                 // correction word init
                 p_block->correction = malloc(ecc_count * sizeof(char*));
                 for(size_t i = 0; i < ecc_count; ++i)
@@ -176,10 +181,12 @@ struct Codewords* unweave(char* input, int version, int level)
     }
     else
     {
+        nb_cc = ecc_count;
         for(size_t c1 = 0; (c1 < nb_cc); ++c1)
         {
             for(size_t b1 = 0; b1 < nb_block_01; ++b1) 
             {
+                printf("%li && %li\n", c1, b1);
                 char* p_cc = DCR->group[0]->blocks[b1]->correction[c1];
                 for(size_t i = 0; i < 8; ++i, ++index)
                     p_cc[i] = input[index];

@@ -460,14 +460,14 @@ int** evaluate(struct QrCode_Enc* data, int version, int cor) {
     for(int mask = 0; mask < 8; ++mask) {
         setFormatString(data, S_bits[cor][mask]);
         if(version > 6)
-            setVersionString(data, V_bits[version]);
+            setVersionString(data, V_bits[version - 7]);
 
         // Preprocessing (applying the mask)
         applyMask(mat, data->size, mask);
 
         setFormatString(data, S_bits[cor][mask]);
         if(version > 6)
-            setVersionString(data, V_bits[version]);
+            setVersionString(data, V_bits[version - 7]);
 
         unprotectMatrix(data);
 

@@ -1,137 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.22.1 -->
 <interface>
-<<<<<<< HEAD
-  <!-- interface-requires gtk+ 3.0 -->
-  <object class="GtkDialog" id="dialog1">
-    <property name="can_focus">False</property>
-    <property name="border_width">5</property>
-    <property name="type_hint">dialog</property>
-    <child internal-child="vbox">
-      <object class="GtkBox" id="dialog-vbox1">
-        <property name="can_focus">False</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox" id="dialog-action_area1">
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
-            <child>
-              <object class="GtkButton" id="save_button">
-                <property name="label" translatable="yes">Save</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="relief">half</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="button4">
-                <property name="label" translatable="yes">Exit</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="pack_type">end</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkImage" id="image1">
-            <property name="width_request">329</property>
-            <property name="height_request">448</property>
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="stock">gtk-missing-image</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-    <action-widgets>
-      <action-widget response="0">save_button</action-widget>
-      <action-widget response="0">button4</action-widget>
-    </action-widgets>
-  </object>
-  <object class="GtkFileChooserDialog" id="filechooserdialog1">
-    <property name="can_focus">False</property>
-    <property name="border_width">5</property>
-    <property name="role">GtkFileChooserDialog</property>
-    <property name="type_hint">dialog</property>
-    <child internal-child="vbox">
-      <object class="GtkBox" id="filechooserdialog-vbox1">
-        <property name="can_focus">False</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox" id="filechooserdialog-action_area1">
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
-            <child>
-              <object class="GtkButton" id="button3">
-                <property name="label" translatable="yes">Choose</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="button5">
-                <property name="label" translatable="yes">Cancel</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="pack_type">end</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkEntry" id="entry1">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="invisible_char">●</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">2</property>
-          </packing>
-        </child>
-=======
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkWindow" id="about">
     <property name="can_focus">False</property>
@@ -143,13 +12,8 @@
       <object class="GtkFixed">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
->>>>>>> 8a7b1df5cb12435b31cc15ea72c8dc81956b8877
       </object>
     </child>
-    <action-widgets>
-      <action-widget response="-2">button3</action-widget>
-      <action-widget response="0">button5</action-widget>
-    </action-widgets>
   </object>
   <object class="GtkListStore" id="liststore1">
     <columns>
@@ -340,6 +204,9 @@
   <object class="GtkWindow" id="window1">
     <property name="can_focus">False</property>
     <property name="resizable">False</property>
+    <child>
+      <placeholder/>
+    </child>
     <child>
       <object class="GtkFixed" id="fixed1">
         <property name="visible">True</property>
@@ -565,8 +432,8 @@
         <property name="can_focus">False</property>
         <child>
           <object class="GtkImage" id="qrCode">
-            <property name="width_request">400</property>
-            <property name="height_request">400</property>
+            <property name="width_request">200</property>
+            <property name="height_request">200</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="stock">gtk-missing-image</property>
