@@ -45,6 +45,36 @@ int get_BW(SDL_Surface *img, int x, int y) //returns 0 if black, 1 if white
 }  
 
 static inline
+char get_CL(SDL_Surface *img, int x, int y)
+{
+    Uint32 pixel = getpixel(img, x, y);
+    Uint8 r, g, b;
+    SDL_GetRGB(pixel, img->format, &r, &g, &b);
+    if(g == 255 && r == 255 && b == 255)
+    {
+        return '0';
+    }
+    else if (g == 0 && r == 0 && b == 0)
+    {
+        return '1';
+    }
+    else if( g >= b && g >= r)
+    {
+        return 'g';
+    }
+    else if( r >= b && r >= g)
+    {
+        return 'r';
+    }
+    else if( b >= r && b >= g)
+    {
+        return 'b';
+    }
+    else 
+        return '0';
+}
+
+static inline
 int check_ratio(int *state)
 {
     //PRINT_STATE(state);
@@ -288,6 +318,80 @@ double UpdateY(SDL_Surface *img, int center_x , int center_y, double Y, int bin)
     
 }
 // MAIN FUNCTION
+void SampleCodeV1E(struct GeoImg *qrimg, struct QrCode *qr, double X)
+{
+    int HA = GetHeightFP(qrimg->img, qrimg->coordA[0], qrimg->coordA[1]);
+    int HC = GetHeightFP(qrimg->img, qrimg->coordC[0], qrimg->coordC[1]);
+    
+    if(HA == 0 || HC == 0)
+        err(EXIT_FAILURE, "Segmentation error : Corrupted Geometry");
+    
+    double Y = (HA + HC) / 14;
+    
+    // initialize matrix
+
+    char **mat = malloc(sizeof(char*) * 21);
+    for(int i = 0; i < 21; i++)
+    {
+        mat[i] = calloc(21, sizeof(char));
+        for(int j = 0; j < 21; j ++)
+            mat[i][j] = '0';
+    }
+    
+    // coord upper timing pattern
+    
+    double UT1y = qrimg->coordA[1] + 3 * Y;
+    double UT1x = qrimg->coordA[0] + 5 * X;
+    //double UTxEnd = qrimg->coordB[0] - 5 * X;
+    
+    // coord left timing pattern
+    
+    double LT1x = qrimg->coordA[0] + 3 * X;
+    double LT1y = qrimg->coordA[1] + 5 * Y;
+    
+    // above upper timing pattern
+    int ux = 0;
+    int uy = 0;
+    for(int y = 7; y >= 0; y--)
+    {
+        for(int x = 8; x < 13; x++)
+        {
+            mat[y][x] = get_CL(qrimg->img, UT1x + (x - 8) * X, UT1y + (y - 6) *
+Y);
+        }
+    }
+    
+    // left of left timing pattern
+    
+    for(int x = 7; x >= 0; x--)
+    {
+        for(int y = 8; y < 13; y++)
+        {
+            mat[y][x] = get_CL(qrimg->img, LT1x + (x - 6) * X, LT1y + (y - 8) *
+Y);
+        }
+    }
+    
+    // under right of timing patterns
+  
+    for(int y = 8; y < 21; y++)
+    {
+        for(int x = 8; x < 21 ; x++)
+        {
+            int cX = round(LT1x + (x - 6) * X + ux);
+            int cY = round(UT1y + (y - 6) * Y + uy);
+            mat[y][x] = get_CL(qrimg->img, cX, cY);
+            //display_image(qrimg->img);
+        }
+        ux = 0;
+        //uy = 0;
+    }
+    
+    qr->mat = mat;
+    qr->version = 1;
+    //print_mat(mat, 21);
+}
+
 
 void SampleCodeV1(struct GeoImg *qrimg, struct QrCode *qr, double X)
 {
@@ -516,6 +620,57 @@ struct QrCode *extract_QrCode (struct GeoImg *qrimg)
     else if( V == 1)
     {
         SampleCodeV1(qrimg, qr, X);  
+    }
+    else
+    {
+        warn("V = %d", V);
+        err(EXIT_FAILURE, "Segmentation error : Corrupted QrCode size");
+    }
+    
+    return qr;
+}
+
+struct QrCode *extract_EpCode (struct GeoImg *qrimg, struct GeoImg *coimg)
+{
+    struct QrCode *qr = malloc(sizeof(struct QrCode));
+    
+    double D = sqrt(pow(qrimg->coordA[0] - qrimg->coordB[0], 2) +
+    pow(qrimg->coordA[1] - qrimg->coordB[1], 2));
+    
+    int WA = GetWidthFP(qrimg->img, qrimg->coordA[0], qrimg->coordA[1]);
+    int WB = GetWidthFP(qrimg->img, qrimg->coordB[0], qrimg->coordB[1]);
+    int WC = GetWidthFP(qrimg->img, qrimg->coordC[0], qrimg->coordC[1]);
+    int HA = GetHeightFP(qrimg->img, qrimg->coordA[0], qrimg->coordA[1]);
+    int HB = GetHeightFP(qrimg->img, qrimg->coordB[0], qrimg->coordB[1]);
+    int HC = GetHeightFP(qrimg->img, qrimg->coordC[0], qrimg->coordC[1]);
+    
+    if(WA == 0 || WB == 0 || WC == 0 || HA == 0 || HB == 0 || HC == 0)
+        err(EXIT_FAILURE, "Segmentation error : Bad Geometry");
+    
+    double X = (WA + WB) / 14;
+
+    int V = round((D / X - 10) / 4);
+    
+    if( V >= 7 && V <= 40)
+    {
+        V = GetVersionV7_40N2(qrimg, HB, WB);
+        if( V == 6)
+        {
+            V = GetVersionV7_40N1(qrimg, HC, WB);
+            if( V == 6)
+                err(EXIT_FAILURE, "Segmentation error : Version Corrupted");
+        }
+        qr->version = V;
+        SampleCodeV7_40E(qrimg, qr, WA, WB, WC, HA, HB, HC, coimg->img);
+    }
+    else if( V >= 2 && V <= 6)
+    {
+        qr->version = V;
+        SampleCodeV2_6E(qrimg, qr, WA, WB, WC, HA, HB, HC, coimg->img);
+    }
+    else if( V == 1)
+    {
+        SampleCodeV1E(coimg, qr, X);  
     }
     else
     {

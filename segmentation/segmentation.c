@@ -136,8 +136,9 @@ struct PCode *SegmentationEpi(SDL_Surface *img, SDL_Surface *color)
     ImageProcessing(g->img);
     struct GeoImg *gcolor = GeoTransform(color, fp);
     display_image(gcolor->img);
-    struct QrCode *qr = extract_QrCode(g);
+    struct QrCode *qr = extract_EpCode(g, gcolor);
     struct PCode *c = get_code(qr);
+    printf("%s", c->BStream);
     free_segmentation(f, fp, g, qr);
     SDL_FreeSurface(img);
     return c;
@@ -180,7 +181,7 @@ struct PCode *SegmentationDemo(SDL_Surface *img, SDL_Surface *demo)
     printf("| the Reed-Solomon process in order to get corrected and decrypted.\n|\n");
     printf("|            The Segmentation Demo has ended, thank you for watching!\n");
     printf("----------------------------------------------------------------------------------------\n");
-    free_segmentation(f, fp, g, qr);
+    //free_segmentation(f, fp, g, qr);
     SDL_FreeSurface(img);
     SDL_FreeSurface(demo);
     return c;
@@ -197,6 +198,11 @@ struct PCode *SegmentationFromFile(char *File, int Demo)
         display_image(img);
         c = SegmentationDemo(img, demo);
     }
+    else if(Demo == 2)
+    {
+        SDL_Surface *color = load_image(File);
+        c = SegmentationEpi(img, color);
+    }
     else
     {
         c = Segmentation(img);
@@ -208,8 +214,13 @@ struct PCode *SegmentationFromFile(char *File, int Demo)
 
 int main(int argc, char *argv[])
 {
-    if(argc > 2 && strcmp(argv[2], "-d") == 0)
-        SegmentationFromFile(argv[1], 1);
+    if(argc > 2)
+    {
+        if(strcmp(argv[2], "-d") == 0)
+            SegmentationFromFile(argv[1], 1);
+        else if(strcmp(argv[2], "-e") == 0)
+            SegmentationFromFile(argv[1], 2);
+    }
     else if(argc > 1)
         SegmentationFromFile(argv[1], 0);
     else

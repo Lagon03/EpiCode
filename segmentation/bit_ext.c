@@ -15,7 +15,9 @@ void upwards(char **mat, char *msg, size_t size, int *ip, int *jp, int *kp)
     int k = *kp;
     int i = *ip;
     int j = *jp;
-    while((size_t)j < size && (size_t)i < size && i >= 0 && j  >= 0 && (mat[i][j] == '1' || mat[i][j] == '0'))
+    while((size_t)j < size && (size_t)i < size && i >= 0 && j  >= 0 &&
+(mat[i][j] == '1' || mat[i][j] == '0'|| mat[i][j] == 'w'|| mat[i][j] == 'r'||
+mat[i][j] == 'b'|| mat[i][j] == 'g'))
     {
         //warn("1 going up %d %d", i, j);
         msg[k] = mat[i][j];
@@ -43,7 +45,8 @@ void downwards(char **mat, char *msg, size_t size, int *ip, int *jp, int *kp)
     int i = *ip;
     int j = *jp;
     
-    while((size_t)j < size && (size_t)i < size && j >= 0 && i >= 0 && (mat[i][j] == '1' || mat[i][j] == '0'))
+    while((size_t)j < size && (size_t)i < size && j >= 0 && i >= 0 && (mat[i][j] == '1' || mat[i][j] == '0'|| mat[i][j] == 'w'|| mat[i][j] == 'g'||
+mat[i][j] == 'b'|| mat[i][j] == 'r'))
     {
         //warn("1 going down %d %d", i, j);
         msg[k] = mat[i][j];
