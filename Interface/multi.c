@@ -77,8 +77,14 @@ void on_window_main_destroy()
 }
 
 void switch_window() {
-    gtk_widget_show(epicode);
-    gtk_widget_show(epidec);
+    if(gtk_widget_get_visible(epicode)) {
+        gtk_widget_hide(epicode);
+        gtk_widget_show(epidec);
+    }
+    else {
+        gtk_widget_show(epicode);
+        gtk_widget_hide(epidec);
+    }
 }
 
 void on_adv_opts_toggled()

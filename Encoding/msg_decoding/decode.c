@@ -104,7 +104,7 @@ char* decode(char* input, int version, int level)
     //-------------------------------------------------------------------------
 
     size_t l_data = TOTAL_DECC[level][version]; // length of the data codewords
-    size_t c_data = ECC_CODEWORDS_PER_BLOCK[level][version];
+    //size_t c_data = ECC_CODEWORDS_PER_BLOCK[level][version];
 
     char* data = malloc(((l_data  * 8) + 1) * sizeof(char));
     data[0] = '\0';
@@ -115,7 +115,7 @@ char* decode(char* input, int version, int level)
         // Block, one by one
         for(size_t b = 0; b < DCR->group[g]->size; ++b)
         {
-            size_t nb_b = DCR->group[g]->blocks[b]->size;
+            /*size_t nb_b = DCR->group[g]->blocks[b]->size;
             char* buffer = malloc((((nb_b + c_data) * 8) + 1) * sizeof(char));
             buffer[0] = '\0';
 
@@ -188,13 +188,13 @@ char* decode(char* input, int version, int level)
 
             // TODO : add strncat the correct data to the data array
             free(buffer);
-            free(check);
+            free(check);*/
 
             // Word, one by one
-            /*for(size_t w = 0; w < DCR->group[g]->blocks[b]->size; ++w)
+            for(size_t w = 0; w < DCR->group[g]->blocks[b]->size; ++w)
             {           
                 strncat(data, DCR->group[g]->blocks[b]->words[w], 8);
-            }*/
+            }
 
         }
     }
