@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.22.1 -->
 <interface>
+<<<<<<< HEAD
 <<<<<<< HEAD
   <!-- interface-requires gtk+ 3.0 -->
   <object class="GtkDialog" id="dialog1">
@@ -151,6 +153,9 @@
       <action-widget response="0">button5</action-widget>
     </action-widgets>
   </object>
+=======
+  <requires lib="gtk+" version="3.20"/>
+>>>>>>> f156d9ff9f6a74cdaaae3b957b61a1c4b5e1e493
   <object class="GtkListStore" id="liststore1">
     <columns>
       <!-- column-name Correction -->
@@ -340,6 +345,9 @@
   <object class="GtkWindow" id="window1">
     <property name="can_focus">False</property>
     <property name="resizable">False</property>
+    <child>
+      <placeholder/>
+    </child>
     <child>
       <object class="GtkFixed" id="fixed1">
         <property name="visible">True</property>

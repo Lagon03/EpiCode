@@ -7,6 +7,9 @@
 # include "../headers/encode.h"
 # include "../headers/unweaver.h"
 # include "../headers/decode_message.h"
+# include "../headers/decode_RS.h"
+# include "../headers/array.h"
+# include "../headers/op.h"
 
 int getLength(char* input)
 {
@@ -100,13 +103,12 @@ char* decode(char* input, int version, int level)
     //  TODO : Add function to check health of the data using RS
     //-------------------------------------------------------------------------
 
-
     size_t l_data = TOTAL_DECC[level][version]; // length of the data codewords
     
     char* data = malloc(((l_data  * 8) + 1) * sizeof(char));
     data[0] = '\0';
 
-    for(size_t g = 0; g < DCR->size; ++g)
+     for(size_t g = 0; g < DCR->size; ++g)
     {
         for(size_t b = 0; b < DCR->group[g]->size; ++b)
         {
@@ -114,8 +116,63 @@ char* decode(char* input, int version, int level)
             {
                 strncat(data, DCR->group[g]->blocks[b]->words[w], 8);            }
         }
-    }
+    }   
+    /*for(size_t g = 0; g < DCR->size; ++g)
+    {
+        for(size_t b = 0; b < DCR->group[g]->size; ++b)
+        {
+            for(size_t w = 0; w < (size_t)ECC_CODEWORDS_PER_BLOCK[level][version]; ++w)
+            {
+                strncat(data, DCR->group[g]->blocks[b]->correction[w], 8);            }
+        }
+    }*/
     freeCodeWords(DCR);
+    
+    
+    
+    printf("Data retrieve from segmentation : %s\n", data);
+    /*struct Array *msg = malloc(sizeof(struct Array));
+    size_t l = getLength(data) / 8;
+    initArray(msg, l);
+    for(size_t i = 0; i < l; ++i)
+    {
+        msg->array[i] = convertToDec(listTakeAt(data, i * 8, 8));
+        insertArray(msg);
+    }
+
+    printf("Msg in: [");
+    for (size_t i = 0; i < msg->used - 1; ++i) 
+    {
+        printf("%u,", msg->array[i]);
+    }
+    printf("%u]\n", msg->array[msg->used-1]);
+
+    struct gf_tables *gf_table = malloc(sizeof(struct gf_tables));
+    gf_table->gf_exp = malloc(sizeof(struct Array));
+    gf_table->gf_log = malloc(sizeof(struct Array));
+    initArray(gf_table->gf_exp, 512);
+    initArray(gf_table->gf_log, 256);
+    gf_table = init_tables();
+
+    struct Array *err_loc;
+    struct Array *synd;
+    struct Array *pos;
+    struct Array *rev_pos;
+
+    size_t nsym = ECC_CODEWORDS_PER_BLOCK[level][version];
+    synd = rs_calc_syndromes(msg, nsym, gf_table);
+    err_loc = rs_find_error_locator(synd, nsym, 0, gf_table);
+    pos = rs_find_errors(reverse_arr(err_loc), msg->used, gf_table);
+    rev_pos = reverse_arr(pos);
+
+    msg = rs_correct_errdata(msg, synd, pos, gf_table);
+    printf("Msg out: [");
+    for (size_t i = 0; i < msg->used - 1; ++i) 
+    {
+        printf("%u,", msg->array[i]);
+    }
+    printf("%u]\n", msg->array[msg->used-1]);*/
+
 
     char* c_mode;                           // mode : 0001 / 0010 / 0100
                                             // the mode is the first 4 byte of

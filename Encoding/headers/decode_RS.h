@@ -6,10 +6,11 @@
 //  Copyright © 2018 Not A Barcode. All rights reserved.
 //
 
-#ifndef decode_h
-#define decode_h
+#ifndef _DECODE_RS_h
+#define _DECODE_RS_h
 
 #include <stdbool.h>
+#include "op.h"
 
 struct Array* rs_calc_syndromes(struct Array *msg, uint8_t nsym, struct gf_tables *gf_table);
 

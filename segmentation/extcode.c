@@ -256,6 +256,7 @@ double UpdateY(SDL_Surface *img, int center_x , int center_y, double Y, int bin)
         cup++;
         y--;
     }
+    
     y = center_y + 1;
     
     while((y < h) && get_BW(img, center_x, y) == bin)
@@ -506,7 +507,6 @@ struct QrCode *extract_QrCode (struct GeoImg *qrimg)
         }
         qr->version = V;
         SampleCodeV7_40(qrimg, qr, WA, WB, WC, HA, HB, HC);
-        //warn("next");
     }
     else if( V >= 2 && V <= 6)
     {

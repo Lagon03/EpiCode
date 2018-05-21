@@ -300,6 +300,8 @@
           <object class="GtkComboBox" id="level">
             <property name="width_request">60</property>
             <property name="height_request">28</property>
+<<<<<<< HEAD
+=======
             <property name="visible">True</property>
             <property name="sensitive">False</property>
             <property name="can_focus">False</property>
@@ -317,6 +319,123 @@
           <packing>
             <property name="x">612</property>
             <property name="y">142</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="clevel_label">
+            <property name="width_request">162</property>
+            <property name="height_request">80</property>
+>>>>>>> f156d9ff9f6a74cdaaae3b957b61a1c4b5e1e493
+            <property name="visible">True</property>
+            <property name="sensitive">False</property>
+            <property name="can_focus">False</property>
+<<<<<<< HEAD
+            <property name="model">liststore1</property>
+            <property name="active">0</property>
+            <property name="id_column">0</property>
+            <property name="active_id">0</property>
+            <child>
+              <object class="GtkCellRendererText" id="clevel"/>
+              <attributes>
+                <attribute name="text">0</attribute>
+              </attributes>
+            </child>
+          </object>
+          <packing>
+            <property name="x">612</property>
+            <property name="y">142</property>
+=======
+            <property name="label" translatable="yes">Correction level :</property>
+          </object>
+          <packing>
+            <property name="x">440</property>
+            <property name="y">114</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="version_label">
+            <property name="width_request">100</property>
+            <property name="height_request">80</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Version :</property>
+          </object>
+          <packing>
+            <property name="x">432</property>
+            <property name="y">150</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkComboBox" id="version">
+            <property name="width_request">60</property>
+            <property name="height_request">28</property>
+            <property name="visible">True</property>
+            <property name="sensitive">False</property>
+            <property name="can_focus">False</property>
+            <property name="model">liststore2</property>
+            <property name="active">0</property>
+            <property name="id_column">0</property>
+            <property name="active_id">0</property>
+            <child>
+              <object class="GtkCellRendererText" id="clevel1"/>
+              <attributes>
+                <attribute name="text">0</attribute>
+              </attributes>
+            </child>
+          </object>
+          <packing>
+            <property name="x">612</property>
+            <property name="y">175</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkComboBox" id="mask">
+            <property name="width_request">60</property>
+            <property name="height_request">28</property>
+            <property name="visible">True</property>
+            <property name="sensitive">False</property>
+            <property name="can_focus">False</property>
+            <property name="model">liststore3</property>
+            <property name="active">0</property>
+            <property name="id_column">0</property>
+            <property name="active_id">0</property>
+            <child>
+              <object class="GtkCellRendererText" id="clevel2"/>
+              <attributes>
+                <attribute name="text">0</attribute>
+              </attributes>
+            </child>
+          </object>
+          <packing>
+            <property name="x">612</property>
+            <property name="y">208</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="clevel_label1">
+            <property name="width_request">100</property>
+            <property name="height_request">80</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Mask :</property>
+          </object>
+          <packing>
+            <property name="x">418</property>
+            <property name="y">186</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkToggleButton" id="adv_opts">
+            <property name="label" translatable="yes">enable custom options</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <signal name="toggled" handler="on_adv_opts_toggled" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">447</property>
+            <property name="y">250</property>
+>>>>>>> f156d9ff9f6a74cdaaae3b957b61a1c4b5e1e493
           </packing>
         </child>
         <child>
@@ -434,6 +553,28 @@
           <object class="GtkImage" id="qrCode">
             <property name="width_request">200</property>
             <property name="height_request">200</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="stock">gtk-missing-image</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkWindow" id="output">
+    <property name="can_focus">False</property>
+    <property name="resizable">False</property>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <object class="GtkFixed">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <child>
+          <object class="GtkImage" id="qrCode">
+            <property name="width_request">400</property>
+            <property name="height_request">400</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="stock">gtk-missing-image</property>

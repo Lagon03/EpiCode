@@ -19,7 +19,7 @@ ASRC= ../Encoding/analysis/analysis.c
 MESRC= ../Encoding/msg_encoding/encode.c ../Encoding/msg_encoding/encode_message.c ../Encoding/msg_encoding/weaver.c
 DSRC= ../Encoding/draw/draw.c ../Encoding/draw/fill_mat.c ../Encoding/draw/mask.c
 GSRC= ../Encoding/gen_img/gen_img.c
-RSSRC= ../Encoding/error_cor/RS/array.c ../Encoding/error_cor/RS/op.c ../Encoding/error_cor/RS/encode_RS.c
+RSSRC= ../Encoding/error_cor/RS/array.c ../Encoding/error_cor/RS/op.c ../Encoding/error_cor/RS/encode_RS.c ../Encoding/error_cor/RS/decode_RS.c
 SSRC= ../sdl/mysdl.c
 MDSRC= ../Encoding/msg_decoding/decode.c ../Encoding/msg_decoding/unweaver.c ../Encoding/msg_decoding/decode_message.c
 

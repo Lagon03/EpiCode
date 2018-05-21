@@ -75,16 +75,23 @@ size_t* JtoL(char** words, size_t size, size_t err_words)
         uint8_t cur = (uint8_t)convertToDec(words[i]);
         msg_in->array[i] = cur;
         insertArray(msg_in);
+        //printf("%u ", cur);
     }
+    //printf("\n");
     struct Array* msg = malloc(sizeof(struct Array));
-    initArray(msg, 2);
 
+    printf("nsym : %li\n", err_words);
     msg = rs_encode_msg(msg_in, err_words, gf_table);
     size_t * output = malloc(sizeof(size_t) * err_words);
     for(size_t i = 0; i < err_words; ++i)
     {
         output[i] = msg->array[i + msg_in->used];
     }
+    /*for (size_t i = 0; i < msg->used; ++i) 
+    {
+        printf("%u ", msg->array[i]);
+    }*/
+
 
     free(gf_table->gf_exp);
     free(gf_table->gf_log);
