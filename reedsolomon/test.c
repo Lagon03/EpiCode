@@ -153,12 +153,22 @@ int main()
 	
 	synd = rs_calc_syndromes(msg, 14, gf_table);
 	printf("synd : ");
-	for (size_t i = 0; i < strlen(my_msg); i++) {
+	for (size_t i = 0; i < synd->used; i++) {
 		printf("%u, ",synd->array[i]);
 	}
 	printf("\n");
 	err_loc = rs_find_error_locator(synd, 14, 0, gf_table);
+	printf("err_loc : ");
+	for (size_t i = 0; i < err_loc->used; i++) {
+		printf("%u, ",err_loc->array[i]);
+	}
+	printf("\n");
 	pos = rs_find_errors(reverse_arr(err_loc), msg->used, gf_table);
+	printf("err_pos : ");
+	for (size_t i = 0; i < pos->used; i++) {
+		printf("%u, ",pos->array[i]);
+	}
+	printf("\n");
 	rev_pos = reverse_arr(pos);
 	
 	printf("Error positions: [");
@@ -171,7 +181,8 @@ int main()
 	initArray(err_pos, 3);
 	err_pos->array[0] = 0;
 	
-	msg = rs_correct_msg(msg, 20-msg->used, err_pos, gf_table);
+	//msg = rs_correct_errdata(msg, synd, pos, gf_table);
+	msg = rs_correct_msg(msg, 14, err_pos, gf_table);
 	
 	printf("Msg Corrected: [");
 	for (size_t i = 0; i < msg->used; i++) {
