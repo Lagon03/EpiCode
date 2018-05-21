@@ -16,18 +16,13 @@
 
 # include "headers/freect.h"
 
-int display;
-
 struct options* checkArg(int argc, char* argv[])
 {
     struct options *arg = malloc(sizeof(struct options));
-    display = 1;
     arg->message = NULL;
     arg->correction = -1;
     arg->mode = -1;
     arg->version = 99;
-    arg->epi = 0;
-    arg->output = "\0";
     for(int i = 1; i < argc; ++i)
     {
         if(strcmp(argv[i], "-d") == 0) { // arg for the data
@@ -41,18 +36,6 @@ struct options* checkArg(int argc, char* argv[])
             if (i >= argc)
                 err(1, "!!!--------> Error missing arguments.\n");
             arg->version = strtol(argv[i], NULL, 10);
-        }
-        else if(strcmp(argv[i], "-x") == 0) { // arg for the display
-            display = 0;
-        }
-        else if(strcmp(argv[i], "-t") == 0) { // arg for the epicode
-            arg->epi = 1;
-        }
-        else if(strcmp(argv[i], "-o") == 0) { // arg for the output
-            ++i;
-            if (i >= argc)
-                err(1, "!!!--------> Error missing arguments.\n");
-            arg->output = argv[i];
         }
         else if(strcmp(argv[i], "-c") == 0) {
             ++i;
@@ -87,15 +70,19 @@ struct options* checkArg(int argc, char* argv[])
 
 char* GenName(void)
 {
+    char* name = (char*)malloc(sizeof(char)*25);
     time_t rawtime;
-
-    char* name = (char*)malloc(sizeof(char)*17);
 
     time (&rawtime);
     struct tm  *timeinfo = localtime (&rawtime);
-    strftime(name, 16, "%d.%m - %H:%M", timeinfo);
+    strftime(name, sizeof(name)-1, "%d.%m", timeinfo);
 
-    name[16] = '\0';
+    name[5] = '\0';
+    //printf("%s\n", name);
+    name[0] = 't';
+    name[1] = 'e';
+    name[2] = 's';
+    name[3] = 't';
     return name;
 }
 
@@ -177,60 +164,17 @@ int enc_main (int argc, char* argv[])
     }
 
     //weave->size = weave->size + Remainder_bits[data->version];
-    /*printf("Interweaved data : \n");
+    printf("Interweaved data : \n");
       for(size_t i = 0; i < weave->size; ++i)
       printf("%ld ", weave->forest[i]);
       printf("\nLength : %li\n", weave->size);
       printf("Interweaved data to binary : \n%s\n", weave_trans);
       printf("Total length : %li | with %li remainder bits\n", (weave->size * 8)
-      + Remainder_bits[data->version], Remainder_bits[data->version]);*/
-    
-    
-    char* epic = malloc(sizeof(char));
-    if(arg->epi == 1) {
-        size_t epic_size = ((weave->size * 8) + Remainder_bits[data->version]) / 2;
-        free(epic);
-        char* epic = malloc((epic_size * 2) * sizeof(char));
-        for(size_t es = 0; es < epic_size ; ++es) {
-            // now we check the value of the epic char
-            // 00 -> white | 01 -> red
-            // 10 -> blue  | 11 -> green
-            if(weave_trans[es] == weave_trans[es + 1]) {
-                if (weave_trans[es] == '0')
-                    epic[es] = 'w';
-                else if (weave_trans[es] == '1')
-                    epic[es] = 'g';
-            }
-            else {
-                if (weave_trans[es] == '0')
-                    epic[es] = 'b';
-                else if (weave_trans[es] == '1')
-                    epic[es] = 'r';
-            }
-        }
-        for(size_t i = epic_size, k = 0; 
-                i < (weave->size * 8) + Remainder_bits[data->version]; ++i, ++k) {
-            if(weave_trans[k] == weave_trans[k + 1]) {
-                if (weave_trans[k] == '0')
-                    epic[i] = 'w';
-                else if (weave_trans[k] == '1')
-                    epic[i] = 'g';
-            }
-            else {
-                if (weave_trans[k] == '0')
-                    epic[i] = 'b';
-                else if (weave_trans[k] == '1')
-                    epic[i] = 'r';
-            }
-            if(k + 1 >= epic_size)
-                k = 0;
-        }
-        fill_mat(QrCode->mat, QrCode->size, data->version, epic, weave->size * 8 + Remainder_bits[data->version]);
-    }
-    else {
-        fill_mat(QrCode->mat, QrCode->size, data->version, weave_trans, (weave->size
-                    * 8) + Remainder_bits[data->version]);
-    }
+      + Remainder_bits[data->version], Remainder_bits[data->version]);
+
+    fill_mat(QrCode->mat, QrCode->size, data->version, weave_trans, (weave->size
+                * 8) + Remainder_bits[data->version]);
+
 
     setFormatString(QrCode, S_bits[data->correction_level][6]);
     if(data->version >= 7)
@@ -252,7 +196,7 @@ int enc_main (int argc, char* argv[])
             min = mask_point[i][4];
         }
     }
-    printf("Mask selected is %li\n", cur);
+    printf("Mask selected is %li\n", cur);    
 
     /*for(int i = 0; i < 8; ++i) {
       applyMask(QrCode->mat, QrCode->size, i);
@@ -276,15 +220,50 @@ int enc_main (int argc, char* argv[])
         setVersionString(QrCode, V_bits[data->version - 7]);
 
     char* name = GenName();
+    name = "test.bmp";
     if(data->version >= 15)
-        Generate_QrCode(QrCode->mat, data->version, name, 4, arg->output, display);
+        Generate_QrCode(QrCode->mat, data->version, name, 4);
     else
-        Generate_QrCode(QrCode->mat, data->version, name, 8, arg->output, display);
+        Generate_QrCode(QrCode->mat, data->version, name, 8);
+    /*char* test = "0100000001000101010001100101011100110111010000001110110000010001111011000101000010101101111011100100011110011010101101110000001111010101111100000001110101000001101111111110110001001000010110111010011010010111\0";
+    // "Test" should be the output
+    char* test2 = "01000000110001001000011001010110110001101100011011110010110000100000010101110110111101110010011011000110010000001110110000010001100111000000001010010110011100011010001100110110010010100101000100011010100101110111110010100100001010000010111100010001011100000110010000111011100101011110000101001010110100001111100110000000101101000000111100111001001100110000000\0";
+    // "Hello, World" should be the output
+    char *test3 = "001000001101110111000011010100110000101101010100011110001010101011010001001010110111001000000000110111001110110001001101000100010100010011101100110110100001000111000101111011000110111000010001001000011110110011110100110101000100011000110000000001100101111110001010001011010101101110100011011011100001011110111000010011111100100100101100011000111101110101010110001101000100000110111011111110111010101001000000110110001101111110111101111111101110001000101001101100101111001010100100100100100110110010101011101101001011011001111111011100010011001100000111111101100000000\0";
+    // "HELLO WORLD HOW ARE THOU" should be the output
+    char* string = decode(test, 1, 3);
+    printf("Decoded string : %s\n", string);
+    free(string);
+    string = decode(test2, 2, 3);
+    printf("Decoded string : %s\n", string);
+    free(string);
+    string = decode(test3, 3, 3);
+    printf("Decoded string : %s\n", string);
+    free(string);
+    string = decode(weave_trans, data->version, data->correction_level);
+    printf("Decoded string : %s\n", string);
+    free(string);   */ 
+
+    /*for(size_t x = 0; x < QrCode->size; ++x) {
+      free(QrCode->mat[x]);
+      }
+      free(QrCode->mat);
+      free(QrCode);
+
+      free(weave->forest);
+      free(weave);
+
+      freeCodeWords(data->codewords);
+    // need a custom made free function
+    free(data->character_count_ind);
+    free(data->encoded_data);
+    free(data);
+    free(arg);*/
+    // ---
 
     Completefree(data, arg, QrCode, weave);
 
     free(mod);
     free(weave_trans);
-    free(epic);
     return 1;
 }

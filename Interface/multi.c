@@ -19,6 +19,7 @@ GtkWidget* adv_opt;
 GtkWidget* level;
 GtkWidget* vers;
 GtkWidget* mask;
+GtkWidget* epi;
 
 GtkWidget* output;
 GtkWidget* qrcode;
@@ -28,6 +29,7 @@ GtkWidget* qrcode_d;
 GtkWidget* dialog;
 
 char *filename;
+char *saveAs;
 
 int demo = 0;
 
@@ -54,6 +56,7 @@ int main(int argc, char *argv[])
     level = GTK_WIDGET(gtk_builder_get_object(builder, "level"));
     vers = GTK_WIDGET(gtk_builder_get_object(builder, "version"));
     mask = GTK_WIDGET(gtk_builder_get_object(builder, "mask"));
+    epi = GTK_WIDGET(gtk_builder_get_object(builder, "epic"));
 
 
     dialog = GTK_WIDGET(gtk_builder_get_object(builder, "SET_FILE"));
@@ -96,6 +99,7 @@ void on_adv_opts_toggled()
 
 void on_button1_clicked()
 {
+    printf("path : %s\n", saveAs);
     gint c_level = 0;
     gint c_vers = 41;
     //gint c_mask = 8;
@@ -108,6 +112,7 @@ void on_button1_clicked()
         //c_mask = gtk_combo_box_get_active(GTK_COMBO_BOX(mask));
     }
 
+    gint epic = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(epi));
     char* s_level;
     switch(c_level)
     {
@@ -135,19 +140,36 @@ void on_button1_clicked()
         printf("Entry empty.\n");
     else
     {
-        char* cmd[7];
+        char* cmd[11];
+        int argc = 1;
         cmd[0] = "./enc_main";
-        cmd[1] = "-d";
-        cmd[2] = (char*)input_txt;
-        cmd[3] = "-c";
-        cmd[4] = s_level;
-        cmd[5] = "-v";
-        cmd[6] = s_vers;
-        int argc = 7;
+        cmd[1] = "-x";
+        cmd[2] = "-d";
+        cmd[3] = (char*)input_txt;
+        cmd[4] = "-c";
+        cmd[5] = s_level;
+        cmd[6] = "-v";
+        cmd[7] = s_vers;
+        argc = 8;
+        if(epic == 1 && saveAs) {
+            cmd[8] = "-o";
+            cmd[9] = saveAs;
+            cmd[10] = "-t";
+            argc = 11;
+        }
+        else if(epic) {
+            cmd[8] = "-t";
+            argc = 9;
+        }
+        else if(saveAs) {
+            cmd[8] = "-o";
+            cmd[9] = saveAs;
+            argc = 10;
+        }
 
-        enc_main(argc , cmd);
+        enc_main(argc, cmd);
         gtk_widget_show(output);
-        gtk_image_set_from_file(GTK_IMAGE(qrcode), "./output/test.bmp");
+        gtk_image_set_from_file(GTK_IMAGE(qrcode), saveAs);
 
         GdkPixbuf *pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(qrcode));
         if (pixbuf == NULL)
@@ -248,3 +270,41 @@ void file_set()
 
 void changed_file() {}
 void cancel_clicked_cb() {}
+
+void quit_output() {
+    gtk_widget_hide(output);
+}
+
+void save_file() {
+    GtkWidget *dialog;
+    GtkFileChooser *chooser;
+    GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_SAVE;
+    gint res;
+
+    dialog = gtk_file_chooser_dialog_new ("Save File",
+            GTK_WINDOW(output),
+            action,
+            ("_Cancel"),
+            GTK_RESPONSE_CANCEL,
+            ("_Save"),
+            GTK_RESPONSE_ACCEPT,
+            NULL);
+    chooser = GTK_FILE_CHOOSER (dialog);
+
+    gtk_file_chooser_set_do_overwrite_confirmation (chooser, TRUE);
+
+    gtk_file_chooser_set_filename (chooser,
+            "output/test.bmp");
+
+    res = gtk_dialog_run (GTK_DIALOG (dialog));
+    if (res == GTK_RESPONSE_ACCEPT)
+    {
+        char *filename;
+
+        filename = gtk_file_chooser_get_filename (chooser);
+        saveAs = filename;
+        //g_free (filename);
+    }
+
+    gtk_widget_destroy (dialog);
+}

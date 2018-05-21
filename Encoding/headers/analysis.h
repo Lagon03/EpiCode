@@ -11,6 +11,8 @@ struct options
   int correction;
   int mode;
   int version;
+  int epi;
+  char* output;
 };
 
 enum data

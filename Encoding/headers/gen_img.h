@@ -9,6 +9,7 @@
 
 # include "../../sdl/mysdl.h"
 
-void Generate_QrCode(char **mat, int version, const char *name, int mod_size);
+void Generate_QrCode(char **mat, int version, const char *name, int mod_size,
+        char* outPath, int display);
 
 # endif

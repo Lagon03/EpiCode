@@ -55,6 +55,6 @@ clean:
 	${RM} ${DOBJ} ${DDEP} *-
 	${RM} ${EOBJ} ${EDEP} *-
 	${RM} ${TARGET1} ${TARGET2} multi
-	${RM} *.d
+	${RM} *.d multi.o
 
 -include ${DDEP} $ ${EDEP}

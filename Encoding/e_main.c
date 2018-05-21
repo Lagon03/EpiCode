@@ -16,13 +16,18 @@
 
 # include "headers/freect.h"
 
+int display;
+
 struct options* checkArg(int argc, char* argv[])
 {
     struct options *arg = malloc(sizeof(struct options));
+    display = 1;
     arg->message = NULL;
     arg->correction = -1;
     arg->mode = -1;
     arg->version = 99;
+    arg->epi = 0;
+    arg->output = "\0";
     for(int i = 1; i < argc; ++i)
     {
         if(strcmp(argv[i], "-d") == 0) { // arg for the data
@@ -36,6 +41,18 @@ struct options* checkArg(int argc, char* argv[])
             if (i >= argc)
                 err(1, "!!!--------> Error missing arguments.\n");
             arg->version = strtol(argv[i], NULL, 10);
+        }
+        else if(strcmp(argv[i], "-x") == 0) { // arg for the display
+            display = 0;
+        }
+        else if(strcmp(argv[i], "-t") == 0) { // arg for the epicode
+            arg->epi = 1;
+        }
+        else if(strcmp(argv[i], "-o") == 0) { // arg for the output
+            ++i;
+            if (i >= argc)
+                err(1, "!!!--------> Error missing arguments.\n");
+            arg->output = argv[i];
         }
         else if(strcmp(argv[i], "-c") == 0) {
             ++i;
@@ -167,10 +184,53 @@ int main (int argc, char* argv[])
       printf("Interweaved data to binary : \n%s\n", weave_trans);
       printf("Total length : %li | with %li remainder bits\n", (weave->size * 8)
       + Remainder_bits[data->version], Remainder_bits[data->version]);*/
-
-    fill_mat(QrCode->mat, QrCode->size, data->version, weave_trans, (weave->size
-                * 8) + Remainder_bits[data->version]);
-
+    
+    
+    char* epic = malloc(sizeof(char));
+    if(arg->epi == 1) {
+        size_t epic_size = ((weave->size * 8) + Remainder_bits[data->version]) / 2;
+        free(epic);
+        char* epic = malloc((epic_size * 2) * sizeof(char));
+        for(size_t es = 0; es < epic_size ; ++es) {
+            // now we check the value of the epic char
+            // 00 -> white | 01 -> red
+            // 10 -> blue  | 11 -> green
+            if(weave_trans[es] == weave_trans[es + 1]) {
+                if (weave_trans[es] == '0')
+                    epic[es] = 'w';
+                else if (weave_trans[es] == '1')
+                    epic[es] = 'g';
+            }
+            else {
+                if (weave_trans[es] == '0')
+                    epic[es] = 'b';
+                else if (weave_trans[es] == '1')
+                    epic[es] = 'r';
+            }
+        }
+        for(size_t i = epic_size, k = 0; 
+                i < (weave->size * 8) + Remainder_bits[data->version]; ++i, ++k) {
+            if(weave_trans[k] == weave_trans[k + 1]) {
+                if (weave_trans[k] == '0')
+                    epic[i] = 'w';
+                else if (weave_trans[k] == '1')
+                    epic[i] = 'g';
+            }
+            else {
+                if (weave_trans[k] == '0')
+                    epic[i] = 'b';
+                else if (weave_trans[k] == '1')
+                    epic[i] = 'r';
+            }
+            if(k + 1 >= epic_size)
+                k = 0;
+        }
+        fill_mat(QrCode->mat, QrCode->size, data->version, epic, weave->size * 8 + Remainder_bits[data->version]);
+    }
+    else {
+        fill_mat(QrCode->mat, QrCode->size, data->version, weave_trans, (weave->size
+                    * 8) + Remainder_bits[data->version]);
+    }
 
     setFormatString(QrCode, S_bits[data->correction_level][6]);
     if(data->version >= 7)
@@ -192,7 +252,7 @@ int main (int argc, char* argv[])
             min = mask_point[i][4];
         }
     }
-    printf("Mask selected is %li\n", cur);    
+    printf("Mask selected is %li\n", cur);
 
     /*for(int i = 0; i < 8; ++i) {
       applyMask(QrCode->mat, QrCode->size, i);
@@ -217,13 +277,14 @@ int main (int argc, char* argv[])
 
     char* name = GenName();
     if(data->version >= 15)
-        Generate_QrCode(QrCode->mat, data->version, name, 4);
+        Generate_QrCode(QrCode->mat, data->version, name, 4, arg->output, display);
     else
-        Generate_QrCode(QrCode->mat, data->version, name, 8);
-    
+        Generate_QrCode(QrCode->mat, data->version, name, 8, arg->output, display);
+
     Completefree(data, arg, QrCode, weave);
 
     free(mod);
     free(weave_trans);
+    free(epic);
     return 1;
 }

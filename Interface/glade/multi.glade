@@ -454,7 +454,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="clevel_label1">
+          <object class="GtkLabel" id="mask_label1">
             <property name="width_request">100</property>
             <property name="height_request">80</property>
             <property name="visible">True</property>
@@ -476,7 +476,32 @@
           </object>
           <packing>
             <property name="x">447</property>
-            <property name="y">250</property>
+            <property name="y">275</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkToggleButton" id="epic">
+            <property name="label" translatable="yes">Epicode</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+          </object>
+          <packing>
+            <property name="x">447</property>
+            <property name="y">243</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkToggleButton" id="_save">
+            <property name="label" translatable="yes">Save as...</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <signal name="toggled" handler="save_file" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">542</property>
+            <property name="y">243</property>
           </packing>
         </child>
       </object>
@@ -503,14 +528,16 @@
         </child>
         <child>
           <object class="GtkButton">
-            <property name="label" translatable="yes">button</property>
+            <property name="label" translatable="yes">Quit</property>
+            <property name="width_request">100</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <signal name="clicked" handler="quit_output" swapped="no"/>
           </object>
           <packing>
-            <property name="x">153</property>
-            <property name="y">410</property>
+            <property name="x">145</property>
+            <property name="y">400</property>
           </packing>
         </child>
       </object>
