@@ -68,6 +68,31 @@ static int modeToInt(char* mode)
         return 2;
 }
 
+char* convertEpi(char* input, size_t max_size) {
+    char* buffer = malloc((max_size +1) * sizeof(char));
+    buffer[max_size] = '\0';
+    for(size_t es = 0, k = 0; (input[es] != '\0' && k < max_size - 1);
+            ++es, k += 2) {
+        if(input[es] == 'w') {
+            buffer[k] = '0';
+            buffer[k + 1] = '0';
+        }
+        if(input[es] == 'r') {
+            buffer[k] = '0';
+            buffer[k + 1] = '1';
+        }
+        if(input[es] == 'g') {
+            buffer[k] = '1';
+            buffer[k + 1] = '1';
+        }
+        if(input[es] == 'b') {
+            buffer[k] = '1';
+            buffer[k + 1] = '0';
+        }
+    }
+    return buffer;
+}
+
 char* decode(char* input, int version, int level)
 {
     /*
@@ -195,10 +220,11 @@ char* decode(char* input, int version, int level)
             {           
                 strncat(data, DCR->group[g]->blocks[b]->words[w], 8);
             }
-
         }
     }
-    freeCodeWords(DCR);   
+    freeCodeWords(DCR);
+    if((data[0] == 'w') | (data[0] == 'b') | (data[0] == 'r') | (data[0] == 'g'))
+        data = convertEpi(data, l_data);
     
     printf("Data retrieve from segmentation : %s\n", data);
 
