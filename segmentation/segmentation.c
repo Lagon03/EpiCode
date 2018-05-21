@@ -134,7 +134,7 @@ struct PCode *SegmentationEpi(SDL_Surface *img, SDL_Surface *color)
         err(EXIT_FAILURE, "Segmentation error : No Valid QrCode found");
     struct GeoImg *g = GeoTransform(img, fp);
     ImageProcessing(g->img);
-    struct GeoImg *gcolor = GeoTransfrom(color, fp);
+    struct GeoImg *gcolor = GeoTransform(color, fp);
     display_image(gcolor->img);
     struct QrCode *qr = extract_QrCode(g);
     struct PCode *c = get_code(qr);
@@ -206,7 +206,7 @@ struct PCode *SegmentationFromFile(char *File, int Demo)
     return c;
 }
 
-/*int main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
     if(argc > 2 && strcmp(argv[2], "-d") == 0)
         SegmentationFromFile(argv[1], 1);
@@ -215,4 +215,4 @@ struct PCode *SegmentationFromFile(char *File, int Demo)
     else
         return EXIT_FAILURE;
     return EXIT_SUCCESS;
-}*/
+}

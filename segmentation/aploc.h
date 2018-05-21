@@ -9,6 +9,6 @@
 # include "Dmat.h"
 # include "../sdl/mysdl.h"
 
-void APScan(SDL_Surface *img, double *Px, double *Py);
+void ScanAP(SDL_Surface *img, double *Px, double *Py);
 
 #endif
