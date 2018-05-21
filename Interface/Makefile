@@ -13,6 +13,7 @@ GTKLIB=`pkg-config --cflags --libs gtk+-3.0`
 
 DISRC= decode.c
 EISRC= main.c
+MISRC= multi.c
 
 MSRC= ../Encoding/enc_main.c ../Encoding/freect.c
 ASRC= ../Encoding/analysis/analysis.c
@@ -36,12 +37,16 @@ DDEP=${DISRC:.c=.d} ${MSRC:.c=.d} ${ASRC:.c=.d} ${MESRC:.c=.d} ${DSRC:.c=.d} ${G
 EOBJ=${EISRC:.c=.o} ${MSRC:.c=.o} ${ASRC:.c=.o} ${MESRC:.c=.o} ${DSRC:.c=.o} ${GSRC:.c=.o} ${RSSRC:.c=.o} ${SSRC:.c=.o} ${MDSRC:.c=.o}
 EDEP=${EISRC:.c=.d} ${MSRC:.c=.d} ${ASRC:.c=.d} ${MESRC:.c=.d} ${DSRC:.c=.d} ${GSRC:.c=.d} ${RSSRC:.c=.d} ${SSRC:.c=.d} ${MDSRC:.c=.d}
 
-all : epicode epidec 
+MEOBJ= ${MISRC:.c=.o} ${MSRC:.c=.o} ${ASRC:.c=.o} ${MESRC:.c=.o} ${DSRC:.c=.o} ${GSRC:.c=.o} ${RSSRC:.c=.o} ${SSRC:.c=.o} ${MDSRC:.c=.o} ${IPSRC:.c=.o} ${SGSRC:.c=.o} ${BSSRC:.c=.o} ${MSSRC:.c=.o}
+
+all : epicode epidec multi 
 
 epicode: ${EOBJ}
 	${CC} ${CFLAGS} ${CPPFLAGS} ${EOBJ} ${LDLIBS} ${GTKLIB} -o ${TARGET2}
 epidec: ${DOBJ}
 	${CC} ${CFLAGS} ${CPPFLAGS} ${DOBJ} ${LDLIBS} ${GTKLIB} -o ${TARGET1}
+multi: ${MEOBJ}
+	${CC} ${CFLAGS} ${CPPFLAGS} ${MEOBJ} ${LDLIBS} ${GTKLIB} -o multi
 
 
 .PHONY: clean
@@ -49,7 +54,7 @@ epidec: ${DOBJ}
 clean:
 	${RM} ${DOBJ} ${DDEP} *-
 	${RM} ${EOBJ} ${EDEP} *-
-	${RM} ${TARGET1} ${TARGET2}
+	${RM} ${TARGET1} ${TARGET2} multi
 	${RM} *.d
 
 -include ${DDEP} $ ${EDEP}
