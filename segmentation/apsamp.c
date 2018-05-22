@@ -89,24 +89,28 @@ char get_CL(SDL_Surface *img, int x, int y)
     Uint32 pixel = getpixel(img, x, y);
     Uint8 r, g, b;
     SDL_GetRGB(pixel, img->format, &r, &g, &b);
-    if(g == b && g == r)
+    if(b == 255 && g == 255 && r == 255)
     {
-        return 'w';
+        return '0';
     }
-    else if( g > b && g > r)
+    else if(g == 0 && r == 0 && b == 0)
+    {
+        return '1';
+    }
+    else if( g >= b && g >= r)
     {
         return 'g';
     }
-    else if( r > b && r > g)
+    else if( r >= b && r >= g)
     {
         return 'r';
     }
-    else if( b > r && b > g)
+    else if( b >= r && b >= g)
     {
         return 'b';
     }
     else
-        return 'w';
+        return '0';
 }
 
 int checkRatio(int *state, double msize)
@@ -130,7 +134,7 @@ int checkRatio(int *state, double msize)
 }
 
 static inline
-void SampleGridKernelE(SDL_Surface *img, char **mat,
+void SampleGridKernelE(char **mat,
 double XA, double YA, double XB, double YB, double XC, double YC, double XD, double YD, 
 double CPxp, double CPyp, double CPx, double CPy,
 int AP, int pX, int pY, SDL_Surface *co)
@@ -172,7 +176,7 @@ int AP, int pX, int pY, SDL_Surface *co)
 }
 
 static inline
-void SampleGridBorderLeftE(SDL_Surface *img, char **mat,
+void SampleGridBorderLeftE(char **mat,
 double XA, double YA, double XC, double YC,
 double CPyp, double CPAx, double CPCx, int AP, int pY, SDL_Surface *co)
 {
@@ -203,7 +207,7 @@ double CPyp, double CPAx, double CPCx, int AP, int pY, SDL_Surface *co)
 }
 
 static inline
-void SampleGridBorderTopE(SDL_Surface *img, char **mat,
+void SampleGridBorderTopE(char **mat,
 double XA, double YA, double XB, double YB,
 double CPxp, double CPAy, double CPBy, int AP, int pX, SDL_Surface *co)
 {
@@ -234,7 +238,7 @@ double CPxp, double CPAy, double CPBy, int AP, int pX, SDL_Surface *co)
 }
 
 static inline
-void SampleGridBorderBottomE(SDL_Surface *img, char **mat,
+void SampleGridBorderBottomE(char **mat,
 double XC, double YC, double XD, double YD,
 double CPx, double CPCy, double CPy, int AP, int pX, int SNB, SDL_Surface *co)
 {
@@ -268,7 +272,7 @@ double CPx, double CPCy, double CPy, int AP, int pX, int SNB, SDL_Surface *co)
 }
 
 static inline
-void SampleGridBorderRightE(SDL_Surface *img, char **mat,
+void SampleGridBorderRightE(char **mat,
 double XB, double YB, double XD, double YD,
 double CPx, double CPBx, double CPy, int AP, int pY, int SNB, SDL_Surface *co)
 {
@@ -302,7 +306,7 @@ double CPx, double CPBx, double CPy, int AP, int pY, int SNB, SDL_Surface *co)
 }
 
 static inline
-void SampleGridCornerE(SDL_Surface *img, char **mat,
+void SampleGridCornerE(char **mat,
 double XD, double YD,
 double CPx, double CPy, int AP, int SNB, SDL_Surface *co)
 {
@@ -585,8 +589,6 @@ int WC, int HA, int HB, int HC, SDL_Surface *co)
     double CPAy = (double)HA / 7;
     double CPBy = (double)HB / 7;
     double CPCy = (double)HC / 7;
-    double CPX = (CPAx + CPBx + CPCx)/3;
-    double CPY = (CPAy + CPBy + CPCy)/3;
     double XA = qrimg->coordA[0] + 3 * CPAx;
     double YA = qrimg->coordA[1] + 3 * CPAy;
     double XB = qrimg->coordB[0] - 3 * CPBx;
@@ -610,21 +612,21 @@ int WC, int HA, int HB, int HC, SDL_Surface *co)
     double CPx = Lx / distAP;
     double CPy = Ly / distAP;
     //SampleGridKernel A->P
-    SampleGridKernelE(qrimg->img, mat, XA, YA, XB, YB, XC, YC, Px, Py, CPxp,
+    SampleGridKernelE(mat, XA, YA, XB, YB, XC, YC, Px, Py, CPxp,
 CPyp, CPx, CPy, distAP, 0, 0, co);
     //SampleGridBorders
-    SampleGridBorderLeftE(qrimg->img, mat, XA, YA, XC, YC, CPyp, CPAx, CPCx,
+    SampleGridBorderLeftE(mat, XA, YA, XC, YC, CPyp, CPAx, CPCx,
 distAP, 0, co);
-    SampleGridBorderTopE(qrimg->img, mat, XA, YA, XB, YB, CPxp, CPAy, CPBy,
+    SampleGridBorderTopE(mat, XA, YA, XB, YB, CPxp, CPAy, CPBy,
 distAP, 0, co);
         //we should try to find CPxend and CPyend for better Sampling for
         //bot/right and corner
-    SampleGridBorderBottomE(qrimg->img, mat, XC, YC, Px, Py, CPx, CPCy, CPy,
+    SampleGridBorderBottomE(mat, XC, YC, Px, Py, CPx, CPCy, CPy,
 distAP, 0, 0 ,co);
-    SampleGridBorderRightE(qrimg->img, mat, XB, YB, Px, Py, CPx, CPBx, CPy,
+    SampleGridBorderRightE(mat, XB, YB, Px, Py, CPx, CPBx, CPy,
 distAP, 0, 0, co);
     //Sample Grid Corner
-    SampleGridCornerE(qrimg->img, mat, Px, Py, CPx, CPy, distAP, 0, co);
+    SampleGridCornerE(mat, Px, Py, CPx, CPy, distAP, 0, co);
     qr->mat = mat;
     Draw_point(qrimg->img, Px, Py);
 }
@@ -736,7 +738,7 @@ int WC, int HA, int HB, int HC, SDL_Surface *co)
             CPxs[y + 1][x] = CPx;
             CPys[y][x] = CPy;
             CPys[y][x + 1] = CPy;
-            SampleGridKernelE(qrimg->img, mat, APStack[x][y][0],
+            SampleGridKernelE(mat, APStack[x][y][0],
             APStack[x][y][1], APStack[x+1][y][0], APStack[x+1][y][1],
             APStack[x][y+1][0], APStack[x][y+1][1], APStack[x + 1][y + 1][0],
             APStack[x + 1][y + 1][1], CPxs[y][x], CPys[y][x], CPxs[y + 1][x], 
@@ -754,19 +756,19 @@ int WC, int HA, int HB, int HC, SDL_Surface *co)
     {
         if(y == 0)
         {
-            SampleGridBorderLeftE(qrimg->img, mat,
+            SampleGridBorderLeftE(mat,
             APStack[0][0][0], APStack[0][0][1], APStack[0][1][0],
             APStack[0][1][1], CPys[0][0], CPAx, CPxs[1][0], distAP, 0,co);
         }
         else if(y == SampleKNb - 2)
         { 
-            SampleGridBorderLeftE(qrimg->img, mat,
+            SampleGridBorderLeftE(mat,
             APStack[0][y][0], APStack[0][y][1], APStack[0][y + 1][0],
             APStack[0][y + 1][1], CPys[y][0], CPxs[y][0], CPCx, distAP, y,co);   
         }
         else
         {
-            SampleGridBorderLeftE(qrimg->img, mat,
+            SampleGridBorderLeftE(mat,
             APStack[0][y][0], APStack[0][y][1], APStack[0][y + 1][0],
             APStack[0][y + 1][1], CPys[y][0], CPxs[y][0], CPxs[y + 1][0],
 distAP, y,co);
@@ -778,19 +780,19 @@ distAP, y,co);
     {
         if(x == 0)
         {
-            SampleGridBorderTopE(qrimg->img, mat,
+            SampleGridBorderTopE(mat,
             APStack[0][0][0], APStack[0][0][1], APStack[1][0][0],
             APStack[1][0][1], CPxs[0][0], CPAy, CPys[0][1], distAP, 0,co);
         }
         else if(x == SampleKNb - 2)
         { 
-            SampleGridBorderTopE(qrimg->img, mat,
+            SampleGridBorderTopE(mat,
             APStack[x][0][0], APStack[x][0][1], APStack[x + 1][0][0],
             APStack[x + 1][0][1], CPxs[0][x], CPys[0][x], CPBy, distAP, x,co);   
         }
         else
         {
-            SampleGridBorderTopE(qrimg->img, mat,
+            SampleGridBorderTopE(mat,
             APStack[x][0][0], APStack[x][0][1], APStack[x + 1][0][0],
             APStack[x + 1][0][1], CPxs[0][x], CPys[0][x], CPys[0][x + 1],
 distAP, x,co);
@@ -803,14 +805,14 @@ distAP, x,co);
     {
         if(x == 0)
         {
-            SampleGridBorderBottomE(qrimg->img, mat,
+            SampleGridBorderBottomE(mat,
             APStack[0][yend][0], APStack[0][yend][1], APStack[1][yend][0],
             APStack[1][yend][1], CPxs[yend][0], CPCy, CPys[yend - 1][1], distAP,
 0, yend - 1,co);
         }
         else
         {
-            SampleGridBorderBottomE(qrimg->img, mat,
+            SampleGridBorderBottomE(mat,
             APStack[x][yend][0], APStack[x][yend][1], APStack[x + 1][yend][0],
             APStack[x + 1][yend][1], CPxs[yend][x], CPys[yend - 1][x], CPys[yend
 - 1][x + 1], distAP, x, yend - 1, co);
@@ -823,21 +825,21 @@ distAP, x,co);
     {
         if(y == 0)
         {
-            SampleGridBorderRightE(qrimg->img, mat,
+            SampleGridBorderRightE(mat,
             APStack[xend][0][0], APStack[xend][0][1], APStack[xend][1][0],
             APStack[xend][1][1], CPxs[1][xend - 1], CPBx, CPys[0][xend], distAP,
 0, xend - 1,co);
         }
         else
         {
-            SampleGridBorderRightE(qrimg->img, mat,
+            SampleGridBorderRightE(mat,
             APStack[xend][y][0], APStack[xend][y][1], APStack[xend][y + 1][0],
             APStack[xend][y + 1][1], CPxs[y + 1][xend - 1], CPxs[y][xend - 1],
 CPys[y][xend], distAP, y, xend - 1, co);
         }
     }
     
-    SampleGridCornerE(qrimg->img, mat, APStack[SampleKNb - 1][SampleKNb - 1][0],
+    SampleGridCornerE(mat, APStack[SampleKNb - 1][SampleKNb - 1][0],
     APStack[SampleKNb - 1][SampleKNb - 1][1], CPxs[yend][xend - 1], 
     CPys[yend -1][xend], distAP, xend - 1, co);
     
@@ -867,8 +869,6 @@ void SampleCodeV2_6(struct GeoImg *qrimg, struct QrCode *qr, int WA, int WB, int
     double CPAy = (double)HA / 7;
     double CPBy = (double)HB / 7;
     double CPCy = (double)HC / 7;
-    double CPX = (CPAx + CPBx + CPCx)/3;
-    double CPY = (CPAy + CPBy + CPCy)/3;
     double XA = qrimg->coordA[0] + 3 * CPAx;
     double YA = qrimg->coordA[1] + 3 * CPAy;
     double XB = qrimg->coordB[0] - 3 * CPBx;
@@ -1024,7 +1024,6 @@ void SampleCodeV7_40(struct GeoImg *qrimg, struct QrCode *qr, int WA, int WB, in
         x = 0;
         y++;
     }
-    
     //Left Border
     for(int y = 0; y < SampleKNb - 1; y++)
     {
@@ -1110,9 +1109,8 @@ void SampleCodeV7_40(struct GeoImg *qrimg, struct QrCode *qr, int WA, int WB, in
     SampleGridCorner(qrimg->img, mat, APStack[SampleKNb - 1][SampleKNb - 1][0],
     APStack[SampleKNb - 1][SampleKNb - 1][1], CPxs[yend][xend - 1], 
     CPys[yend -1][xend], distAP, xend - 1);
-    
     //print_mat(mat, size);
-    draw_AP(APStack, SampleKNb, qrimg->img);
+    //draw_AP(APStack, SampleKNb, qrimg->img);
     //display_image(qrimg->img);
     //print_AP(APStack, SampleKNb);
     qr->mat = mat; 

@@ -133,7 +133,7 @@ struct PCode *Segmentation(SDL_Surface *img)
     struct PCode *c = get_code(qr);
     free_segmentation(f, fp, g, qr);
     SDL_FreeSurface(img);
-    return c;
+    return NULL;
 }
 
 
@@ -147,7 +147,7 @@ struct PCode *SegmentationEpi(SDL_Surface *img, SDL_Surface *color)
     struct GeoImg *g = GeoTransform(img, fp);
     ImageProcessing(g->img);
     struct GeoImg *gcolor = GeoTransform(color, fp);
-    display_image(gcolor->img);
+    //display_image(gcolor->img);
     struct QrCode *qr = extract_EpCode(g, gcolor);
     struct PCode *c = get_code(qr);
     writeWhiteEpi(c->BStream);

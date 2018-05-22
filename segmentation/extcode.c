@@ -599,7 +599,6 @@ struct QrCode *extract_QrCode (struct GeoImg *qrimg)
     double X = (WA + WB) / 14;
 
     int V = round((D / X - 10) / 4);
-    
     if( V >= 7 && V <= 40)
     {
         V = GetVersionV7_40N2(qrimg, HB, WB);

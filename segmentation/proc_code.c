@@ -266,24 +266,24 @@ struct PCode *get_code(struct QrCode *qr)
     struct PCode *code = malloc(sizeof(struct PCode));
     
     //TransposeMat(qr->mat, qr->version * 4 + 17);
-    print_mat(qr->mat, qr->version * 4 + 17);
-    warn("Starting Mat->BStream");
+    //print_mat(qr->mat, qr->version * 4 + 17);
+    //warn("Starting Mat->BStream");
     char *fmt1 = get_format1(qr->mat);
     int fmtIndex = CorrectFormat(fmt1);
-    warn("fmt1 = %s, Correction : %d", fmt1, fmtIndex);
+    //warn("fmt1 = %s, Correction : %d", fmt1, fmtIndex);
     if(fmtIndex == -1)
     {
         fmtIndex = CorrectFormatInv(fmt1);
-        warn("INV fmt1 = %s, Correction : %d", fmt1, fmtIndex);
+        //warn("INV fmt1 = %s, Correction : %d", fmt1, fmtIndex);
         if(fmtIndex == -1)
         {
             char *fmt2 = get_format2(qr->mat, qr->version);
             fmtIndex = CorrectFormat(fmt2);
-            warn("fmt2 = %s, Correction : %d", fmt2, fmtIndex);
+            //warn("fmt2 = %s, Correction : %d", fmt2, fmtIndex);
             if(fmtIndex == -1)
             {
                 fmtIndex = CorrectFormatInv(fmt2);
-                warn("INV fmt2 = %s, Correction : %d", fmt2, fmtIndex);
+                //warn("INV fmt2 = %s, Correction : %d", fmt2, fmtIndex);
                 if(fmtIndex == -1)
                     err(EXIT_FAILURE, "Segmentation error : Corrupted Format");
                 else
@@ -297,14 +297,14 @@ struct PCode *get_code(struct QrCode *qr)
         } 
     }
     free(fmt1);
-    warn("End Format correction");
-    print_mat(qr->mat, qr->version * 4 + 17);
+    //warn("End Format correction");
+    //print_mat(qr->mat, qr->version * 4 + 17);
     char ECL = GetErrorCorrectionlvl(fmtIndex);
     int Mask = fmtIndex % 8;
     size_t size = qr->version * 4 + 17;
     //print_mat(qr->mat, size);
     color_spec_pat(qr->mat, qr->version);
-    print_mat(qr->mat, size);
+    //print_mat(qr->mat, size);
     demask(qr->mat, size, Mask);
     //print_mat(qr->mat, size); 
     char* msg = ext_cyphmsg(qr->mat, size, qr->version);
