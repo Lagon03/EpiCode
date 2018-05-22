@@ -1,6 +1,6 @@
 # executable output name
 TARGET1=epidec
-TARGET2=epicode
+TARGET2=epicod
 
 # compiler
 CC=gcc #-fsanitize=address
@@ -39,14 +39,14 @@ EDEP=${EISRC:.c=.d} ${MSRC:.c=.d} ${ASRC:.c=.d} ${MESRC:.c=.d} ${DSRC:.c=.d} ${G
 
 MEOBJ= ${MISRC:.c=.o} ${MSRC:.c=.o} ${ASRC:.c=.o} ${MESRC:.c=.o} ${DSRC:.c=.o} ${GSRC:.c=.o} ${RSSRC:.c=.o} ${SSRC:.c=.o} ${MDSRC:.c=.o} ${IPSRC:.c=.o} ${SGSRC:.c=.o} ${BSSRC:.c=.o} ${MSSRC:.c=.o}
 
-all : epicode epidec multi 
+all : epicod epidec Epicode 
 
-epicode: ${EOBJ}
+epicod: ${EOBJ}
 	${CC} ${CFLAGS} ${CPPFLAGS} ${EOBJ} ${LDLIBS} ${GTKLIB} -o ${TARGET2}
 epidec: ${DOBJ}
 	${CC} ${CFLAGS} ${CPPFLAGS} ${DOBJ} ${LDLIBS} ${GTKLIB} -o ${TARGET1}
 multi: ${MEOBJ}
-	${CC} ${CFLAGS} ${CPPFLAGS} ${MEOBJ} ${LDLIBS} ${GTKLIB} -o multi
+	${CC} ${CFLAGS} ${CPPFLAGS} ${MEOBJ} ${LDLIBS} ${GTKLIB} -o epicode
 
 
 .PHONY: clean
@@ -54,7 +54,7 @@ multi: ${MEOBJ}
 clean:
 	${RM} ${DOBJ} ${DDEP} *-
 	${RM} ${EOBJ} ${EDEP} *-
-	${RM} ${TARGET1} ${TARGET2} multi
-	${RM} *.d multi.o
+	${RM} ${TARGET1} ${TARGET2} epicode
+	${RM} *.d epicode.o
 
 -include ${DDEP} $ ${EDEP}
