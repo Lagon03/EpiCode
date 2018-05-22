@@ -224,8 +224,8 @@ struct PCode *SegmentationFromFile(char *File, int Demo)
     SDL_Quit();
     return c;
 }
-/*
-int main(int argc, char *argv[])
+
+/*int main(int argc, char *argv[])
 {
     if(argc > 2)
     {

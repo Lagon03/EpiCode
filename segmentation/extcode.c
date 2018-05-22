@@ -601,13 +601,16 @@ struct QrCode *extract_QrCode (struct GeoImg *qrimg)
     int V = round((D / X - 10) / 4);
     if( V >= 7 && V <= 40)
     {
+        //printf("%d\n", V);
         V = GetVersionV7_40N2(qrimg, HB, WB);
-        if( V == 6)
+        //printf("%d\n", V);
+        /*if( V == 6)
         {
             V = GetVersionV7_40N1(qrimg, HC, WB);
             if( V == 6)
                 err(EXIT_FAILURE, "Segmentation error : Version Corrupted");
-        }
+                SampleCodeV7_40(qrimg, qr, WA, WB, WC, HA, HB, HC);
+        }*/
         qr->version = V;
         SampleCodeV7_40(qrimg, qr, WA, WB, WC, HA, HB, HC);
     }
@@ -653,12 +656,16 @@ struct QrCode *extract_EpCode (struct GeoImg *qrimg, struct GeoImg *coimg)
     if( V >= 7 && V <= 40)
     {
         V = GetVersionV7_40N2(qrimg, HB, WB);
-        if( V == 6)
+        /*if( V == 6)
         {
             V = GetVersionV7_40N1(qrimg, HC, WB);
             if( V == 6)
-                err(EXIT_FAILURE, "Segmentation error : Version Corrupted");
-        }
+            {
+                //warn("wrong version maybe");
+                //err(EXIT_FAILURE, "Segmentation error : Version Corrupted");
+                SampleCodeV7_40E(qrimg, qr, WA, WB, WC, HA, HB, HC, coimg->img);
+            }
+        }*/
         qr->version = V;
         SampleCodeV7_40E(qrimg, qr, WA, WB, WC, HA, HB, HC, coimg->img);
     }

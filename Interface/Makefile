@@ -45,7 +45,7 @@ epicod: ${EOBJ}
 	${CC} ${CFLAGS} ${CPPFLAGS} ${EOBJ} ${LDLIBS} ${GTKLIB} -o ${TARGET2}
 epidec: ${DOBJ}
 	${CC} ${CFLAGS} ${CPPFLAGS} ${DOBJ} ${LDLIBS} ${GTKLIB} -o ${TARGET1}
-multi: ${MEOBJ}
+Epicode: ${MEOBJ}
 	${CC} ${CFLAGS} ${CPPFLAGS} ${MEOBJ} ${LDLIBS} ${GTKLIB} -o epicode
 
 
