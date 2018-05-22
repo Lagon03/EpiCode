@@ -147,12 +147,12 @@ int enc_main (int argc, char* argv[])
     printf("------ Options  ------\n");
     printf("\tVersion                    : %li\n", data->version);
     printf("\tCorrection                 : %i\n", data->correction_level);
-    printf("------ Raw bits ------\n");
+    /*printf("------ Raw bits ------\n");
     printf("\tRaw encoded bits           : %s%s%s\n", data->mode_ind,
       data->character_count_ind, data->encoded_data);
       size_t size = 4 + getSize(data->character_count_ind) 
       + getSize(data->encoded_data);
-      printf("\tRaw encoded bits length    : %li\n", size);
+      printf("\tRaw encoded bits length    : %li\n", size);*/
 
     // Generating the QrCode Matrix
     struct QrCode_Enc* QrCode = initQrCode(data);
@@ -191,25 +191,29 @@ int enc_main (int argc, char* argv[])
         size_t epic_size = ((weave->size * 8) + Remainder_bits[data->version]) / 2;
         free(epic);
         char* epic = malloc((epic_size * 2) * sizeof(char));
-        for(size_t es = 0; es < epic_size - 1 ; ++es) {
+        //epic[epic_size * 2] = '\0';
+        for(size_t es = 0, ess = 0; es < epic_size - 2 ; es += 2, ++ess) {
             // now we check the value of the epic char
             // 00 -> white | 01 -> red
             // 10 -> blue  | 11 -> green
+            printf("%c%c -> ", weave_trans[es], weave_trans[es + 1]);
             if(weave_trans[es] == weave_trans[es + 1]) {
                 if (weave_trans[es] == '0')
-                    epic[es] = 'w';
+                    epic[ess] = 'w';
                 else if (weave_trans[es] == '1')
-                    epic[es] = 'g';
+                    epic[ess] = 'g';
             }
             else {
                 if (weave_trans[es] == '0')
-                    epic[es] = 'r';
+                    epic[ess] = 'r';
                 else if (weave_trans[es] == '1')
-                    epic[es] = 'b';
+                    epic[ess] = 'b';
             }
+            printf("%c\n", epic[ess]);
         }
-        for(size_t i = epic_size, k = 0; 
-                i < (weave->size * 8) + Remainder_bits[data->version]; ++i, ++k) {
+        printf("test\n");
+        for(size_t i = epic_size / 2, k = 0; 
+                i < (weave->size * 8) + Remainder_bits[data->version]; ++i, k += 2) {
             if(weave_trans[k] == weave_trans[k + 1]) {
                 if (weave_trans[k] == '0')
                     epic[i] = 'w';
@@ -225,7 +229,7 @@ int enc_main (int argc, char* argv[])
             if(k + 1 >= epic_size)
                 k = 0;
         }
-        printf("%s\n", epic);
+        //printf("epic : %s\n", epic);
         fill_mat(QrCode->mat, QrCode->size, data->version, epic, weave->size * 8 + Remainder_bits[data->version]);
     }
     else {

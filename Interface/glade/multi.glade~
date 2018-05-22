@@ -696,7 +696,7 @@
         </child>
         <child>
           <object class="GtkToggleButton" id="demo1">
-            <property name="label" translatable="yes">demo</property>
+            <property name="label" translatable="yes">epic</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>

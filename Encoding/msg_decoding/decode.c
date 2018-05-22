@@ -90,7 +90,7 @@ char* convertEpi(char* input, size_t max_size) {
             buffer[k] = '1';
             buffer[k + 1] = '0';
         }
-        printf("k = %li\n", k);
+        //printf("k = %li\n", k);
     }
     printf("%s\n", buffer);
     return buffer;

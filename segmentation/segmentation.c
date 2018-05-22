@@ -133,7 +133,7 @@ struct PCode *Segmentation(SDL_Surface *img)
     struct PCode *c = get_code(qr);
     free_segmentation(f, fp, g, qr);
     SDL_FreeSurface(img);
-    return NULL;
+    return c;
 }
 
 
