@@ -601,7 +601,9 @@ struct QrCode *extract_QrCode (struct GeoImg *qrimg)
     int V = round((D / X - 10) / 4);
     if( V >= 7 && V <= 40)
     {
+        printf("%i\n", V);
         V = GetVersionV7_40N2(qrimg, HB, WB);
+        printf("%i\n", V);
         if( V == 6)
         {
             V = GetVersionV7_40N1(qrimg, HC, WB);

@@ -69,8 +69,8 @@ static int modeToInt(char* mode)
 }
 
 char* convertEpi(char* input, size_t max_size) {
-    printf("Max size : %li\n", max_size);
-    printf("%s\n", input);
+    //printf("Max size : %li\n", max_size);
+    //printf("%s\n", input);
     char* buffer = malloc((max_size +1) * sizeof(char));
     buffer[max_size] = '\0';
     for(size_t es = 0, k = 0; (input[es] != '\0') && k < max_size; ++es, k += 2) {
@@ -92,13 +92,13 @@ char* convertEpi(char* input, size_t max_size) {
         }
         //printf("k = %li\n", k);
     }
-    printf("%s\n", buffer);
+    //printf("%s\n", buffer);
     return buffer;
 }
 
 char* decode(char* input, int version, int level)
 {
-    printf("Input : %s\n", input);
+    //printf("Input : %s\n", input);
     /*
      * From the input we shall now determine the correction codewords
      * and the message codewords which have been interweaved
@@ -296,6 +296,6 @@ char* decode(char* input, int version, int level)
     free(c_count);
     free(c_mode);
 
-    printf("output : %s\n", output);
+    //printf("output : %s\n", output);
     return output;
 }

@@ -80,7 +80,7 @@ size_t* JtoL(char** words, size_t size, size_t err_words)
     //printf("\n");
     struct Array* msg = malloc(sizeof(struct Array));
 
-    printf("nsym : %li\n", err_words);
+    //printf("nsym : %li\n", err_words);
     msg = rs_encode_msg(msg_in, err_words, gf_table);
     size_t * output = malloc(sizeof(size_t) * err_words);
     for(size_t i = 0; i < err_words; ++i)

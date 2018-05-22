@@ -94,19 +94,19 @@ struct Array* rs_correct_errdata(struct Array *msg_in, struct Array *synd, struc
     initArray(err_loc, coef_pos->used+1);
     err_loc= rs_find_errdata_locator(coef_pos, gf_table);
 
-    printf("Bonjour\n");
-    printf("synd->used = %li\n", synd->used);
+    /*printf("Bonjour\n");
+    printf("synd->used = %li\n", synd->used);*/
     struct Array *rev_synd = reverse_arr(synd);
-    printf("Fail\n");
+    //printf("Fail\n");
     struct Array *err_eval = malloc(sizeof(struct Array));
     uint8_t nsym = err_loc->used - 1;
     //nsym = 7;
    
-    printf("WTF\n");
+    //printf("WTF\n");
     err_eval = rs_find_error_evaluator(rev_synd, err_loc, nsym, gf_table);
-    printf("mild fuck\n");
+    //printf("mild fuck\n");
     err_eval = reverse_arr(err_eval);
-    printf("FTW\n"); 
+    //printf("FTW\n"); 
     struct Array *X = malloc(sizeof(struct Array));
     initArray(X, coef_pos->used);
     for(size_t t = 0; t < coef_pos->used; t++){
@@ -154,11 +154,11 @@ struct Array* rs_find_error_locator(struct Array* synd, uint8_t nsym, uint8_t er
     old_loc->array[0] = 1;
     insertArray(old_loc);
 
-    printf("1\n");
+    //printf("1\n");
     unsigned int synd_shift = 0;
     if(synd->used > nsym)
         synd_shift = synd->used - nsym;
-    printf("2\n");
+    //printf("2\n");
     for(int i = 0; i < nsym-erase_count;i++){
         int K = i + synd_shift;
         uint8_t delta = synd->array[K];
@@ -167,35 +167,35 @@ struct Array* rs_find_error_locator(struct Array* synd, uint8_t nsym, uint8_t er
         }
         old_loc->array[old_loc->used + 1] = 0;
         insertArray(old_loc);
-        printf("2.1\n");
+        //printf("2.1\n");
         if(delta != 0){
             if(old_loc->used > err_loc->used){
-                printf("test\n");
+                //printf("test\n");
                 struct Array *new_loc = malloc(sizeof(struct Array));
                 new_loc = gf_poly_scale(old_loc, delta, gf_table);
-                printf("2.1.0\n");
+               //printf("2.1.0\n");
                 old_loc = gf_poly_scale(err_loc, gf_inverse(delta, gf_table), gf_table);
                 memmove(err_loc->array, new_loc->array, err_loc->used);
                 err_loc->used = new_loc->used;
             }
-            printf("test2\n");
-            printf("2.1.1\n");
+            //printf("test2\n");
+           // printf("2.1.1\n");
             struct Array *scale = malloc(sizeof(struct Array*));
             scale = gf_poly_scale(old_loc, delta, gf_table);
-            printf("test2.1\n");
+            //printf("test2.1\n");
             err_loc = gf_poly_add(err_loc, scale);
-            printf("test3\n");
+            //printf("test3\n");
         }
-        printf("2.2\n");
+        //printf("2.2\n");
     }
-    printf("3\n");
+    //printf("3\n");
     while(err_loc->used && err_loc->array[0] == 0) {
-        printf("IN\n");
+        //printf("IN\n");
         err_loc = pop_arr(err_loc);
     }
-    printf("OUT\n");
+    //printf("OUT\n");
     size_t errs = err_loc->used - 1;
-    printf("errs = %li\n", errs);
+    //printf("errs = %li\n", errs);
     if(errs-erase_count * 2 + erase_count > nsym){
         fprintf(stderr, "Too many errors to correct");
         exit(EXIT_FAILURE);
@@ -206,7 +206,7 @@ struct Array* rs_find_error_locator(struct Array* synd, uint8_t nsym, uint8_t er
 struct Array* rs_find_errors(struct Array *err_loc, size_t nmess, struct gf_tables *gf_table)//nmess is len(msg_in)
 {
     size_t errs = err_loc->used - 1;
-    printf("errs = %li\n", errs);
+    //printf("errs = %li\n", errs);
     size_t counter = 0;
     struct Array *err_pos = malloc(sizeof(struct Array*));
     initArray(err_pos, errs);
@@ -217,8 +217,8 @@ struct Array* rs_find_errors(struct Array *err_loc, size_t nmess, struct gf_tabl
             counter++;
         }
     }
-    printf("err_pos counter = %li\n", counter);
-    printf("err_pos->used = %li\n", err_pos->used);
+    //printf("err_pos counter = %li\n", counter);
+    //printf("err_pos->used = %li\n", err_pos->used);
     if(err_pos->used != errs){
         fprintf(stderr, "Too many (or few) errors found by Chien Search for the errdata locator polynomial!");
         exit(EXIT_FAILURE);

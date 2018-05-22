@@ -130,7 +130,7 @@ void on_button1_clicked()
             break;
 
     }
-    char s_vers[4];
+    char s_vers[12];
     sprintf(s_vers, "%d", c_vers);
 
     const char* input_txt;
