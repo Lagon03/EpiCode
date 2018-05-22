@@ -32,7 +32,7 @@ char *filename;
 char *saveAs;
 
 int demo = 0;
-
+int epic = 0;
 
 int main(int argc, char *argv[])
 {
@@ -192,7 +192,13 @@ void on_button2_clicked()
 void demo_act()
 {
     demo = demo == 0 ? 1 : 0;
-    printf("%i\n", demo);
+    //printf("%i\n", demo);
+}
+
+void epic_act()
+{
+    epic = epic == 0 ? 1 : 0;
+    //printf("%i\n", demo);
 }
 
 void decod_clicked()
@@ -204,6 +210,8 @@ void decod_clicked()
         struct PCode* data;
         if (demo == 1)
             data = SegmentationFromFile(filename, 1);
+        else if (epic == 1)
+            data = SegmentationFromFile(filename, 2);
         else
             data = SegmentationFromFile(filename, 0);
         int s_level;
@@ -221,7 +229,6 @@ void decod_clicked()
             default:
                 s_level = 0;
                 break;
-
         }
         char* string = "Not implemented yet.";
         string = decode(data->BStream, data->Version, s_level);

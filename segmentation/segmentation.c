@@ -151,7 +151,7 @@ struct PCode *SegmentationEpi(SDL_Surface *img, SDL_Surface *color)
     struct QrCode *qr = extract_EpCode(g, gcolor);
     struct PCode *c = get_code(qr);
     writeWhiteEpi(c->BStream);
-    printf("%s", c->BStream);
+    //printf("%s", c->BStream);
     free_segmentation(f, fp, g, qr);
     SDL_FreeSurface(img);
     return c;
@@ -224,7 +224,7 @@ struct PCode *SegmentationFromFile(char *File, int Demo)
     SDL_Quit();
     return c;
 }
-
+/*
 int main(int argc, char *argv[])
 {
     if(argc > 2)
@@ -239,4 +239,4 @@ int main(int argc, char *argv[])
     else
         return EXIT_FAILURE;
     return EXIT_SUCCESS;
-}
+}*/

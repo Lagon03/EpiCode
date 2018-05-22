@@ -11,8 +11,13 @@
 int main(int argc, char *argv[])
 {
     struct PCode* data;
-    if(argc > 2 && strcmp(argv[2], "-d") == 0)
-        data = SegmentationFromFile(argv[1], 1);
+    if(argc > 2)
+    {
+        if(strcmp(argv[2], "-d") == 0)
+            data = SegmentationFromFile(argv[1], 1);
+        else if(strcmp(argv[2], "-e") == 0)
+            data = SegmentationFromFile(argv[1], 2);
+    }
     else if(argc > 1)
         data = SegmentationFromFile(argv[1], 0);
     else

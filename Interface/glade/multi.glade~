@@ -536,22 +536,8 @@
             <signal name="clicked" handler="quit_output" swapped="no"/>
           </object>
           <packing>
-            <property name="x">214</property>
-            <property name="y">410</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton">
-            <property name="label" translatable="yes">Save</property>
-            <property name="width_request">100</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <signal name="clicked" handler="save_file" swapped="no"/>
-          </object>
-          <packing>
-            <property name="x">90</property>
-            <property name="y">410</property>
+            <property name="x">145</property>
+            <property name="y">400</property>
           </packing>
         </child>
       </object>
@@ -706,6 +692,19 @@
           <packing>
             <property name="x">90</property>
             <property name="y">212</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkToggleButton" id="demo1">
+            <property name="label" translatable="yes">demo</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <signal name="toggled" handler="epic_act" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">148</property>
+            <property name="y">180</property>
           </packing>
         </child>
       </object>

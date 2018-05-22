@@ -694,6 +694,19 @@
             <property name="y">212</property>
           </packing>
         </child>
+        <child>
+          <object class="GtkToggleButton" id="demo1">
+            <property name="label" translatable="yes">epic</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <signal name="toggled" handler="epic_act" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">148</property>
+            <property name="y">180</property>
+          </packing>
+        </child>
       </object>
     </child>
   </object>
