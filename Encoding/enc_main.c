@@ -211,7 +211,7 @@ int enc_main (int argc, char* argv[])
             }
             printf("%c\n", epic[ess]);
         }
-        printf("test\n");
+        //printf("test\n");
         for(size_t i = epic_size / 2, k = 0; 
                 i < (weave->size * 8) + Remainder_bits[data->version]; ++i, k += 2) {
             if(weave_trans[k] == weave_trans[k + 1]) {
