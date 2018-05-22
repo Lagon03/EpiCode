@@ -108,6 +108,18 @@ void ImageProcessingDemo(SDL_Surface *img)
     display_image(img);
 }
 
+static inline
+void writeWhiteEpi(char *s)
+{
+    int i = 0;
+    while(s[i] != '\0')
+    {
+        if(s[i] == '1' || s[i] == '0')
+            s[i] = 'w';
+        i++;
+    }
+}
+
 struct PCode *Segmentation(SDL_Surface *img)
 {
     ImageProcessing(img);
@@ -138,6 +150,7 @@ struct PCode *SegmentationEpi(SDL_Surface *img, SDL_Surface *color)
     display_image(gcolor->img);
     struct QrCode *qr = extract_EpCode(g, gcolor);
     struct PCode *c = get_code(qr);
+    writeWhiteEpi(c->BStream);
     printf("%s", c->BStream);
     free_segmentation(f, fp, g, qr);
     SDL_FreeSurface(img);
