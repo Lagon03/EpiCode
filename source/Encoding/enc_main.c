@@ -28,6 +28,7 @@ struct options* checkArg(int argc, char* argv[])
     arg->version = 99;
     arg->epi = 0;
     arg->output = "\0";
+    arg->name = NULL;
     for(int i = 1; i < argc; ++i)
     {
         if(strcmp(argv[i], "-d") == 0) { // arg for the data
@@ -81,6 +82,11 @@ struct options* checkArg(int argc, char* argv[])
                     }
             }
         }
+        else if(strcmp(argv[i], "-n") == 0) {
+            i++;
+            if (i >= argc)
+                err(1, "|||--------> Error missing argument.\n");
+        }
     }
     return arg;
 }
@@ -99,7 +105,7 @@ char* GenName(void)
     return name;
 }
 
-int main (int argc, char* argv[])
+int enc_main (int argc, char* argv[])
 {
     struct options *arg = checkArg(argc, argv);
     if(arg->message == NULL)
@@ -147,8 +153,8 @@ int main (int argc, char* argv[])
     printf("------ Options  ------\n");
     printf("\tVersion                    : %li\n", data->version);
     printf("\tCorrection                 : %i\n", data->correction_level);
-    printf("------ Raw bits ------\n");
-    /*printf("\tRaw encoded bits           : %s%s%s\n", data->mode_ind,
+    /*printf("------ Raw bits ------\n");
+    printf("\tRaw encoded bits           : %s%s%s\n", data->mode_ind,
       data->character_count_ind, data->encoded_data);
       size_t size = 4 + getSize(data->character_count_ind) 
       + getSize(data->encoded_data);
@@ -191,24 +197,28 @@ int main (int argc, char* argv[])
         size_t epic_size = ((weave->size * 8) + Remainder_bits[data->version]) / 2;
         free(epic);
         char* epic = malloc((epic_size * 2) * sizeof(char));
-        for(size_t es = 0; es < epic_size ; ++es) {
+        //epic[epic_size * 2] = '\0';
+        for(size_t es = 0, ess = 0; es < epic_size - 2 ; es += 2, ++ess) {
             // now we check the value of the epic char
             // 00 -> white | 01 -> red
             // 10 -> blue  | 11 -> green
+            printf("%c%c -> ", weave_trans[es], weave_trans[es + 1]);
             if(weave_trans[es] == weave_trans[es + 1]) {
                 if (weave_trans[es] == '0')
-                    epic[es] = 'w';
+                    epic[ess] = 'w';
                 else if (weave_trans[es] == '1')
-                    epic[es] = 'g';
+                    epic[ess] = 'g';
             }
             else {
                 if (weave_trans[es] == '0')
-                    epic[es] = 'b';
+                    epic[ess] = 'r';
                 else if (weave_trans[es] == '1')
-                    epic[es] = 'r';
+                    epic[ess] = 'b';
             }
+            printf("%c\n", epic[ess]);
         }
-        for(size_t i = epic_size, k = 0; 
+        //printf("test\n");
+        for(size_t i = epic_size / 2, k = 0; 
                 i < (weave->size * 8) + Remainder_bits[data->version]; ++i, k += 2) {
             if(weave_trans[k] == weave_trans[k + 1]) {
                 if (weave_trans[k] == '0')
@@ -225,9 +235,7 @@ int main (int argc, char* argv[])
             if(k + 1 >= epic_size)
                 k = 0;
         }
-        printf("Epic size : %li\n", epic_size);
-        printf("Normal size : %li\n", (weave->size * 8) + Remainder_bits[data->version]);
-        printf("Epicode version : %li\n", data->epi_v);
+        //printf("epic : %s\n", epic);
         fill_mat(QrCode->mat, QrCode->size, data->version, epic, weave->size * 8 + Remainder_bits[data->version]);
     }
     else {

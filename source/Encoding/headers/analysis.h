@@ -13,6 +13,7 @@ struct options
   int version;
   int epi;
   char* output;
+  char* name;
 };
 
 enum data

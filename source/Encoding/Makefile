@@ -10,19 +10,19 @@ EMSRC= e_main.c freect.c
 DMSRC= d_main.c freect.c
 
 # Encoding and Decoding code
-ASRC= analysis/analysis.c
-MESRC= msg_encoding/encode.c msg_encoding/encode_message.c msg_encoding/weaver.c
-DSRC= draw/draw.c draw/fill_mat.c draw/mask.c
-GSRC= gen_img/gen_img.c
-RSSRC= error_cor/RS/array.c error_cor/RS/op.c error_cor/RS/encode_RS.c error_cor/RS/decode_RS.c
-SSRC= ../sdl/mysdl.c
-MDSRC= msg_decoding/decode.c msg_decoding/unweaver.c msg_decoding/decode_message.c
+ASRC= source/Encoding/analysis/analysis.c
+MESRC= source/Encoding/msg_encoding/encode.c msg_encoding/encode_message.c msg_encoding/weaver.c
+DSRC= source/Encoding/draw/draw.c draw/fill_mat.c draw/mask.c
+GSRC= source/Encoding/gen_img/gen_img.c
+RSSRC= source/Encoding/error_cor/RS/array.c source/Encoding/error_cor/RS/op.c source/Encoding/error_cor/RS/encode_RS.c source/Encoding/error_cor/RS/decode_RS.c
+SSRC= source/sdl/mysdl.c
+MDSRC= source/Encoding/msg_decoding/decode.c source/Encoding/msg_decoding/unweaver.c source/Encoding/msg_decoding/decode_message.c
 
 # Segmentation code
-IPSRC= ../preproc/preproc.c
-SGSRC= ../segmentation/fpfind.c ../segmentation/FPValid.c ../segmentation/geotrans.c ../segmentation/aploc.c ../segmentation/apsamp.c ../segmentation/extcode.c ../segmentation/surfdraw.c
-BSSRC= ../segmentation/proc_code.c ../segmentation/color_mat.c ../segmentation/demask.c ../segmentation/bit_ext.c
-MSSRC= ../segmentation/segmentation.c
+IPSRC= source/preproc/preproc.c
+SGSRC= source/segmentation/fpfind.c source/segmentation/FPValid.c source/segmentation/geotrans.c source/segmentation/aploc.c source/segmentation/apsamp.c source/segmentation/extcode.c source/segmentation/surfdraw.c
+BSSRC= source/segmentation/proc_code.c source/segmentation/color_mat.c source/segmentation/demask.c source/segmentation/bit_ext.c
+MSSRC= source/segmentation/segmentation.c
 
 # Encoding objects
 OBJ=${EMSRC:.c=.o} ${ASRC:.c=.o} ${MESRC:.c=.o} ${DSRC:.c=.o} ${GSRC:.c=.o} ${RSSRC:.c=.o} ${SSRC:.c=.o} ${MDSRC:.c=.o}

@@ -230,7 +230,7 @@ char* decode(char* input, int version, int level)
     if((data[0] == 'w') | (data[0] == 'b') | (data[0] == 'r') | (data[0] == 'g'))
         data = convertEpi(data, (l_data * 8));
     
-    printf("Data retrieve from segmentation : %s\n", data);
+    //printf("Data retrieve from segmentation : %s\n", data);
 
     char* c_mode;                           // mode : 0001 / 0010 / 0100
                                             // the mode is the first 4 byte of

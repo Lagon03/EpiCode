@@ -18,6 +18,20 @@
 
 int display;
 
+void Help()
+{
+    printf("Usage: ./encode [OPTIONS]\n            Encodes a QrCode or an Epicode and saves it under .bmp format\n\n");
+    printf("OPTIONS\n\n");
+    printf("  -d [string to encode]         Stands for Data, write after the option the message you want to encode in between quotes\n\n");
+    printf("  -v [QrCode Version]           Stands for Version, write after the option the desired version (1 to 40)\n\n");
+    printf("  -x                            If you wish not to display your QrCode or EpiCode when encoded\n\n");
+    printf("  -t                            Encodes the message in a Epicode\n\n");
+    printf("  -o [Location]                 Saves the Code at desired location\n\n");
+    printf("  -c L|M|Q|H                    Stands for Error Correction, write the letter corresponding to the level of correction you want, L(Low)|M(Medium)|Q(Quartile)|H(hHigh)\n\n");
+    printf("  -n [file name]                Stands for name, write after the option the name of your QrCode (It will be saved under that name)\n\n");
+    printf("  -h                            Help\n");
+}
+
 struct options* checkArg(int argc, char* argv[])
 {
     struct options *arg = malloc(sizeof(struct options));
@@ -28,6 +42,7 @@ struct options* checkArg(int argc, char* argv[])
     arg->version = 99;
     arg->epi = 0;
     arg->output = "\0";
+    arg->name = NULL;
     for(int i = 1; i < argc; ++i)
     {
         if(strcmp(argv[i], "-d") == 0) { // arg for the data
@@ -81,6 +96,16 @@ struct options* checkArg(int argc, char* argv[])
                     }
             }
         }
+        else if(strcmp(argv[i], "-n") == 0) {
+            i++;
+            if (i >= argc)
+                err(1, "|||--------> Error missing argument.\n");
+            arg->name = argv[i];
+        }
+        else if(strcmp(argv[i], "-h") == 0) {
+            Help();
+            exit(EXIT_SUCCESS);
+        }
     }
     return arg;
 }
@@ -99,7 +124,7 @@ char* GenName(void)
     return name;
 }
 
-int enc_main (int argc, char* argv[])
+int main (int argc, char* argv[])
 {
     struct options *arg = checkArg(argc, argv);
     if(arg->message == NULL)
@@ -147,8 +172,8 @@ int enc_main (int argc, char* argv[])
     printf("------ Options  ------\n");
     printf("\tVersion                    : %li\n", data->version);
     printf("\tCorrection                 : %i\n", data->correction_level);
-    /*printf("------ Raw bits ------\n");
-    printf("\tRaw encoded bits           : %s%s%s\n", data->mode_ind,
+    printf("------ Raw bits ------\n");
+    /*printf("\tRaw encoded bits           : %s%s%s\n", data->mode_ind,
       data->character_count_ind, data->encoded_data);
       size_t size = 4 + getSize(data->character_count_ind) 
       + getSize(data->encoded_data);
@@ -191,28 +216,24 @@ int enc_main (int argc, char* argv[])
         size_t epic_size = ((weave->size * 8) + Remainder_bits[data->version]) / 2;
         free(epic);
         char* epic = malloc((epic_size * 2) * sizeof(char));
-        //epic[epic_size * 2] = '\0';
-        for(size_t es = 0, ess = 0; es < epic_size - 2 ; es += 2, ++ess) {
+        for(size_t es = 0; es < epic_size ; ++es) {
             // now we check the value of the epic char
             // 00 -> white | 01 -> red
             // 10 -> blue  | 11 -> green
-            printf("%c%c -> ", weave_trans[es], weave_trans[es + 1]);
             if(weave_trans[es] == weave_trans[es + 1]) {
                 if (weave_trans[es] == '0')
-                    epic[ess] = 'w';
+                    epic[es] = 'w';
                 else if (weave_trans[es] == '1')
-                    epic[ess] = 'g';
+                    epic[es] = 'g';
             }
             else {
                 if (weave_trans[es] == '0')
-                    epic[ess] = 'r';
+                    epic[es] = 'b';
                 else if (weave_trans[es] == '1')
-                    epic[ess] = 'b';
+                    epic[es] = 'r';
             }
-            printf("%c\n", epic[ess]);
         }
-        //printf("test\n");
-        for(size_t i = epic_size / 2, k = 0; 
+        for(size_t i = epic_size, k = 0; 
                 i < (weave->size * 8) + Remainder_bits[data->version]; ++i, k += 2) {
             if(weave_trans[k] == weave_trans[k + 1]) {
                 if (weave_trans[k] == '0')
@@ -229,7 +250,9 @@ int enc_main (int argc, char* argv[])
             if(k + 1 >= epic_size)
                 k = 0;
         }
-        //printf("epic : %s\n", epic);
+        printf("Epic size : %li\n", epic_size);
+        printf("Normal size : %li\n", (weave->size * 8) + Remainder_bits[data->version]);
+        printf("Epicode version : %li\n", data->epi_v);
         fill_mat(QrCode->mat, QrCode->size, data->version, epic, weave->size * 8 + Remainder_bits[data->version]);
     }
     else {
@@ -279,12 +302,12 @@ int enc_main (int argc, char* argv[])
     setFormatString(QrCode, S_bits[data->correction_level][cur]);
     if(data->version >= 7)
         setVersionString(QrCode, V_bits[data->version - 7]);
-
-    char* name = GenName();
+    if(arg->name == NULL)
+        arg->name = GenName();
     if(data->version >= 15)
-        Generate_QrCode(QrCode->mat, data->version, name, 4, arg->output, display);
+        Generate_QrCode(QrCode->mat, data->version, arg->name, 4, arg->output, display);
     else
-        Generate_QrCode(QrCode->mat, data->version, name, 8, arg->output, display);
+        Generate_QrCode(QrCode->mat, data->version, arg->name, 8, arg->output, display);
 
     Completefree(data, arg, QrCode, weave);
 

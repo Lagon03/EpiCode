@@ -8,6 +8,14 @@
 # include "../segmentation/segmentation.h"
 # include "headers/decode.h"
 
+void Help()
+{
+    printf("Usage: ./decode [File To Decode] [OPTIONS]\n            Decodes a QrCode from a file\n\n");
+    printf("OPTIONS\n\n");
+    printf("  -e                Decodes an Epicode instead of a QrCode\n\n");
+    printf("  -h                Help\n");
+}
+
 int main(int argc, char *argv[])
 {
     struct PCode* data;
@@ -17,9 +25,18 @@ int main(int argc, char *argv[])
             data = SegmentationFromFile(argv[1], 1);
         else if(strcmp(argv[2], "-e") == 0)
             data = SegmentationFromFile(argv[1], 2);
+        else if(strcmp(argv[2], "-h") == 0){
+            Help();
+            exit(EXIT_SUCCESS);
+        }
     }
-    else if(argc > 1)
+    else if(argc > 1){
+        if(strcmp(argv[1], "-h") == 0){
+            Help();
+            exit(EXIT_SUCCESS);
+        }
         data = SegmentationFromFile(argv[1], 0);
+    }
     else
         return EXIT_FAILURE;
 

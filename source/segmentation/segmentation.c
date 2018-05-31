@@ -225,7 +225,8 @@ struct PCode *SegmentationFromFile(char *File, int Demo)
     return c;
 }
 
-/*int main(int argc, char *argv[])
+/*
+int main(int argc, char *argv[])
 {
     if(argc > 2)
     {
@@ -239,4 +240,5 @@ struct PCode *SegmentationFromFile(char *File, int Demo)
     else
         return EXIT_FAILURE;
     return EXIT_SUCCESS;
-}*/
+}
+*/
